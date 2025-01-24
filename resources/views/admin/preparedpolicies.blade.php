@@ -21,8 +21,7 @@
                         <thead>
                             <tr>
                             <th>Sl No</th>
-                            <th>Vehicle Number</th>
-                            <th>Phone Number</th>
+                            <th>Policy</th>
                             <th>Prepared Link</th>
                             <th>Note</th>
                             <th>Created By</th>
@@ -41,7 +40,7 @@
 </div>
 <!-- Create Modal -->
 <div class="modal fade" id="CreateModal" tabindex="-1" role="dialog" aria-labelledby="CreateModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Create</h5>
@@ -53,22 +52,26 @@
               <form id="create_prepare_policy_form" class="form" enctype="multipart/form-data">
               @csrf
                 <div class="row form-group">
-                    <div class="col-6">
-                        <label>Policy<span>*</span></label>
-                        <select name="policy_id" class="form-control" required>
+                    <div class="col-4">
+                        <label>Policy Categroy <span>*</span></label>
+                        <select  name="policy_cat_id" id="add_policy_category_id" class="form-control">
                             <option value="">Select One</option>
-                            @foreach($assigned_policies as $policy)
-                            <option value="{{$policy->id}}">{{$policy->name}}</option>
+                            @foreach( $policy_categories as $cat)
+                            <option value="{{$cat->id}}">{{$cat->policy_category}}</option>
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-6">
+                    <div class="col-4">
+                        <label>Policy<span>*</span></label>
+                        <select name="policy_id" id="add_policy_id" class="form-control" required>
+                            <option value="">Select One</option>
+                        </select>
+                    </div>
+                    <div class="col-4">
                         <label>Link<span>*</span></label>
                         <textarea  name="link" class="form-control" required></textarea>
                     </div>
-                </div>
-                <div class="row form-group">
-                    <div class="col-6">
+                    <div class="col-4">
                         <label>Note</label>
                         <textarea  name="note" class="form-control"></textarea>
                     </div>
@@ -87,7 +90,7 @@
  <!-- Create Modal -->
 <!-- Edit Modal -->
 <div class="modal fade" id="EditModal" tabindex="-1" role="dialog" aria-labelledby="EditModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Edit</h5>
@@ -101,20 +104,9 @@
                     <input type="hidden" name="prepare_policyid" id="prepare_policyid" value="">
                     <div class="row form-group">
                         <div class="col-6">
-                            <label>Policy<span>*</span></label>
-                            <select name="policy_id" id="policy_id" class="form-control" required>
-                                <option value="">Select One</option>
-                                @foreach($assigned_policies as $policy)
-                                <option value="{{$policy->id}}">{{$policy->name}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-6">
                             <label>Link<span>*</span></label>
                             <textarea  name="link" id="link" class="form-control" required></textarea>
                         </div>
-                    </div>
-                    <div class="row form-group">
                         <div class="col-6">
                             <label>Note</label>
                             <textarea  name="note" id="note"  class="form-control"></textarea>
@@ -135,11 +127,15 @@
  @push('scripts')
 <script type="text/javascript">
     $(document).ready(function() {
-        function fetch_prepare_policyData()
+        function fetch_prepare_policyData(policy_id='',policy_cat_id='')
         {
             $('#prepare_policy_tbody').html('');
-            $.ajax({ type: "GET",
+            $.ajax({ type: "POST",
                     url: "{{route('prepared_policies.list')}}",
+                    data:{ "_token": "{{ csrf_token() }}",
+                        policy_id:policy_id,
+                        policy_cat_id:policy_cat_id
+                    },
                     beforeSend: function() 
                     {
                         $('#preloader').show();
@@ -245,11 +241,28 @@ $(document).on("click", ".edit_preparepolicy", function() {
               },
         success: function(res) 
         {
-          $('#policy_id').val(res.policy_id);
           $('#link').val(res.link);
           $('#note').val(res.note);
         },
     });
+});
+$(document).on("change", "#add_policy_category_id", function() {
+    var policy_category_id=$(this).val();
+    $('#add_policy_id').prop('disabled', true).html('<option value="">Loading...</option>');
+    $.ajax({ type: "POST",
+        url: "{{route('payment.getPolicyByCategory')}}",
+        data: { "_token": "{{ csrf_token() }}",
+                policy_category_id:policy_category_id
+              },
+        success: function(res) 
+        {
+            $('#add_policy_id').prop('disabled', false).html('<option value="">Select One</option>');
+            $.each(res.policies, function(index, policy) {
+                $('#add_policy_id').append('<option value="' +policy.id+'">'+policy.name	+'</option>');
+            });
+        }
+    });
+
 });
 </script> 
 @endpush

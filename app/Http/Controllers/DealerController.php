@@ -9,8 +9,13 @@ use Response;
 use Redirect;
 class DealerController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        if($request->ajax())
+        {
+            $dealers=Tbl_dealers::latest('id')->get();
+            return Response::json($dealers);
+        }
         return view('admin.dealers');
     }
     public function list()
@@ -48,7 +53,7 @@ class DealerController extends Controller
        $dealer->created_by=$created_by;
        $dealer->created_date=date('Y-m-d');
        $dealer->save();
-       return Response::json([ 'success' => true]);
+       return Response::json([ 'success' => true,'message'=>'Successfully Created Dealer']);
     }
     public function show(Request $request)
     {

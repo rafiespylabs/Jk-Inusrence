@@ -24,4 +24,9 @@ class Tbl_payments extends Model
     {
         return $this->belongsTo(Tbl_insurence_providers::class, 'provide_id','id');
     }
+    public function policy_category()
+    {
+        return $this->belongsTo(Tbl_policy_categories::class, 'policy_cat_id','id');
+    }
+   
 }

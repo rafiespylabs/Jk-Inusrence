@@ -9,8 +9,13 @@ use Redirect;
 use Hash;
 class ReferredPersonController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        if($request->ajax())
+        {
+            $referred_persons=Tbl_referred_persons::latest('id')->get();
+            return Response::json($referred_persons);
+        }
         return view('admin.reffered_person');
     }
     public function list()

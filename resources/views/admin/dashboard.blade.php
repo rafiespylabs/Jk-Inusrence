@@ -20,7 +20,7 @@ $role=auth()->user()->role_id;
                             </div>
                             <div class="col col-stats ms-3 ms-sm-0">
                             <div class="numbers">
-                                <p class="card-category">Recruitements</p>
+                                <p class="card-category">Health Insurences</p>
                                 <h4 class="card-title">0</h4>
                             </div>
                             </div>
@@ -43,7 +43,7 @@ $role=auth()->user()->role_id;
                             </div>
                             <div class="col col-stats ms-3 ms-sm-0">
                             <div class="numbers">
-                                <p class="card-category">Categories</p>
+                                <p class="card-category">Vehicle Insurences</p>
                                 <h4 class="card-title">0</h4>
                             </div>
                             </div>
@@ -66,7 +66,7 @@ $role=auth()->user()->role_id;
                         </div>
                         <div class="col col-stats ms-3 ms-sm-0">
                         <div class="numbers">
-                            <p class="card-category">Passports</p>
+                            <p class="card-category">Other Policies</p>
                             <h4 class="card-title">0</h4>
                         </div>
                         </div>
@@ -87,7 +87,7 @@ $role=auth()->user()->role_id;
                             </div>
                             <div class="col col-stats ms-3 ms-sm-0">
                             <div class="numbers">
-                                <p class="card-category">Leads</p>
+                                <p class="card-category">Loans</p>
                                 <h4 class="card-title">0</h4>
                             </div>
                             </div>
@@ -97,36 +97,12 @@ $role=auth()->user()->role_id;
             </div>
         </div>
     </div>
-    <div class="row">
+    <!-- <div class="row">
         <div class="col-md-8">
             <div class="card card-round">
                 <div class="card-header">
                     <div class="card-head-row card-tools-still-right">
                         <div class="card-title">Due Payments</div>
-                        <!-- <div class="card-tools">
-                            <div class="dropdown">
-                                <button
-                                class="btn btn-icon btn-clean me-0"
-                                type="button"
-                                id="dropdownMenuButton"
-                                data-bs-toggle="dropdown"
-                                aria-haspopup="true"
-                                aria-expanded="false"
-                                >
-                                <i class="fas fa-ellipsis-h"></i>
-                                </button>
-                                <div
-                                class="dropdown-menu"
-                                aria-labelledby="dropdownMenuButton"
-                                >
-                                <a class="dropdown-item" href="#">Action</a>
-                                <a class="dropdown-item" href="#">Another action</a>
-                                <a class="dropdown-item" href="#"
-                                    >Something else here</a
-                                >
-                                </div>
-                            </div>
-                        </div> -->
                     </div>
                 </div>
                 <div class="card-body p-0">
@@ -170,6 +146,6 @@ $role=auth()->user()->role_id;
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 </div>
 </x-admin1-layout>

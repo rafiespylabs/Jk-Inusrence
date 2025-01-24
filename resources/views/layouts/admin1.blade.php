@@ -3,9 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>JK Inusrence</title>
+    <title>JK Group</title>
     <meta content="width=device-width, initial-scale=1.0, shrink-to-fit=no" name="viewport" />
-    <link rel="icon" href="{{asset('/admin/images/favicon.ico')}}" type="image/x-icon" />
+    <link rel="icon" href="{{asset('admin1/assets/img/logo/jklogo.png')}}" type="image/x-icon" />
     <script src="{{asset('admin1/assets/js/plugin/webfont/webfont.min.js')}}"></script>
     <script>
       WebFont.load({
@@ -25,6 +25,11 @@
     <link rel="stylesheet" href="{{asset('admin1/assets/css/plugins.min.css')}}" />
     <link rel="stylesheet" href="{{asset('admin1/assets/css/kaiadmin.min.css')}}" />
     <link rel="stylesheet" href="{{asset('admin1/assets/css/demo.css')}}" /> 
+    <style>
+      .main-header{
+        top :0!important
+      }
+    </style>
     @stack('styles')
   </head>
   <body>

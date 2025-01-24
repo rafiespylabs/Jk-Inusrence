@@ -8,8 +8,13 @@ use Response;
 use Redirect;
 class AgentController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        if($request->ajax())
+        {
+            $agents=Tbl_agents::latest('id')->get();
+            return Response::json($agents);
+        }
         return view('admin.agents');
     }
     public function list()
@@ -45,7 +50,7 @@ class AgentController extends Controller
         $agent->created_by=$created_by;
         $agent->created_date=date('Y-m-d');
         $agent->save();
-        return Response::json([ 'success' => true]);
+        return Response::json([ 'success' => true,'message'=>'Successfully Created Agent']);
     }
     public function show(Request $request)
     {

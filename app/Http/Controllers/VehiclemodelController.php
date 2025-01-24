@@ -2,14 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Tbl_vehicle_model;
+use App\Models\Tbl_vehicle_models;
 use Illuminate\Http\Request;
-
+use Response;
 class VehiclemodelController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $vehiclemodels=Tbl_vehicle_model::all();
+        if($request->ajax())
+        {
+            $vehiclemodels=Tbl_vehicle_models::latest('id')->get();
+            return Response::json($vehiclemodels);
+        }
+        $vehiclemodels=Tbl_vehicle_models::all();
         return view('admin.vehiclemodels',data: ['vehiclemodels'=>$vehiclemodels]);
     }
 
@@ -20,10 +25,17 @@ class VehiclemodelController extends Controller
         ]);
 
         try {
-            $vehiclemodels = new Tbl_vehicle_model();
+            $existRecord=Tbl_vehicle_models::where('model',$validatedData['model'])->exists();
+            if($existRecord)
+            {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Already Taken Vehicle model',
+                ]);
+            }
+            $vehiclemodels = new Tbl_vehicle_models();
             $vehiclemodels->model = $validatedData['model'];           
             $vehiclemodels->save();
-            
             return response()->json([
                 'success' => true,
                 'message' => 'Vehicle model created successfully',
@@ -39,7 +51,7 @@ class VehiclemodelController extends Controller
 
     public function edit(Request $request)
     {
-        $vehiclemodels = Tbl_vehicle_model::find($request->vehiclemodels_id);
+        $vehiclemodels = Tbl_vehicle_models::find($request->vehiclemodels_id);
     
         if (!$vehiclemodels) {
             return response()->json(['success' => false, 'message' => 'Vehicle model not found'], 404);
@@ -59,7 +71,7 @@ class VehiclemodelController extends Controller
             
         ]);
 
-        $vehiclemodels = Tbl_vehicle_model::find($validatedData['id']);
+        $vehiclemodels = Tbl_vehicle_models::find($validatedData['id']);
         $vehiclemodels->model = $validatedData['model'];             
         $vehiclemodels->save();
        
@@ -76,7 +88,7 @@ class VehiclemodelController extends Controller
             'id' => 'required|exists:tbl_vehicle_models,id',
         ]);
 
-        $vehiclemodels = Tbl_vehicle_model::find($validatedData['id']);
+        $vehiclemodels = Tbl_vehicle_models::find($validatedData['id']);
         if (!$vehiclemodels) {
             return response()->json([
                 'success' => false,

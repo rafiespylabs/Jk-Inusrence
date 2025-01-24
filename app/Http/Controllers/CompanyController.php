@@ -8,8 +8,13 @@ use Response;
 use Redirect;
 class CompanyController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        if($request->ajax())
+        {
+            $companies=Tbl_companies::latest('id')->get();
+            return Response::json($companies);
+        }
         return view('admin.companies');
     }
     public function list()
@@ -43,7 +48,7 @@ class CompanyController extends Controller
         $company->created_by=$created_by;
         $company->created_date=date('Y-m-d');
         $company->save();
-        return Response::json([ 'success' => true]);
+        return Response::json([ 'success' => true,'message'=>'Successfully Created Company']);
     }
     public function show(Request $request)
     {

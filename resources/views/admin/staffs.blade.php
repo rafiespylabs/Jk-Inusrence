@@ -57,48 +57,47 @@
               <form id="create_staff_form" class="form" enctype="multipart/form-data">
               @csrf
                 <div class="row form-group">
-                    <div class="col-6">
-                        <label>Name</label>
-                        <input type="text"  name="name" class="form-control" required>
+                    <div class="col-4">
+                        <label>Name <span>*</span></label>
+                        <input type="text"  name="name" class="form-control" pattern="[a-zA-Z]+" 
+                        title="Name can only contain letters."  required>
                     </div>
-                    <div class="col-6">
-                        <label>Email</label>
+                    <div class="col-4">
+                        <label>Email <span>*</span></label>
                         <input type="email"  name="email" class="form-control" required>
                     </div>
-                </div>
-                <div class="row form-group">
-                    <div class="col-6">
-                        <label>Mobile Number</label>
-                        <input type="number"  name="mobile_number" class="form-control" required>
-                    </div>
-                    <div class="col-6">
-                        <label>Profile Image</label>
-                        <input type="text"  name="profile_image" class="form-control" required>
+                    <div class="col-4">
+                        <label>Mobile Number <span>*</span></label>
+                        <input type="text"  name="mobile_number" class="form-control" pattern="[0-9]{10}" 
+                        title="Phone number must be 10 digits" required>
                     </div>
                 </div>
                 <div class="row form-group">
-                    <div class="col-6">
+                    <div class="col-4">
+                        <label>Profile Image </label>
+                        <input type="text"  name="profile_image" class="form-control">
+                    </div>
+                    <div class="col-4">
                         <label>Join Date</label>
-                        <input type="date"  name="join_date" class="form-control" required>
+                        <input type="date"  name="join_date" id="joinDate" class="form-control" required>
                     </div>
-                    <div class="col-6">
+                    <div class="col-4">
                         <label>User Name</label>
                         <input type="text"  name="user_name" class="form-control" required>
                     </div>
                 </div>
                 <div class="row form-group">
-                    <div class="col-6">
-                        <label>Password</label>
-                        <input type="password"  name="password" class="form-control" required>
+                    <div class="col-4">
+                        <label>Password <span>*</span></label>
+                        <input type="password"  name="password" id="password" class="form-control" required>
                     </div>
-                    <div class="col-6">
-                        <label>Confirm Password</label>
-                        <input type="password"  name="cpassword" class="form-control" required>
+                    <div class="col-4">
+                        <label>Confirm Password <span>*</span></label>
+                        <input type="password"  name="cpassword" id="confirmPassword" class="form-control" required>
+                        <p id="passwordMatch"></p>
                     </div>
-                </div>
-                <div class="row  form-group">
-                    <div class="col-6">
-                        <label>Branch</label>
+                    <div class="col-4">
+                        <label>Branch <span>*</span></label>
                         <select  name="branch_id" id="addbranch_id" class="form-control" required>
                             <option value="">Select One</option>
                             @foreach($branches as $branch)
@@ -106,28 +105,28 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-6">
+                </div>
+                <div class="row form-group">
+                    <div class="col-4">
                         <label>Department</label>
-                        <select  name="dept_id" id="adddept_id" class="form-control" required>
+                        <select  name="dept_id" id="adddept_id" class="form-control">
                             <option value="">Select One</option>
                             @foreach($departments as $dept)
                             <option value="{{$dept->id}}">{{$dept->department}}</option>
                             @endforeach
                         </select>
                     </div>
-                </div>
-                <div class="row form-group">
-                    <div class="col-6">
+                    <div class="col-4">
                         <label>Designation</label>
-                        <select  name="design_id" id="adddesign_id" class="form-control" required>
+                        <select  name="design_id" id="adddesign_id" class="form-control">
                             <option value="">Select One</option>
                             @foreach($designations as $design)
                             <option value="{{$design->id}}">{{$design->designation}}</option>
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-6">
-                        <label>Role</label>
+                    <div class="col-4">
+                        <label>Role <span>*</span></label>
                         <select  name="role_id" id="addrole_id" class="form-control" required>
                             <option value="">Select One</option>
                             @foreach($roles as $role)
@@ -169,38 +168,38 @@
                     @csrf
                     <input type="hidden" name="staff_id" id="staff_id" value="">
                     <div class="row form-group">
-                        <div class="col-6">
-                            <label>Name</label>
-                            <input type="text"  name="name"  id="name" class="form-control" required>
+                        <div class="col-4">
+                            <label>Name <span>*</span></label>
+                            <input type="text"  name="name"  id="name" class="form-control" pattern="[a-zA-Z]+" 
+                            title="Name can only contain letters."  required>
                         </div>
-                        <div class="col-6">
-                            <label>Email</label>
+                        <div class="col-4">
+                            <label>Email <span>*</span></label>
                             <input type="email"  name="email"  id="email" class="form-control" required>
                         </div>
+                        <div class="col-4">
+                            <label>Mobile Number <span>*</span></label>
+                            <input type="text"  name="mobile_number" id="mobile_number" pattern="[0-9]{10}" 
+                            title="Phone number must be 10 digits" class="form-control" required>
+                        </div> 
                     </div>
                     <div class="row form-group">
-                        <div class="col-6">
-                            <label>Mobile Number</label>
-                            <input type="number"  name="mobile_number" id="mobile_number" class="form-control" required>
-                        </div>  
-                    </div>
-                    <div class="row form-group">
-                        <div class="col-6">
+                        <div class="col-4">
                             <label>Profile Image</label>
-                            <input type="text"  name="profile_image" id="profile_image" class="form-control" required>
+                            <input type="text"  name="profile_image" id="profile_image" class="form-control">
                         </div>
-                        <div class="col-6">
-                            <label>Join Date</label>
-                            <input type="date"  name="join_date" id="join_date" class="form-control" required>
+                        <div class="col-4">
+                            <label>Join Date <span>*</span> </label>
+                            <input type="date"  name="join_date" id="join_date" class="form-control">
                         </div>
-                        </div>
-                    <div class="row form-group">
-                        <div class="col-6">
+                        <div class="col-4">
                             <label>User Name</label>
                             <input type="text"  name="user_name" id="user_name" class="form-control" required>
                         </div>
-                        <div class="col-6">
-                            <label>Branch</label>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-4">
+                            <label>Branch <span>*</span></label>
                             <select  name="branch_id" id="editbranch_id" class="form-control" required>
                                 <option value="">Select One</option>
                                 @foreach($branches as $branch)
@@ -208,20 +207,18 @@
                                 @endforeach
                             </select>
                         </div>
-                    </div>
-                    <div class="row  form-group">
-                        <div class="col-6">
+                        <div class="col-4">
                             <label>Department</label>
-                            <select  name="dept_id" id="editdept_id" class="form-control" required>
+                            <select  name="dept_id" id="editdept_id" class="form-control">
                                 <option value="">Select One</option>
                                 @foreach($departments as $dept)
                                 <option value="{{$dept->id}}">{{$dept->department}}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-6">
-                            <label>Designation</label>
-                            <select  name="design_id" id="editdesign_id" class="form-control" required>
+                        <div class="col-4">
+                            <label>Designation </label>
+                            <select  name="design_id" id="editdesign_id" class="form-control">
                                 <option value="">Select One</option>
                                 @foreach($designations as $design)
                                 <option value="{{$design->id}}">{{$design->designation}}</option>
@@ -230,8 +227,8 @@
                         </div>
                     </div>
                     <div class="row form-group">
-                        <div class="col-6">
-                            <label>Role</label>
+                        <div class="col-4">
+                            <label>Role <span>*</span></label>
                             <select  name="role_id" id="editrole_id" class="form-control" required>
                                 <option value="">Select One</option>
                                 @foreach($roles as $role)
@@ -239,7 +236,7 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-6">
+                        <div class="col-8">
                             <label>Address</label>
                             <textarea  name="address" id="address" class="form-control"></textarea>
                         </div>
@@ -499,6 +496,30 @@ $(document).on("click", ".reset_password", function() {
    var staff_id = $(this).data('id');
    $('#staff_pwd_id').val(staff_id);
 });
+$(document).ready(function() {
+  $("#confirmPassword").on("input", function() {
+    var password = $("#password").val();
+    var confirmPassword = $(this).val();
+
+    if (password === confirmPassword) {
+      $("#passwordMatch").text("Passwords match!").css("color", "green");
+    } else {
+      $("#passwordMatch").text("Passwords do not match.").css("color", "red");
+    }
+  });
+});
 </script> 
+<script>
+$(document).ready(function() {
+  $("#joinDate").on("change", function() {
+    var joinDate = new Date($(this).val());
+    var today = new Date();
+    if (joinDate > today) {
+      $(this).val(""); 
+      alert("Join date cannot be in the future.");
+    }
+  });
+});
+</script>
 @endpush
 </x-admin1-layout>

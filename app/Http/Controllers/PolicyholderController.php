@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Tbl_policyholders;
-use App\Models\Tbl_vehiclemodels;
+use App\Models\Tbl_vehicle_models;
 use App\Models\Tbl_companies;
 use App\Models\Tbl_payment_modes;
 use App\Models\Tbl_agents;
@@ -11,6 +11,8 @@ use App\Models\Tbl_dealers;
 use App\Models\Tbl_staffs;
 use App\Models\Tbl_referred_persons;
 use App\Models\Tbl_insurence_providers;
+use App\Models\Tbl_policy_categories;
+use App\Models\Tbl_vehiclepolicy_renews;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Auth;
 use Response;
@@ -19,7 +21,7 @@ class PolicyholderController extends Controller
 {
     public function index()
     {
-        $vehiclemodels=Tbl_vehiclemodels::all();
+        $vehiclemodels=Tbl_vehicle_models::all();
         $companies=Tbl_companies::all();
         $payment_modes=Tbl_payment_modes::all();
         $agents=Tbl_agents::all();
@@ -55,6 +57,7 @@ class PolicyholderController extends Controller
             $html.='<td>'.$holder->vehicle_number.'</td>';
             $html.='<td>'.$holder->primary_number.'</td>';
             $html.='<td>'.$holder->secondary_number.'</td>';
+            $html.='<td>'.$holder->start_date.'</td>';
             $html.='<td>'.$holder->expiry_date.'</td>';
             $html.='<td>'.$vehicle_model.'</td>';
             $html.='<td>'.$company.'</td>';
@@ -67,10 +70,10 @@ class PolicyholderController extends Controller
             $html.='<td>'.$referred_person.'</td>';
             $html.='<td>'.$holder->created_date.'</td>';
             $html.='<td>';
-            $html.='<a href="/payments/'.$holder->id.'"><button class="btn btn-secondary btn-xs" data-id="'.$holder->id.'">Payment</button></a>';
+            $html.='<a href="/vehicle_policydocuments/'.$holder->id.'"><button class="btn btn-primary btn-xs" data-id="'.$holder->id.'"><i class="fa fa-file"></i> Documents</button></a>';
             $html.='</td>';
             $html.='<td>';
-            $html.='<a href="/policydocuments/'.$holder->id.'"><button class="btn btn-primary btn-xs" data-id="'.$holder->id.'"><i class="fa fa-file"></i> Documents</button></a>';
+            $html.='<a href="/vechicle_policyrenews/'.$holder->id.'"><button class="btn btn-primary btn-xs" data-id="'.$holder->id.'"><i class="fa fa-sync"></i> Renew</button></a>';
             $html.='</td>';
             $html.='<td>';
             $html.='<i class="fa fa-user-plus assign_staff" data-id="'.$holder->id.'" data-bs-toggle="modal"   data-bs-target="#AssignModal"></i>';
@@ -86,7 +89,7 @@ class PolicyholderController extends Controller
     }
     public function store(Request $request)
     {
-        $executive_id=Auth::user()->id;
+        $created_by=Auth::user()->id;
         $existingRecord =Tbl_policyholders::where('name',$request->name )->exists();
         if($existingRecord)
         {
@@ -100,12 +103,14 @@ class PolicyholderController extends Controller
         $policyholder->vehicle_number=$request->vehicle_number;
         $policyholder->primary_number=$request->primary_number;
         $policyholder->secondary_number=$request->secondary_number;
+        $policyholder->start_date=$request->start_date;
         $policyholder->expiry_date=$request->expiry_date;
         $policyholder->vehicle_model_id=$request->vehicle_model_id;
         $policyholder->company_id=$request->company_id;
         $policyholder->premium_amount=$request->premium_amount;
         $policyholder->valuation_amount=$request->valuation_amount;
-        $policyholder->executive_id =$executive_id;
+        $policyholder->sum_insured=$request->sum_insured;
+        $policyholder->executive_id =$request->assigned_userid;
         $policyholder->status =0;
         $policyholder->payment_mode_id =$request->payment_mode_id;
         $policyholder->referred_id =$request->referred_id;
@@ -117,7 +122,23 @@ class PolicyholderController extends Controller
         $policyholder->note=$request->note;
         $policyholder->assigned_userid=$request->assigned_userid;
         $policyholder->assigned_date=date('Y-m-d');
-        $policyholder->save();
+        $policyholder->prepared_user_id=$request->prepared_user_id;
+        $policyholder->prepared_date=date('Y-m-d');
+        if($policyholder->save())
+        {
+            $renew=new Tbl_vehiclepolicy_renews;
+            $renew->policy_category_id=9;
+            $renew->policy_id=$policyholder->id;
+            $renew->premium_amount=$request->premium_amount;
+            $renew->valuation_amount=$request->valuation_amount;
+            $renew->total_cost=$request->total_cost;
+            $renew->renew_date=$request->start_date;
+            $renew->expiry_date=$request->expiry_date;
+            $renew->payment_mode_id=$request->payment_mode_id;
+            $renew->created_date=date('Y-m-d');
+            $renew->created_by=$created_by;
+            $renew->save();
+        }
         return Response::json([ 'success' => true,'message'=>'Policy Created successfully']);
     }
     public function show(Request $request)
@@ -139,6 +160,7 @@ class PolicyholderController extends Controller
         $policyholder->company_id=$request->company_id;
         $policyholder->premium_amount=$request->premium_amount;
         $policyholder->valuation_amount=$request->valuation_amount;
+        $policyholder->sum_insured=$request->sum_insured;
         $policyholder->payment_mode_id =$request->payment_mode_id;
         $policyholder->referred_id =$request->referred_id;
         $policyholder->buying_type =$request->buying_type;

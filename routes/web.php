@@ -20,7 +20,7 @@ use App\Http\Controllers\VehiclemodelController;
 use App\Http\Controllers\PolicyholderController;
 use App\Http\Controllers\DealerController;
 use App\Http\Controllers\CardController;
-use App\Http\Controllers\RenewController;
+use App\Http\Controllers\VehiclepolicyRenewController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\CreditCardPayController;
 use App\Http\Controllers\PreparePolicyController;
@@ -29,7 +29,7 @@ use App\Http\Controllers\InsuranceproviderController;
 use App\Http\Controllers\ExpensesController;
 use App\Http\Controllers\ExpensetypesController;
 use App\Http\Controllers\PolicycategoryController;
-use App\Http\Controllers\PolicyDocumentController;
+use App\Http\Controllers\VehcilePolicyDocumentController;
 use App\Http\Controllers\HealthInsurenceController;
 use App\Http\Controllers\FireInsurenceController;
 use App\Http\Controllers\EmployerInsurenceController;
@@ -40,6 +40,11 @@ use App\Http\Controllers\TooltypeController;
 use App\Http\Controllers\LoanController;
 use App\Http\Controllers\LoantypeController;
 use App\Http\Controllers\VechiclecategoryController;
+use App\Http\Controllers\HealthPolicyMemberController;
+use App\Http\Controllers\HealthPolicyDocumentController;
+use App\Http\Controllers\HealthpolicyRenewController;
+use App\Http\Controllers\OtherPolicyDocumentController;
+use App\Http\Controllers\OtherpolicyRenewController;
 use Illuminate\Support\Facades\Route;
 // Route::get('/', [ComingsoonController::class, 'index'])->name('comingsoon');
 Route::get('/', function () {return redirect(route('login'));});
@@ -120,24 +125,24 @@ Route::middleware('auth')->group(function () {
     Route::get('/attendances', [AttendanceController::class, 'index'])->name('attendances');
     Route::get('/attendance/list', [AttendanceController::class, 'list'])->name('attendance.list');
 
-    Route::get('/agents', [AgentController::class, 'index'])->name('agents');
+    Route::any('/agents', [AgentController::class, 'index'])->name('agents');
     Route::get('/agent/list', [AgentController::class, 'list'])->name('agent.list');
     Route::post('/agent/store', [AgentController::class, 'store'])->name('agent.store');
     Route::post('/agent/show', [AgentController::class, 'show'])->name('agent.show');
     Route::post('/agent/update', [AgentController::class, 'update'])->name('agent.update');
 
-    Route::get('/companies', [CompanyController::class, 'index'])->name('companies');
+    Route::any('/companies', [CompanyController::class, 'index'])->name('companies');
     Route::get('/companies/list', [CompanyController::class, 'list'])->name('companies.list');
     Route::post('/companies/store', [CompanyController::class, 'store'])->name('companies.store');
     Route::post('/company/show', [CompanyController::class, 'show'])->name('company.show');
     Route::post('/company/update', [CompanyController::class, 'update'])->name('company.update');
 
-    Route::get('/vehiclemodels', [VehiclemodelController::class, 'index'])->name('vehiclemodels');
-    Route::get('/vehiclemodel/list', [VehiclemodelController::class, 'list'])->name('vehiclemodel.list');
-    Route::post('/vehiclemodel/store', [VehiclemodelController::class, 'store'])->name('vehiclemodel.store');
-    Route::post('/vehiclemodel/show', [VehiclemodelController::class, 'show'])->name('vehiclemodel.show');
-    Route::post('/vehiclemodel/update', [VehiclemodelController::class, 'update'])->name('vehiclemodel.update');
-    Route::post('/vehiclemodel/search', [VehiclemodelController::class, 'search'])->name('vehiclemodel.search');
+    Route::any('/vehiclemodels', [VehiclemodelController::class, 'index'])->name('vehiclemodels');
+    Route::post('/vehiclemodels/store', [VehiclemodelController::class, 'store'])->name('vehiclemodels.store');
+    Route::post('/vehiclemodels/edit', [VehiclemodelController::class, 'edit'])->name('vehiclemodels.edit');
+    Route::post('/vehiclemodels/update', [VehiclemodelController::class, 'update'])->name('vehiclemodels.update');
+    Route::post('/vehiclemodels/destroy', [VehiclemodelController::class, 'destroy'])->name('vehiclemodels.destroy');
+    Route::post('/vehiclemodels/search', [VehiclemodelController::class, 'search'])->name('vehiclemodels.search');
 
     Route::get('/policyholders', [PolicyholderController::class, 'index'])->name('policyholders');
     Route::get('/policyholder/list', [PolicyholderController::class, 'list'])->name('policyholder.list');
@@ -146,7 +151,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/policyholder/update', [PolicyholderController::class, 'update'])->name('policyholder.update');
     Route::post('/policyholder/assign', [PolicyholderController::class, 'assign'])->name('policyholder.assign');
 
-    Route::get('/dealers', [DealerController::class, 'index'])->name('dealers');
+    Route::any('/dealers', [DealerController::class, 'index'])->name('dealers');
     Route::get('/dealer/list', [DealerController::class, 'list'])->name('dealer.list');
     Route::post('/dealer/store', [DealerController::class, 'store'])->name('dealer.store');
     Route::post('/dealer/show', [DealerController::class, 'show'])->name('dealer.show');
@@ -158,18 +163,20 @@ Route::middleware('auth')->group(function () {
     Route::post('/card/show', [CardController::class, 'show'])->name('card.show');
     Route::post('/card/update', [CardController::class, 'update'])->name('card.update');
 
-    Route::get('/renews', [RenewController::class, 'index'])->name('renews');
-    Route::get('/renew/list/', [RenewController::class, 'list'])->name('renew.list');
-    Route::post('/renew/store', [RenewController::class, 'store'])->name('renew.store');
-    Route::post('/renew/show', [RenewController::class, 'show'])->name('renew.show');
-    Route::post('/renew/update', [RenewController::class, 'update'])->name('renew.update');
-    Route::post('/renew/getPolicies', [RenewController::class, 'getPolicies'])->name('renew.getPolicies');
+    Route::get('/vechicle_policyrenews/{id}', [VehiclepolicyRenewController::class, 'index'])->name('vechicle_policyrenews');
+    Route::post('/vechicle_policyrenew/list/', [VehiclepolicyRenewController::class, 'list'])->name('vechicle_policyrenew.list');
+    Route::post('/vechicle_policyrenew/store', [VehiclepolicyRenewController::class, 'store'])->name('vechicle_policyrenew.store');
+    Route::post('/vechicle_policyrenew/show', [VehiclepolicyRenewController::class, 'show'])->name('vechicle_policyrenew.show');
+    Route::post('/vechicle_policyrenew/update', [VehiclepolicyRenewController::class, 'update'])->name('vechicle_policyrenew.update');
+    Route::post('/vechicle_policyrenew/getPolicies', [VehiclepolicyRenewController::class, 'getPolicies'])->name('vechicle_policyrenew.getPolicies');
 
-    Route::get('/payments/{id}', [PaymentController::class, 'index'])->name('payments');
+    Route::get('/payments', [PaymentController::class, 'index'])->name('payments');
     Route::post('/payment/list', [PaymentController::class, 'list'])->name('payment.list');
     Route::post('/payment/store', [PaymentController::class, 'store'])->name('payment.store');
     Route::post('/payment/show', [PaymentController::class, 'show'])->name('payment.show');
     Route::post('/payment/update', [PaymentController::class, 'update'])->name('payment.update');
+    Route::post('/payment/getPolicyByCategory', [PaymentController::class, 'getPolicyByCategory'])->name('payment.getPolicyByCategory');
+    Route::post('/payment/getPolicyDetails', [PaymentController::class, 'getPolicyDetails'])->name('payment.getPolicyDetails');
 
     Route::get('/creditcard_pay', [CreditCardPayController::class, 'index'])->name('creditcard_pay');
     Route::get('/creditcard_pay/list', [CreditCardPayController::class, 'list'])->name('creditcard_pay.list');
@@ -179,12 +186,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/creditcard_pay/statusupdate', [CreditCardPayController::class, 'statusupdate'])->name('creditcard_pay.statusupdate');
 
     Route::get('/prepared_policies', [PreparePolicyController::class, 'index'])->name('prepared_policies');
-    Route::get('/prepared_policies/list', [PreparePolicyController::class, 'list'])->name('prepared_policies.list');
+    Route::post('/prepared_policies/list', [PreparePolicyController::class, 'list'])->name('prepared_policies.list');
     Route::post('/prepared_policy/store', [PreparePolicyController::class, 'store'])->name('prepared_policy.store');
     Route::post('/prepared_policy/show', [PreparePolicyController::class, 'show'])->name('prepared_policy.show');
     Route::post('/prepared_policy/update', [PreparePolicyController::class, 'update'])->name('prepared_policy.update');
 
-    Route::get('/referredPersons', [ReferredPersonController::class, 'index'])->name('referredPersons');
+    Route::any('/referredPersons', [ReferredPersonController::class, 'index'])->name('referredPersons');
     Route::get('/referredPerson/list', [ReferredPersonController::class, 'list'])->name('referredPerson.list');
     Route::post('/referredPerson/store', [ReferredPersonController::class, 'store'])->name('referredPerson.store');
     Route::post('/referredPerson/show', [ReferredPersonController::class, 'show'])->name('referredPerson.show');
@@ -215,11 +222,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/policycategories/update', [PolicycategoryController::class, 'update'])->name('policycategories.update');
     Route::post('/policycategories/destroy', [PolicycategoryController::class, 'destroy'])->name('policycategories.destroy');
 
-    Route::get('/policydocuments/{id}', [PolicyDocumentController::class, 'index'])->name('policydocuments');
-    Route::post('/policydocument/store', [PolicyDocumentController::class, 'store'])->name('policydocument.store');
-    Route::post('/policydocument/show', [PolicyDocumentController::class, 'show'])->name('policydocument.show');
-    Route::post('/policydocument/update', [PolicyDocumentController::class, 'update'])->name('policydocument.update');
-    Route::post('/policydocument/destroy', [PolicyDocumentController::class, 'destroy'])->name('policydocument.destroy');
+    Route::get('/vehicle_policydocuments/{id}', [VehcilePolicyDocumentController::class, 'index'])->name('vehicle_policydocuments');
+    Route::post('/vehicle_policydocument/store', [VehcilePolicyDocumentController::class, 'store'])->name('vehicle_policydocument.store');
+    Route::post('/vehicle_policydocument/show', [VehcilePolicyDocumentController::class, 'show'])->name('vehicle_policydocument.show');
+    Route::post('/vehicle_policydocument/update', [VehcilePolicyDocumentController::class, 'update'])->name('vehicle_policydocument.update');
+    Route::post('/vehicle_policydocument/destroy', [VehcilePolicyDocumentController::class, 'destroy'])->name('vehicle_policydocument.destroy');
 
     Route::get('/tooltypes', [TooltypeController::class, 'index'])->name('tooltypes');
     Route::post('/tooltypes/store', [TooltypeController::class, 'store'])->name('tooltypes.store');
@@ -262,5 +269,26 @@ Route::middleware('auth')->group(function () {
     Route::post('/loans/edit', [LoanController::class, 'edit'])->name('loans.edit');
     Route::post('/loans/update', [LoanController::class, 'update'])->name('loans.update');
     Route::post('/loans/destroy', [LoanController::class, 'destroy'])->name('loans.destroy');
+
+    Route::get('/healthPolicyMembers/{id}', [HealthPolicyMemberController::class, 'index'])->name('healthPolicyMembers');
+    Route::post('/healthPolicyMember/store', [HealthPolicyMemberController::class, 'store'])->name('healthPolicyMember.store');
+    Route::post('/healthPolicyMember/show', [HealthPolicyMemberController::class, 'show'])->name('healthPolicyMember.show');
+    Route::post('/healthPolicyMember/update', [HealthPolicyMemberController::class, 'update'])->name('healthPolicyMember.update');
+
+    Route::get('/healthPolicyDocs/{id}', [HealthPolicyDocumentController::class, 'index'])->name('healthPolicyDocs');
+    Route::post('/healthPolicyDoc/store', [HealthPolicyDocumentController::class, 'store'])->name('healthPolicyDoc.store');
+    Route::post('/healthPolicyDoc/show', [HealthPolicyDocumentController::class, 'show'])->name('healthPolicyDoc.show');
+    Route::post('/healthPolicyDoc/update', [HealthPolicyDocumentController::class, 'update'])->name('healthPolicyDoc.update');
+
+    Route::get('/healthPolicyRenew/{id}', [HealthpolicyRenewController::class, 'index'])->name('healthPolicyRenew');
+    Route::post('/healthPolicyRenew/store', [HealthpolicyRenewController::class, 'store'])->name('healthPolicyRenew.store');
+
+    Route::get('/otherPolicyDocs/{id}', [OtherPolicyDocumentController::class, 'index'])->name('otherPolicyDocs');
+    Route::post('/otherPolicyDoc/store', [OtherPolicyDocumentController::class, 'store'])->name('otherPolicyDoc.store');
+    Route::post('/otherPolicyDoc/show', [OtherPolicyDocumentController::class, 'show'])->name('otherPolicyDoc.show');
+    Route::post('/otherPolicyDoc/update', [OtherPolicyDocumentController::class, 'update'])->name('otherPolicyDoc.update');
+
+    Route::get('/otherPolicyRenew/{id}', [OtherpolicyRenewController::class, 'index'])->name('otherPolicyRenew');
+    Route::post('/otherPolicyRenew/store', [OtherpolicyRenewController::class, 'store'])->name('otherPolicyRenew.store');
 });
 require __DIR__.'/auth.php';

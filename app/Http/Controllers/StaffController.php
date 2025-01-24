@@ -53,6 +53,12 @@ class StaffController extends Controller
     }
    public function store(Request $request)
    {
+      $existRecord=User::where('user_name',$request->user_name)
+      ->orWhere('email', $request->email)->exists();
+      if($existRecord)
+      {
+         return Response::json([ 'success' => false,'message'=>'Already Taken Email or Username']);
+      }
       $user=new User;
       $user->name=$request->name;
       $user->email=$request->email;

@@ -16,4 +16,8 @@ class Tbl_preparepolicies extends Model
     {
         return $this->belongsTo(Tbl_policyholders::class, 'policy_id','id');
     }
+    public function policy_category()
+    {
+        return $this->belongsTo(Tbl_policy_categories::class, 'policy_cat_id','id');
+    }
 }

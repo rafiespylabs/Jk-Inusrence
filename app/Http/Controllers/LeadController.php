@@ -26,26 +26,14 @@ class LeadController extends Controller
             $edited_by=$lead->edited_user->name ?? "";
             $html.='<tr>';
             $html.='<td>'.$i.'</td>';
-            $html.='<td>'.$lead->name.'</td>';
+            $html.='<td>'.$lead->customer_name.'</td>';
             $html.='<td><a href="/followups/'.$lead->id.'"><i class="fa fa-arrow-up" aria-hidden="true"></i></a></td>';
-            $html.='<td>'.$lead->post_applied.'</td>';
-            $html.='<td>'.$lead->email.'</td>';
             $html.='<td>'.$lead->mobile_number.'</td>';
-            $html.='<td>';
-            if($lead->lead_type==1)
-            {
-                $html.='Hot';
-            }
-            elseif($lead->lead_type==2)
-            {
-                $html.='Medium';
-            }
-            elseif($lead->lead_type==3)
-            {
-                $html.='Cold';
-            }
-            $html.='</td>';
-            $html.='<td>'.$lead->lead_source->leadsource.'</td>';
+            $html.='<td>'.$lead->vehicle_number.'</td>';
+            $html.='<td>'.$lead->vechile_model.'</td>';
+            $html.='<td>'.$lead->IDV_value.'</td>';
+            $html.='<td>'.$lead->ncb.'</td>';
+            $html.='<td>'.$lead->year.'</td>';
             $html.='<td>';
             if($lead->lead_status==1)
             {
@@ -79,14 +67,14 @@ class LeadController extends Controller
     {
         $added_by=Auth::user()->id;
         $lead=new Tbl_leads;
-        $lead->name=$request->name;
-        $lead->post_applied=$request->post_applied;
+        $lead->customer_name=$request->customer_name;
         $lead->mobile_number=$request->mobile_number;
-        $lead->email=$request->email;
-        $lead->leadsource_id=$request->leadsource_id;
-        $lead->lead_type=$request->lead_type;
+        $lead->vehicle_number=$request->vehicle_number;
+        $lead->vehicle_model=$request->vehicle_model;
+        $lead->IDV_value=$request->IDV_value;
+        $lead->ncb=$request->ncb;
+        $lead->year=$request->year;
         $lead->lead_status=$request->lead_status;
-        $lead->resume_link=$request->resume_link;
         $lead->added_by=$added_by;
         $lead->created_date=date('Y-m-d');
         if($lead->save())
@@ -111,14 +99,13 @@ class LeadController extends Controller
         $lead_id=$request->lead_id;
         $edited_by=Auth::user()->id;
         $lead=Tbl_leads::find($lead_id);
-        $lead->name=$request->name;
-        $lead->post_applied=$request->post_applied;
+        $lead->customer_name=$request->customer_name;
         $lead->mobile_number=$request->mobile_number;
-        $lead->email=$request->email;
-        $lead->leadsource_id=$request->leadsource_id;
-        $lead->lead_type=$request->lead_type;
-        $lead->lead_status=$request->lead_status;
-        $lead->resume_link=$request->resume_link;
+        $lead->vehicle_number=$request->vehicle_number;
+        $lead->vehicle_model=$request->vehicle_model;
+        $lead->IDV_value=$request->IDV_value;
+        $lead->ncb=$request->ncb;
+        $lead->year=$request->year;
         $lead->edited_by=$edited_by;
         $lead->edited_date=date('Y-m-d');
         $lead->save();

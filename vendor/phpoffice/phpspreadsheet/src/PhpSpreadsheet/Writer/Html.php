@@ -392,12 +392,12 @@ class Html extends BaseWriter
                 } else {
                     $propertyValue = (string) $propertyValue;
                 }
-                $html .= self::generateMeta($propertyValue, "custom.$propertyQualifier.$customProperty");
+                $html .= self::generateMeta($propertyValue, htmlspecialchars("custom.$propertyQualifier.$customProperty"));
             }
         }
 
         if (!empty($properties->getHyperlinkBase())) {
-            $html .= '      <base href="' . $properties->getHyperlinkBase() . '" />' . PHP_EOL;
+            $html .= '      <base href="' . htmlspecialchars($properties->getHyperlinkBase()) . '" />' . PHP_EOL;
         }
 
         $html .= $includeStyles ? $this->generateStyles(true) : $this->generatePageDeclarations(true);
@@ -550,7 +550,7 @@ class Html extends BaseWriter
             $html .= '<ul class="navigation">' . PHP_EOL;
 
             foreach ($sheets as $sheet) {
-                $html .= '  <li class="sheet' . $sheetId . '"><a href="#sheet' . $sheetId . '">' . $sheet->getTitle() . '</a></li>' . PHP_EOL;
+                $html .= '  <li class="sheet' . $sheetId . '"><a href="#sheet' . $sheetId . '">' . htmlspecialchars($sheet->getTitle()) . '</a></li>' . PHP_EOL;
                 ++$sheetId;
             }
 
@@ -1370,7 +1370,7 @@ class Html extends BaseWriter
             // Value
             $this->generateRowCellDataValue($worksheet, $cell, $cellData);
 
-            // Converts the cell content so that spaces occuring at beginning of each new line are replaced by 
+            // Converts the cell content so that spaces occuring at beginning of each new line are replaced by &nbsp;
             // Example: "  Hello\n to the world" is converted to "&nbsp;&nbsp;Hello\n&nbsp;to the world"
             $cellData = (string) preg_replace('/(?m)(?:^|\\G) /', '&nbsp;', $cellData);
 
@@ -1526,8 +1526,9 @@ class Html extends BaseWriter
             // Hyperlink?
             if ($worksheet->hyperlinkExists($coordinate) && !$worksheet->getHyperlink($coordinate)->isInternal()) {
                 $url = $worksheet->getHyperlink($coordinate)->getUrl();
-                $urldecode = strtolower(html_entity_decode(trim($url), encoding: 'UTF-8'));
-                $parseScheme = preg_match('/^(\\w+):/', $urldecode, $matches);
+                $urlDecode1 = html_entity_decode($url, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+                $urlTrim = preg_replace('/^\\s+/u', '', $urlDecode1) ?? $urlDecode1;
+                $parseScheme = preg_match('/^([\\w\\s]+):/u', strtolower($urlTrim), $matches);
                 if ($parseScheme === 1 && !in_array($matches[1], ['http', 'https', 'file', 'ftp', 's3'], true)) {
                     $cellData = htmlspecialchars($url, Settings::htmlEntityFlags());
                 } else {

@@ -20,13 +20,14 @@
                         <thead>
                             <tr>
                             <th>Sl No</th>
-                            <th>Name</th>
+                            <th>Customer Name</th>
                             <th>Followups</th>
-                            <th>Applied Post</th>
-                            <th>Email</th>
-                            <th>Contact</th>
-                            <th>Type</th>
-                            <th>Source</th>
+                            <th>Mobile Number</th>
+                            <th>Vehicle Number</th>
+                            <th>Vehicle Model</th>
+                            <th>IDV Value</th>
+                            <th>NCB</th>
+                            <th>Year</th>
                             <th>Status</th>
                             <th>Added By</th>
                             <th>Created Date</th>
@@ -58,64 +59,49 @@
               <form id="create_lead_form" class="form" enctype="multipart/form-data">
               @csrf
                 <div class="row form-group">
-                    <div class="col-6">
+                    <div class="col-4">
                         <label>Name<span>*</span></label>
-                        <input type="text"  name="name" class="form-control" required>
+                        <input type="text"  name="customer_name" class="form-control" required>
                     </div>
-                    <div class="col-6">
-                        <label>Post Applied For<span>*</span></label>
-                        <input type="text"  name="post_applied" class="form-control" required>
+                    <div class="col-4">
+                        <label>Mobile Number <span>*</span></label>
+                        <input type="number"  name="mobile_number" class="form-control" required>
                     </div>
-                </div>
-                <div class="row form-group">
-                    <div class="col-6">
-                        <label>Contact Number <span>*</span></label>
-                        <input type="text"  name="mobile_number" class="form-control" required>
-                    </div>
-                    <div class="col-6">
-                        <label>Email</label>
-                        <input type="email"  name="email" class="form-control">
+                    <div class="col-4">
+                        <label>Vechicle Number</label>
+                        <input type="text"  name="vehicle_number" class="form-control">
                     </div>
                 </div>
                 <div class="row form-group">
-                    <div class="col-6">
-                        <label>Lead Source <span>*</span></label>
-                        <select  name="leadsource_id" class="form-control" required>
-                            <option value="">Select One</option>
-                            @foreach($leadsources as $source)
-                            <option value="{{$source->id}}">{{$source->leadsource}}</option>
-                            @endforeach
-                        </select>
+                    <div class="col-4">
+                        <label>Vechicle Model</label>
+                        <input type="text"  name="vechile_model" class="form-control">
                     </div>
-                    <div class="col-6">
+                    <div class="col-4">
+                        <label>IDV value</label>
+                        <input type="text"  name="IDV_value" class="form-control">
+                    </div>
+                    <div class="col-4">
+                        <label>NCB</label>
+                        <input type="text"  name="ncb" class="form-control">
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-4">
+                        <label>Year</label>
+                        <input type="text"  name="year" class="form-control">
+                    </div>
+                    <div class="col-4">
                         <label>Call Description <span>*</span></label>
                         <textarea  name="call_description" class="form-control" required></textarea>
                     </div>
-                </div>
-                <div class="row form-group">
-                    <div class="col-6">
+                    <div class="col-4">
                         <label>Next Followup Date <span>*</span></label>
                         <input type="date"  name="next_followup_date" class="form-control" required>
                     </div>
-                    <div class="col-2">
-                        <label>Type <span>*</span></label>
-                    </div>
-                    <div class="col-4">
-                        <div class="form-check">
-                            <div class="radio">
-                                <input type="radio"  name="lead_type" class="form-check-input"  value="1"><label>Hot</label>
-                            </div>
-                            <div class="radio">
-                                <input type="radio"  name="lead_type"  class="form-check-input" value="2"><label>Medium</label>
-                            </div>
-                            <div class="radio">
-                                <input type="radio"  name="lead_type"  class="form-check-input" value="3"><label>Cold</label>
-                            </div>
-                        </div>
-                    </div>
                 </div>
                 <div class="row form-group">
-                    <div class="col-6">
+                    <div class="col-4">
                         <label>Status <span>*</span></label>
                         <select  name="lead_status" class="form-control" required>
                             <option value="">Select One</option>
@@ -124,10 +110,6 @@
                             <option value="3">Not Need</option>
                             <option value="4">Converted	</option>
                         </select>
-                    </div>
-                    <div class="col-6">
-                        <label>Resume Link</label>
-                        <input type="text"  name="resume_link" class="form-control">
                     </div>
                 </div>
                 <div class="form-actions form-group">
@@ -157,66 +139,37 @@
                     @csrf
                     <input type="hidden" name="lead_id" id="lead_id" value="">
                     <div class="row form-group">
-                        <div class="col-6">
+                        <div class="col-4">
                             <label>Name<span>*</span></label>
-                            <input type="text"  name="name" id="name" class="form-control" required>
-                        </div>
-                        <div class="col-6">
-                            <label>Post Applied For<span>*</span></label>
-                            <input type="text"  name="post_applied" id="post_applied" class="form-control" required>
-                        </div>
-                    </div>
-                    <div class="row form-group">
-                        <div class="col-6">
-                            <label>Contact Number <span>*</span></label>
-                            <input type="text"  name="mobile_number" id="mobile_number" class="form-control" required>
-                        </div>
-                        <div class="col-6">
-                            <label>Email</label>
-                            <input type="email"  name="email" id="email" class="form-control">
-                        </div>
-                    </div>
-                    <div class="row form-group">
-                        <div class="col-6">
-                            <label>Lead Source <span>*</span></label>
-                            <select  name="leadsource_id" id="leadsource_id" class="form-control" required>
-                                <option value="">Select One</option>
-                                @foreach($leadsources as $source)
-                                <option value="{{$source->id}}">{{$source->leadsource}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-2">
-                            <label>Type <span>*</span></label>
+                            <input type="text"  name="customer_name" id="customer_name" class="form-control" required>
                         </div>
                         <div class="col-4">
-                            <div class="form-check">
-                                <div class="radio">
-                                    <input type="radio"  name="lead_type" id="type1" class="form-check-input"  value="1"><label>Hot</label>
-                                </div>
-                                <div class="radio">
-                                    <input type="radio"  name="lead_type"  id="type2" class="form-check-input" value="2"><label>Medium</label>
-                                </div>
-                                <div class="radio">
-                                    <input type="radio"  name="lead_type" id="type3"  class="form-check-input" value="3"><label>Cold</label>
-                                </div>
-                            </div>
+                            <label>Mobile Number <span>*</span></label>
+                            <input type="number"  name="mobile_number" id="mobile_number" class="form-control" required>
+                        </div>
+                        <div class="col-4">
+                            <label>Vechicle Number</label>
+                            <input type="text"  name="vehicle_number" id="vehicle_number" class="form-control">
                         </div>
                     </div>
                     <div class="row form-group">
-                        <div class="col-6">
-                            <label>Status <span>*</span></label>
-                            <select  name="lead_status" id="lead_status" class="form-control" required>
-                                <option value="">Select One</option>
-                                <option value="1">Started</option>
-                                <option value="2">In Progress</option>
-                                <option value="3">Not Need</option>
-                                <option value="4">Converted	</option>
-                            </select>
+                        <div class="col-4">
+                            <label>Vechicle Model</label>
+                            <input type="text"  name="vehicle_model" id="vehicle_model" class="form-control">
                         </div>
-                        <div class="col-6">
-                            <label>Resume Link</label>
-                            <input type="text"  name="resume_link" id="resume_link" class="form-control">
+                        <div class="col-4">
+                            <label>IDV value</label>
+                            <input type="text"  name="IDV_value" id="IDV_value" class="form-control">
+                        </div>
+                        <div class="col-4">
+                            <label>NCB</label>
+                            <input type="text"  name="ncb" id="ncb" class="form-control">
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-4">
+                            <label>Year</label>
+                            <input type="text"  name="year" id="year" class="form-control">
                         </div>
                     </div>
                     <div class="form-actions form-group">
@@ -377,30 +330,13 @@ $(document).on("click", ".edit_lead", function() {
               },
         success: function(res) 
         {
-          $('#post_applied').val(res.post_applied);
-          $('#name').val(res.name);
+          $('#customer_name').val(res.customer_name);
           $('#mobile_number').val(res.mobile_number);
-          $('#email').val(res.email);
-          $('#leadsource_id').val(res.leadsource_id);
-          if(res.lead_type==1)
-          {
-            $('#type1').prop('checked', true);
-          }
-          else if(res.lead_type==2)
-          {
-            $('#type2').prop('checked', true);
-          }
-          else if(res.lead_type==3)
-          {
-            $('#type3').prop('checked', true);
-          }
-          else{
-            $('#type1').prop('checked', false);
-            $('#type2').prop('checked', false);
-            $('#type3').prop('checked', false);
-          }
-          $('#lead_status').val(res.lead_status);
-          $('#resume_link').val(res.resume_link);
+          $('#vehicle_number').val(res.vehicle_number);
+          $('#vehicle_model').val(res.vehicle_model);
+          $('#IDV_value').val(res.IDV_value);
+          $('#ncb').val(res.ncb);
+          $('#year').val(res.year);
         },
     });
 });

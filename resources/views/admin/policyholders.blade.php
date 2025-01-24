@@ -30,6 +30,7 @@
                             <th>Vehicle Number</th>
                             <th>Primary Number</th>
                             <th>Secondary Number</th>
+                            <th>Start Date</th>
                             <th>Expiry Date</th>
                             <th>Vehicle Model</th>
                             <th>Company</th>
@@ -41,8 +42,8 @@
                             <th>Prepared Staff</th>
                             <th>Reference</th>
                             <th>Created Date</th>
-                            <th>Payment</th>
                             <th>Documents</th>
+                            <th>Renew</th>
                             <th>Assign</th>
                             <th>Assigned Date</th>
                             <th>Action</th>
@@ -52,6 +53,10 @@
                         </tbody>
                     </table>
                     </div>
+                    <a href="{{route('payments')}}" class="btn btn-danger" style="margin-top:30px;">
+                        <i class="fa fa-money-bill"></i>
+                          Go To Payments
+                    </a>
                 </div>
             </div>
         </div>
@@ -72,7 +77,7 @@
               @csrf
                 <div class="row form-group">
                     <div class="col-3">
-                        <input type="radio" name="policy_type"  class="policy_type" value="1"><label>Individual</label>
+                        <input type="radio" name="policy_type"  class="policy_type" value="1" required><label>Individual</label>
                     </div>
                     <div class="col-3">
                         <input type="radio" name="policy_type" class="policy_type" value="2"><label>Agent</label>
@@ -86,31 +91,46 @@
                 </div>
                 <div class="row form-group">
                     <div class="col-4" id="agent_div" style="display:none;">
-                        <label>Agent</label>
-                        <select  name="agent_id" id="agent_field" class="form-control">
-                            <option value="">Select One</option>
-                            @foreach($agents as $agent)
-                            <option value="{{$agent->id}}">{{$agent->agent_name}}</option>
-                            @endforeach
-                        </select>
+                        <label>Agent  <span>*</span></label>
+                        <div class="input-group">
+                            <select  name="agent_id" id="agent_field" class="form-control selectpicker with-ajax" data-live-search="true">
+                                <option value="">Select One</option>
+                                @foreach($agents as $agent)
+                                <option value="{{$agent->id}}">{{$agent->agent_name}}</option>
+                                @endforeach
+                            </select>
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-info" id="openAgentModal"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
                     </div>
                     <div class="col-4" id="dealer_div" style="display:none;">
-                        <label>Dealer</label>
-                        <select  name="dealer_id" id="dealer_field" class="form-control">
-                            <option value="">Select One</option>
-                            @foreach($dealers as $dealer)
-                            <option value="{{$dealer->id}}">{{$dealer->dealer_name}}</option>
-                            @endforeach
-                        </select>
+                        <label>Dealer  <span>*</span></label>
+                        <div class="input-group">
+                            <select  name="dealer_id" id="dealer_field" class="form-control selectpicker with-ajax" data-live-search="true">
+                                <option value="">Select One</option>
+                                @foreach($dealers as $dealer)
+                                <option value="{{$dealer->id}}">{{$dealer->dealer_name}}</option>
+                                @endforeach
+                            </select>
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-info" id="openDealerModal"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
                     </div>
                     <div class="col-4"  id="company_div" style="display:none;">
-                        <label>Company<span>*</span></label>
-                        <select  name="company_id" id="company_field"class="form-control selectpicker with-ajax" data-live-search="true"required>
-                            <option value="">Select One</option>
-                            @foreach($companies as $company)
-                            <option value="{{$company->id}}">{{$company->company}}</option>
-                            @endforeach
-                        </select>
+                        <label>Company <span>*</span></label>
+                        <div class="input-group">
+                            <select  name="company_id" id="company_field" class="form-control selectpicker with-ajax" data-live-search="true">
+                                <option value="">Select One</option>
+                                @foreach($companies as $company)
+                                <option value="{{$company->id}}">{{$company->company}}</option>
+                                @endforeach
+                            </select>
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-info" id="openCompanyModal"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="row form-group">
@@ -124,25 +144,33 @@
                     </div>
                     <div class="col-4">
                         <label>Primary Contact<span>*</span></label>
-                        <input type="text"  name="primary_number" class="form-control" required>
+                        <input type="text"  name="primary_number" class="form-control" pattern="[0-9]{10}" 
+                        title="Phone number must be 10 digits"  required>
                     </div>
                 </div>
                 <div class="row form-group">
                    <div class="col-4">
                         <label>Secondary Contact </label>
-                        <input type="text"  name="secondary_number" class="form-control">
+                        <input type="text"  name="secondary_number" pattern="[0-9]{10}" 
+                        title="Phone number must be 10 digits" class="form-control">
+                    </div>
+                    <div class="col-4">
+                        <label>Start Date<span>*</span></label>
+                        <input type="date"  name="start_date" id="add_start_date" class="form-control" value="" required>
                     </div>
                     <div class="col-4">
                         <label>Expiry Date<span>*</span></label>
-                        <input type="date"  name="expiry_date" class="form-control" required>
+                        <input type="date"  name="expiry_date" id="add_expiry_date" class="form-control" value="" required>
                     </div>
+                </div>
+                <div class="row form-group">
                     <div class="col-4">
                         <label>Vehicle Model<span>*</span></label>
                         <div class="input-group">
-                            <select  name="vehicle_model_id" class="form-control selectpicker with-ajax" data-live-search="true" required>
+                            <select  name="vehicle_model_id" id="add_vehicle_model_id" class="form-control  selectpicker with-ajax" data-live-search="true" required>
                                 <option value="">Select One</option>
                                 @foreach($vehiclemodels as $model)
-                                <option value="{{$model->id}}"  data-subtext="{{$model->vehicle_model}}">{{$model->vehicle_model}}</option>
+                                <option value="{{$model->id}}"  data-subtext="{{$model->model}}">{{$model->model}}</option>
                                 @endforeach
                             </select>
                             <div class="input-group-append">
@@ -150,34 +178,44 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="row form-group">
                     <div class="col-4">
                         <label>Premium Amount<span>*</span></label>
                         <input type="text"  name="premium_amount" id="add_premium_amount"   class="form-control" required>
                     </div>
                     <div class="col-4">
                         <label>Valuation Amount</label>
-                        <input type="text"  name="valuation_amount" id="add_valuation_amount" class="form-control">
-                    </div>
-                    <div class="col-4">
-                        <label>Total Cost</label>
-                        <input type="text"  name="total_cost" id="add_total_cost" value="0" readonly class="form-control">
+                        <input type="text"  name="valuation_amount" id="add_valuation_amount"   class="form-control" value="0">
                     </div>
                 </div>
                 <div class="row form-group">
                     <div class="col-4">
-                        <label>Reference Person <span>*</span></label>
-                        <select  name="referred_id" class="form-control selectpicker with-ajax" data-live-search="true" required>
-                            <option value="">Select One</option>
-                            @foreach($referred_persons as $reffred)
-                            <option value="{{$reffred->id}}">{{$reffred->name}}</option>
-                            @endforeach
-                        </select>
+                        <label>Total Cost</label>
+                        <input type="text"  name="total_cost" id="add_total_cost" value="0" readonly class="form-control">
                     </div>
                     <div class="col-4">
-                        <label>Buying Type</label>
+                        <label>Sum Inusred</label>
+                        <input type="number" step="any" name="sum_insured" id="add_sum_insured" required class="form-control">
+                    </div>
+                    <div class="col-4">
+                        <label>C/O Person <span>*</span></label>
+                        <div class="input-group">
+                            <select  name="referred_id"  id="add_referred_id" class="form-control selectpicker with-ajax" data-live-search="true" required>
+                                <option value="">Select One</option>
+                                @foreach($referred_persons as $reffred)
+                                <option value="{{$reffred->id}}">{{$reffred->name}}</option>
+                                @endforeach
+                            </select>
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-info" id="openReferrenceModal"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-4">
+                        <label>Buying Type <span>*</span></label>
                         <select  name="buying_type" class="form-control" id="add_buying_type" required>
+                            <option value="">Select One</option>
                             <option value="1">Direct</option>
                             <option value="2">Broker</option>
                         </select>
@@ -186,8 +224,6 @@
                         <label>Broker Name </label>
                         <input type="text"  name="broker_name" class="form-control">
                     </div>
-                </div>
-                <div class="row form-group">
                     <div class="col-4">
                         <label>Insurence Provider<span>*</span></label>
                         <select  name="provider_id" class="form-control" required>
@@ -197,6 +233,8 @@
                             @endforeach
                         </select>
                     </div>
+                </div>
+                <div class="row form-group">
                     <div class="col-4">
                         <label>Payment Mode<span>*</span></label>
                         <select  name="payment_mode_id" class="form-control" required>
@@ -214,11 +252,20 @@
                             @endforeach
                         </select>
                     </div>
-                </div>
-                <div class="row form-group">
                     <div class="col-4">
                         <label>Note</label>
                         <textarea name="note" class="form-control"></textarea>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-4">
+                        <label>Prepared User<span>*</span></label>
+                        <select  name="prepared_user_id" class="form-control" required>
+                            <option value="">Select One</option>
+                            @foreach($staffs as $staff)
+                                <option value="{{$staff->user_id}}">{{$staff->user->name}}</option>
+                            @endforeach
+                        </select>
                     </div>
                 </div>
                 <div class="form-actions form-group">
@@ -250,7 +297,7 @@
                     <div class="row form-group">
                         <div class="col-4">
                             <label>Company<span>*</span></label>
-                            <select  name="company_id" class="form-control" id="company_id" required>
+                            <select  name="company_id" class="form-control" id="company_id">
                                 <option value="">Select One</option>
                                 @foreach($companies as $company)
                                 <option value="{{$company->id}}">{{$company->company}}</option>
@@ -269,13 +316,15 @@
                         </div>
                         <div class="col-4">
                             <label>Primary Contact<span>*</span></label>
-                            <input type="text"  name="primary_number" id="primary_number" class="form-control" required>
+                            <input type="text"  name="primary_number" id="primary_number" pattern="[0-9]{10}" 
+                            title="Phone number must be 10 digits" class="form-control" required>
                         </div>
                     </div>
                     <div class="row form-group">
                         <div class="col-4">
                             <label>Secondary Contact</label>
-                            <input type="text"  name="secondary_number" id="secondary_number" class="form-control">
+                            <input type="text"  name="secondary_number" id="secondary_number" pattern="[0-9]{10}" 
+                            title="Phone number must be 10 digits" class="form-control">
                         </div>
                         <div class="col-4">
                             <label>Expiry Date<span>*</span></label>
@@ -286,7 +335,7 @@
                             <select  name="vehicle_model_id" id="vehicle_model_id" class="form-control" required>
                                 <option value="">Select One</option>
                                 @foreach($vehiclemodels as $model)
-                                <option value="{{$model->id}}">{{$model->vehicle_model}}</option>
+                                <option value="{{$model->id}}">{{$model->model}}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -307,7 +356,11 @@
                     </div>
                     <div class="row form-group">
                         <div class="col-4">
-                            <label>Reference Person <span>*</span></label>
+                            <label>Sum Inusred</label>
+                            <input type="number" step="any" name="sum_insured" id="edit_sum_insured" required class="form-control">
+                        </div>
+                        <div class="col-4">
+                            <label>C/O Person <span>*</span></label>
                             <select  name="referred_id" id="referred_id" class="form-control selectpicker with-ajax" data-live-search="true" required>
                                 <option value="">Select One</option>
                                 @foreach($referred_persons as $reffred)
@@ -316,18 +369,19 @@
                             </select>
                         </div>
                         <div class="col-4">
-                            <label>Buying Type</label>
+                            <label>Buying Type <span>*</span></label>
                             <select  name="buying_type" class="form-control" id="edit_buying_type" required>
+                                <option value="">Select One</option>
                                 <option value="1">Direct</option>
                                 <option value="2">Broker</option>
                             </select>
                         </div>
+                    </div>
+                    <div class="row form-group">
                         <div class="col-4" id="edit_broker_div">
                             <label>Broker Name </label>
                             <input type="text"  name="broker_name" id="broker_name" class="form-control">
                         </div>
-                    </div>
-                    <div class="row form-group">
                         <div class="col-4">
                             <label>Insurence Provider<span>*</span></label>
                             <select  name="provider_id" id="provider_id" class="form-control" required>
@@ -363,7 +417,7 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Create</h5>
+                <h5 class="modal-title">Create Vehicle Model</h5>
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">×</span>
                 </button>
@@ -374,7 +428,7 @@
                 <div class="row form-group">
                     <div class="col-6">
                         <label>Vehicle Model<span>*</span></label>
-                        <input type="text"  name="vehicle_model" class="form-control" required>
+                        <input type="text"  name="model" class="form-control" required>
                     </div>
                 </div>
                 <div class="form-actions form-group">
@@ -389,6 +443,169 @@
     </div>
 </div>
 <!-- Create Vehicle Modal -->
+<!-- Create Reference Modal -->
+<div class="modal fade" id="CreateReferencemodel" tabindex="-1" role="dialog" aria-labelledby="CreateReferencemodelLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Create Referrence</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+              <form id="create_reference_form" class="form" enctype="multipart/form-data">
+              @csrf
+                <div class="row form-group">
+                    <div class="col-6">
+                        <label>Name<span>*</span></label>
+                        <input type="text"  name="name" class="form-control" required>
+                    </div>
+                    <div class="col-6">
+                        <label>Phone Number<span>*</span></label>
+                        <input type="text"  name="phone_number" pattern="[0-9]{10}" 
+                        title="Phone number must be 10 digits" class="form-control" required>
+                    </div>
+                </div>
+                <div class="form-actions form-group">
+                  <button type="submit" class="btn btn-primary btn-sm">Submit</button>
+                  <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Create Reference Modal -->
+<!-- Create Agent  Modal -->
+<div class="modal fade" id="CreateAgentmodel" tabindex="-1" role="dialog" aria-labelledby="CreateAgentmodelLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Create Agent</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+              <form id="create_agent_form" class="form" enctype="multipart/form-data">
+              @csrf
+                <div class="row form-group">
+                    <div class="col-4">
+                        <label>Agent Name<span>*</span></label>
+                        <input type="text"  name="agent_name" class="form-control" required>
+                    </div>
+                    <div class="col-4">
+                        <label>Phone Number</label>
+                        <input type="text"  name="phone_number" pattern="[0-9]{10}" 
+                        title="Phone number must be 10 digits" class="form-control">
+                    </div>
+                    <div class="col-4">
+                        <label>Email<span>*</span></label>
+                        <input type="email"  name="email" class="form-control">
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-4">
+                        <label>Company Name<span>*</span></label>
+                        <input type="text"  name="company_name" class="form-control" required>
+                    </div>
+                </div>
+                <div class="form-actions form-group">
+                  <button type="submit" class="btn btn-primary btn-sm">Submit</button>
+                  <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Create Agent  Modal -->
+<!-- Create Dealer  Modal -->
+<div class="modal fade" id="CreateDealermodel" tabindex="-1" role="dialog" aria-labelledby="CreateDealermodelLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Create Dealer</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+              <form id="create_dealer_form" class="form" enctype="multipart/form-data">
+              @csrf
+                <div class="row form-group">
+                    <div class="col-4">
+                        <label>Dealer Name<span>*</span></label>
+                        <input type="text"  name="dealer_name" class="form-control" required>
+                    </div>
+                    <div class="col-4">
+                        <label>Phone Number</label>
+                        <input type="text"  name="phone_number" pattern="[0-9]{10}" 
+                        title="Phone number must be 10 digits" class="form-control">
+                    </div>
+                    <div class="col-4">
+                        <label>Email<span>*</span></label>
+                        <input type="email"  name="email" class="form-control">
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-4">
+                        <label>Company Name<span>*</span></label>
+                        <input type="text"  name="company_name" class="form-control" required>
+                    </div>
+                </div>
+                <div class="form-actions form-group">
+                  <button type="submit" class="btn btn-primary btn-sm">Submit</button>
+                  <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Create Dealer  Modal -->
+<!-- Create Company  Modal -->
+<div class="modal fade" id="CreateCompanymodel" tabindex="-1" role="dialog" aria-labelledby="CreateCompanymodelLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Create Company</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+              <form id="create_company_form" class="form" enctype="multipart/form-data">
+              @csrf
+                <div class="row form-group">
+                    <div class="col-4">
+                        <label>Company<span>*</span></label>
+                        <input type="text"  name="company" class="form-control" required>
+                    </div>
+                    <div class="col-4">
+                        <label>Phone Number</label>
+                        <input type="text"  name="phone" class="form-control">
+                    </div>
+                </div>
+                <div class="form-actions form-group">
+                  <button type="submit" class="btn btn-primary btn-sm">Submit</button>
+                  <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Create Company  Modal -->
 <!-- Assign Modal -->
  <div class="modal fade" id="AssignModal" tabindex="-1" role="dialog" aria-labelledby="AssignModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
@@ -560,39 +777,262 @@
                 }
             });
         });
-        $(document).on("click", ".delete_agent", function() {
-            var lead_id = $(this).data('id');
-            if (confirm('Are you sure you want to delete this row?')) 
-            {
-                $.ajax({
-                    url: "{{route('lead.destroy')}}",
-                    method: "POST",
-                    data:{ "_token": "{{ csrf_token() }}",
-                            agent_id: agent_id
-                        },
-                    success: function(response) {
-                        if (response.success) 
-                        {
-                            swal("Good job!", "Lead Deleted successfully", {
-                                icon: "error",
-                                buttons: {
-                                    confirm: {
-                                    className: "btn btn-danger",
-                                    },
-                                },
-                            });
-                            fetch_leadData();
-                        } 
-                        else 
-                        {
-                            alert( response.message);
-                        }
+        function getvechicle_models() 
+        {
+            $('#add_vehicle_model_id').empty();
+            $.ajax({
+                url: "{{ route('vehiclemodels') }}",
+                type: 'POST',
+                data: { "_token": "{{ csrf_token() }}"
                     },
-                    error: function(xhr, status, error) {
-                        console.error('AJAX error:', error);
+                success: function(response) {
+                    $('#add_vehicle_model_id').append('<option value="">Select One</option>');
+                    $.each(response, function(index, model) {
+                        $('#add_vehicle_model_id').append('<option value="' + model.id + '">' + model.model + '</option>');
+                    });
+                    $('#add_vehicle_model_id').selectpicker('refresh'); 
+                }
+            });
+        }
+        $('#create_vehiclemodel_form').submit(function(event) 
+        {
+            event.preventDefault();
+            var formData = new FormData($(this)[0]); 
+            $.ajax({
+                url: "{{route('vehiclemodels.store')}}",
+                method: "POST",
+                data: formData,
+                contentType: false, 
+                processData: false,
+                success: function(response) {
+                    if (response.success) 
+                    {
+                        $('#CreateVehiclemodel').modal('hide');
+                        $('#create_vehiclemodel_form')[0].reset();
+                        swal("Good job!", response.message, {
+                            icon: "success",
+                            buttons: {
+                                confirm: {
+                                className: "btn btn-success",
+                                },
+                            },
+                        });
+                        getvechicle_models();
+                    } 
+                    else 
+                    {
+                        alert( response.message);
                     }
-                });
-            }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX error:', error);
+                }
+            });
+        });
+        function getreference_persons()
+        {
+            $('#add_referred_id').empty();
+            $.ajax({
+                url: "{{ route('referredPersons') }}",
+                type: 'POST',
+                data: { "_token": "{{ csrf_token() }}"
+                    },
+                success: function(response) {
+                    $('#add_referred_id').append('<option value="">Select One</option>');
+                    $.each(response, function(index, reference) {
+                        $('#add_referred_id').append('<option value="' + reference.id + '">' + reference.name + '</option>');
+                    });
+                    $('#add_referred_id').selectpicker('refresh'); 
+                }
+            });
+        }
+        $('#create_reference_form').submit(function(event) 
+        {
+            event.preventDefault();
+            var formData = new FormData($(this)[0]); 
+            $.ajax({
+                url: "{{route('referredPerson.store')}}",
+                method: "POST",
+                data: formData,
+                contentType: false, 
+                processData: false,
+                success: function(response) {
+                    if (response.success) 
+                    {
+                        $('#CreateReferencemodel').modal('hide');
+                        $('#create_reference_form')[0].reset();
+                        swal("Good job!", response.message, {
+                            icon: "success",
+                            buttons: {
+                                confirm: {
+                                className: "btn btn-success",
+                                },
+                            },
+                        });
+                        getreference_persons();
+                    } 
+                    else 
+                    {
+                        alert( response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX error:', error);
+                }
+            });
+        });
+        function getagents()
+        {
+            $('#agent_field').empty();
+            $.ajax({
+                url: "{{ route('agents') }}",
+                type: 'POST',
+                data: { "_token": "{{ csrf_token() }}"},
+                success: function(response) {
+                    $('#agent_field').append('<option value="">Select One</option>');
+                    $.each(response, function(index, agent) {
+                        $('#agent_field').append('<option value="' + agent.id + '">' + agent.agent_name + '</option>');
+                    });
+                    $('#agent_field').selectpicker('refresh'); 
+                }
+            });
+        }
+        $('#create_agent_form').submit(function(event) 
+        {
+            event.preventDefault();
+            var formData = new FormData($(this)[0]); 
+            $.ajax({
+                url: "{{route('agent.store')}}",
+                method: "POST",
+                data: formData,
+                contentType: false, 
+                processData: false,
+                success: function(response) {
+                    if (response.success) 
+                    {
+                        $('#CreateAgentmodel').modal('hide');
+                        $('#create_agent_form')[0].reset();
+                        swal("Good job!", response.message, {
+                            icon: "success",
+                            buttons: {
+                                confirm: {
+                                className: "btn btn-success",
+                                },
+                            },
+                        });
+                        getagents();
+                    } 
+                    else 
+                    {
+                        alert( response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX error:', error);
+                }
+            });
+        });
+        function getdealers()
+        {
+            $('#dealer_field').empty();
+            $.ajax({
+                url: "{{ route('dealers') }}",
+                type: 'POST',
+                data: { "_token": "{{ csrf_token() }}"},
+                success: function(response) {
+                    $('#dealer_field').append('<option value="">Select One</option>');
+                    $.each(response, function(index, dealer) {
+                        $('#dealer_field').append('<option value="' + dealer.id + '">' + dealer.dealer_name + '</option>');
+                    });
+                    $('#dealer_field').selectpicker('refresh'); 
+                }
+            });
+        }
+        $('#create_dealer_form').submit(function(event) 
+        {
+            event.preventDefault();
+            var formData = new FormData($(this)[0]); 
+            $.ajax({
+                url: "{{route('dealer.store')}}",
+                method: "POST",
+                data: formData,
+                contentType: false, 
+                processData: false,
+                success: function(response) {
+                    if (response.success) 
+                    {
+                        $('#CreateDealermodel').modal('hide');
+                        $('#create_dealer_form')[0].reset();
+                        swal("Good job!", response.message, {
+                            icon: "success",
+                            buttons: {
+                                confirm: {
+                                className: "btn btn-success",
+                                },
+                            },
+                        });
+                        getdealers();
+                    } 
+                    else 
+                    {
+                        alert( response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX error:', error);
+                }
+            });
+        });
+        function getcompanies()
+        {
+            $('#company_field').empty();
+            $.ajax({
+                url: "{{ route('companies') }}",
+                type: 'POST',
+                data: { "_token": "{{ csrf_token() }}"},
+                success: function(response) {
+                    $('#company_field').append('<option value="">Select One</option>');
+                    $.each(response, function(index, company) {
+                        $('#company_field').append('<option value="' +company.id + '">' + company.company + '</option>');
+                    });
+                    $('#company_field').selectpicker('refresh'); 
+                }
+            });
+        }
+        $('#create_company_form').submit(function(event) 
+        {
+            event.preventDefault();
+            var formData = new FormData($(this)[0]); 
+            $.ajax({
+                url: "{{route('companies.store')}}",
+                method: "POST",
+                data: formData,
+                contentType: false, 
+                processData: false,
+                success: function(response) {
+                    if (response.success) 
+                    {
+                        $('#CreateCompanymodel').modal('hide');
+                        $('#create_company_form')[0].reset();
+                        swal("Good job!", response.message, {
+                            icon: "success",
+                            buttons: {
+                                confirm: {
+                                className: "btn btn-success",
+                                },
+                            },
+                        });
+                        getcompanies();
+                    } 
+                    else 
+                    {
+                        alert( response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX error:', error);
+                }
+            });
         });
     });
 </script>
@@ -635,6 +1075,7 @@
             $('#company_id').val(response.company_id);
             $('#premium_amount').val(response.premium_amount);
             $('#valuation_amount').val(response.valuation_amount);
+            $('#edit_sum_insured').val(response.sum_insured);
             $('#payment_mode_id').val(response.payment_mode_id);
             $('#referred_id').val(response.referred_id).selectpicker('refresh');
             $('#edit_buying_type').val(response.buying_type);
@@ -707,56 +1148,38 @@ $(document).on("click", ".policy_type", function() {
 <script src="https://cdn.jsdelivr.net/npm/ajax-bootstrap-select@1.4.4/dist/js/ajax-bootstrap-select.min.js"></script>
 <script>
 $(document).ready(function(){
-    // var options = 
-    // {
-    //     values: "a, b, c",
-    //     ajax: 
-    //     {
-    //         url: "{{route('vehiclemodel.search')}}",
-    //         type: "POST",
-    //         dataType: "json",
-    //         data: 
-    //         {
-    //             q: vehicle_model_id
-    //         }
-    //     },
-    //     locale: 
-    //     {
-    //         emptyTitle: "Select and Begin Typing"
-    //     },
-    //     log: 3,
-    //     preprocessData: function(data) 
-    //     {
-    //         var i,
-    //         l = data.length,
-    //         array = [];
-    //         if (l) 
-    //         {
-    //             for (i = 0; i < l; i++) 
-    //             {
-    //                 array.push(
-    //                 $.extend(true, data[i], 
-    //                 {
-    //                     text: data[i].Name,
-    //                     value: data[i].Email,
-    //                     data: {
-    //                     subtext: data[i].Email
-    //                     }
-    //                 })
-    //                 );
-    //             }
-    //         }
-    //         return array;
-    //     }
-    // };
-    $(".selectpicker").selectpicker();
-    // $("select").trigger("change");
+    $(".selectpicker").selectpicker({
+    });
 });
 </script>
 <script>
 document.getElementById('openSecondModal').addEventListener('click', function () {
     const secondModal = new bootstrap.Modal(document.getElementById('CreateVehiclemodel'));
     secondModal.show();
+    document.getElementById('CreateModal').classList.add('show');
+    document.getElementById('CreateModal').style.display = 'block';
+});
+document.getElementById('openReferrenceModal').addEventListener('click', function () {
+    const secondModal = new bootstrap.Modal(document.getElementById('CreateReferencemodel'));
+    secondModal.show();
+    document.getElementById('CreateModal').classList.add('show');
+    document.getElementById('CreateModal').style.display = 'block';
+});
+document.getElementById('openAgentModal').addEventListener('click', function () {
+    const AgentModal = new bootstrap.Modal(document.getElementById('CreateAgentmodel'));
+    AgentModal.show();
+    document.getElementById('CreateModal').classList.add('show');
+    document.getElementById('CreateModal').style.display = 'block';
+});
+document.getElementById('openDealerModal').addEventListener('click', function () {
+    const DealerModal = new bootstrap.Modal(document.getElementById('CreateDealermodel'));
+    DealerModal.show();
+    document.getElementById('CreateModal').classList.add('show');
+    document.getElementById('CreateModal').style.display = 'block';
+});
+document.getElementById('openCompanyModal').addEventListener('click', function () {
+    const CompanyModal = new bootstrap.Modal(document.getElementById('CreateCompanymodel'));
+    CompanyModal.show();
     document.getElementById('CreateModal').classList.add('show');
     document.getElementById('CreateModal').style.display = 'block';
 });
@@ -775,19 +1198,47 @@ $(document).on("change", "#add_buying_type", function() {
 });
 </script>
 <script>
+$(document).on("keyup", "#add_premium_amount", function() {
+    var valuation_amount=parseFloat($('#add_valuation_amount').val())?? 0;
+    var premium_amount=parseFloat($(this).val());
+    var total_cost=(premium_amount+valuation_amount);
+    $('#add_total_cost').val(total_cost);
+});
 $(document).on("keyup", "#add_valuation_amount", function() {
     var valuation_amount=parseFloat($(this).val());
+    if ( valuation_amount === "" || isNaN( valuation_amount)) {
+        $(this).val(0);
+        valuation_amount = 0; 
+    }
     var premium_amount=parseFloat($('#add_premium_amount').val());
     var total_cost=(premium_amount+valuation_amount);
     $('#add_total_cost').val(total_cost);
-
 });
 $(document).on("keyup", "#valuation_amount", function() {
     var valuation_amount=parseFloat($(this).val());
+    if ( valuation_amount === "" || isNaN( valuation_amount)) {
+        $(this).val(0);
+        valuation_amount = 0; 
+    }
     var premium_amount=parseFloat($('#premium_amount').val());
     var total_cost=(premium_amount+valuation_amount);
     $('#edit_total_cost').val(total_cost);
 
+});
+$(document).on("keyup", "#premium_amount", function() {
+    var valuation_amount=parseFloat($('#valuation_amount').val())?? 0;
+    var premium_amount=parseFloat($(this).val());
+    var total_cost=(premium_amount+valuation_amount);
+    $('#edit_total_cost').val(total_cost);
+});
+$(document).on("change", "#add_start_date", function() {
+    var startDate = new Date($(this).val());
+    var expiryDate = new Date(startDate);
+    expiryDate.setFullYear(expiryDate.getFullYear() + 1);
+    var formattedDate = expiryDate.getFullYear() + 
+                      "-" + (expiryDate.getMonth() + 1 < 10 ? '0' + (expiryDate.getMonth() + 1) : expiryDate.getMonth() + 1) + 
+                      "-" + (expiryDate.getDate() < 10 ? '0' + expiryDate.getDate() : expiryDate.getDate());
+    $('#add_expiry_date').val(formattedDate);
 });
 </script>
 @endpush

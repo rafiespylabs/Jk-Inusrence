@@ -4,35 +4,39 @@ use App\Models\Tbl_insurence_providers;
 use App\Models\Tbl_other_policies;
 use App\Models\Tbl_policy_categories;
 use App\Models\Tbl_referred_persons;
+use App\Models\Tbl_other_policy_renews;
 use App\Models\Tbl_staffs;
+use App\Models\Tbl_payment_modes;
 use Illuminate\Http\Request;
-
+use Auth;
 class OtherpoliciesController extends Controller
 {
     public function index(){
-        $otherpolicies = Tbl_other_policies::with(['policy_category','executive', 'referred', 'provider'])->get();
-        $policy_category = Tbl_policy_categories::all();
+        $otherpolicies = Tbl_other_policies::with(['policy_category','executive', 'referred', 'provider'])
+        ->get();
+        $policy_category = Tbl_policy_categories::
+        whereNotIn('id', [1,9])->get();
         $executive = Tbl_staffs::all();
         $referred = Tbl_referred_persons::all();
         $provider = Tbl_insurence_providers::all();
-
+        $payment_modes=Tbl_payment_modes::all();
         return view('admin.otherpolicies', [
             'otherpolicies' => $otherpolicies,
             'policy_category' => $policy_category,
             'executive' => $executive,
             'referred' => $referred,
             'provider' => $provider,
+            'payment_modes'=>$payment_modes,
         ]);
     }
-
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-
             'policy_category_id' => 'required|exists:tbl_policy_categories,id',
             'name' => 'required|string|max:255',
             'primary_number' => 'required|string|max:15',
             'secondary_number' => 'nullable|string|max:15',
+            'start_date' => 'required|date',
             'expiry_date' => 'required|date',
             'premium_amount' => 'required|numeric|min:0',
             'sum_insured' => 'required|numeric|min:0',
@@ -42,15 +46,16 @@ class OtherpoliciesController extends Controller
             'referred_id' => 'nullable|integer|exists:tbl_referred_persons,id',
             'provider_id' => 'required|integer|exists:tbl_insurence_providers,id',
             'note' => 'nullable|string',
+            'payment_mode_id'=>'nullable|integer|exists:tbl_payment_modes,id'
         ]);
-    
         try {
-    
+            $current_user_id=Auth::user()->id;
             $otherpolicies = new Tbl_other_policies();
             $otherpolicies->policy_category_id = $validatedData['policy_category_id'];
             $otherpolicies->name = $validatedData['name'];
             $otherpolicies->primary_number = $validatedData['primary_number'];           
             $otherpolicies->secondary_number = $validatedData['secondary_number'];           
+            $otherpolicies->start_date = $validatedData['start_date']; 
             $otherpolicies->expiry_date = $validatedData['expiry_date'];           
             $otherpolicies->premium_amount = $validatedData['premium_amount'];           
             $otherpolicies->sum_insured = $validatedData['sum_insured'];           
@@ -60,26 +65,30 @@ class OtherpoliciesController extends Controller
             $otherpolicies->referred_id = $validatedData['referred_id'];           
             $otherpolicies->provider_id = $validatedData['provider_id'];           
             $otherpolicies->note = $validatedData['note'];           
-            $otherpolicies->save();
-    
+            if($otherpolicies->save())
+            {
+                $otherpolicy_renew = new Tbl_other_policy_renews();
+                $otherpolicy_renew->policy_cat_id = $validatedData['policy_category_id'];
+                $otherpolicy_renew->other_policy_id = $otherpolicies->id;
+                $otherpolicy_renew->premium_amount= $validatedData['premium_amount'];
+                $otherpolicy_renew->renew_date = $validatedData['start_date'];
+                $otherpolicy_renew->expiry_date = $validatedData['expiry_date']; 
+                $otherpolicy_renew->payment_mode_id= $validatedData['payment_mode_id']; 
+                $otherpolicy_renew->added_by= $current_user_id ;     
+                $otherpolicy_renew->added_date=date('Y-m-d') ;       
+                $otherpolicy_renew->save();
+            }
             $policy_category = Tbl_policy_categories::find($validatedData['policy_category_id']);
             $otherpolicies->policy_category = $policy_category->policy_category;
-
             $executive = Tbl_staffs::where('user_id', $validatedData['executive_id'])->first();
             if (!$executive) {
                 throw new \Exception('Staff user not found');
             }
-
             $otherpolicies->user_id = $executive->user->name;
-
             $referred = Tbl_referred_persons::find($validatedData['referred_id']);
             $otherpolicies->referred = $referred->name;
-
             $provider = Tbl_insurence_providers::find($validatedData['provider_id']);
             $otherpolicies->provider = $provider->provider_name;
-
-
-    
             return response()->json([
                 'success' => true,
                 'message' => 'Other policy created successfully',
@@ -92,29 +101,23 @@ class OtherpoliciesController extends Controller
             ], 500);
         }
     }
-
     public function edit(Request $request)
     {
         $request->validate([
             'id' => 'required|exists:tbl_other_policies,id',
         ]);
-         
         $otherpolicies = Tbl_other_policies::with('policy_category','executive', 'referred', 'provider')->find($request->id);
-
-        
         if (!$otherpolicies) {
             return response()->json(['success' => false, 'message' => 'Other policy not found'], 404);
         }
-        
-
         return response()->json([
             'success' => true,
             'data' => [
-
                 'policy_category_id' => $otherpolicies->policy_category_id ,
                 'name' => $otherpolicies->name,
                 'primary_number' => $otherpolicies->primary_number,       
                 'secondary_number' => $otherpolicies->secondary_number,          
+                'start_date' => $otherpolicies->start_date,    
                 'expiry_date' => $otherpolicies->expiry_date,         
                 'premium_amount' => $otherpolicies->premium_amount,       
                 'sum_insured' => $otherpolicies->sum_insured,       
@@ -127,8 +130,6 @@ class OtherpoliciesController extends Controller
             ]
         ]);
     }
-   
-
     public function update(Request $request)
     {
         $validatedData = $request->validate([
@@ -137,6 +138,7 @@ class OtherpoliciesController extends Controller
             'name' => 'required|string|max:255',
             'primary_number' => 'required|string|max:15',
             'secondary_number' => 'nullable|string|max:15',
+            'start_date' => 'required|date',
             'expiry_date' => 'required|date',
             'premium_amount' => 'required|numeric|min:0',
             'sum_insured' => 'required|numeric|min:0',
@@ -154,6 +156,7 @@ class OtherpoliciesController extends Controller
             $otherpolicies->name = $validatedData['name'];
             $otherpolicies->primary_number = $validatedData['primary_number'];           
             $otherpolicies->secondary_number = $validatedData['secondary_number'];           
+            $otherpolicies->start_date = $validatedData['start_date'];
             $otherpolicies->expiry_date = $validatedData['expiry_date'];           
             $otherpolicies->premium_amount = $validatedData['premium_amount'];           
             $otherpolicies->sum_insured = $validatedData['sum_insured'];           

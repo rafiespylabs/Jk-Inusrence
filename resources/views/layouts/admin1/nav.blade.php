@@ -44,7 +44,7 @@ $role_id=auth()->user()->role_id;
                 <li class="nav-item">
                     <a data-bs-toggle="collapse" href="#submenu" class="" aria-expanded="true">
                     <i class="fas fa-piggy-bank"></i>
-                    <p>LOAN & <br>INUSRENCES</p>
+                    <p>Loan & <br>Insurances</p>
                     <span class="caret"></span>
                     </a>
                     <div class="collapse {{ request()->is('dealers')
@@ -58,64 +58,30 @@ $role_id=auth()->user()->role_id;
                                 ||  request()->is('expensetypes') 
                                 || request()->is('expenses')
                                 ||  request()->is('leads') 
-                                || request()->is('renews')
+                                || request()->is('vechicle_policyrenews')
                                 || request()->is('healthpolicies') 
-                                || request()->is('otherpolicies') ? 'show' : '' }}" id="submenu" style="">
+                                || request()->is('otherpolicies') 
+                                || request()->is('payments') 
+                                || request()->is('loantypes')
+                                || request()->is('loans')
+                                ||request()->is('creditcard_pay')
+                                || request()->is('expenses')
+                                || request()->is('leads')
+                                || request()->is('payments') ? 'show' : '' }}" id="submenu" style="">
                         <ul class="nav nav-collapse">
-                            <li class="{{request()->is('agents')? 'active':''}}">
-                                <a href="{{route('agents')}}">
-                                    <i class="menu-icon fas fa-user-secret"></i>
-                                         Agents
-                                </a>
-                            </li>
-                            <li class="submenu">
-                                <a data-bs-toggle="collapse" href="#source" class="collapsed" aria-expanded="false">
-                                    <i class="fas fa-coffee"></i> Source
-                                    <span class="caret"></span>
-                                </a>
-                                <div class="collapse  {{ request()->is('dealers')
-                                ||  request()->is('insuranceproviders')
-                                || request()->is('referredPersons')
-                                || request()->is('companies') ? 'show' : '' }}" id="source" style="">
-                                    <ul class="nav nav-collapse subnav">
-                                        <li class="{{request()->is('insuranceproviders')? 'active':''}}">
-                                            <a href="{{route('insuranceproviders')}}">
-                                                <span class="sub-item">Insurence Porviders</span>
-                                            </a>
-                                        </li>
-                                        <li class="{{request()->is('dealers')? 'active':''}}">
-                                            <a href="{{route('dealers')}}">
-                                                <span class="sub-item">Dealers</span>
-                                            </a>
-                                        </li>
-                                        <li class="{{request()->is('referredPersons')? 'active':''}}">
-                                            <a href="{{route('referredPersons')}}">
-                                                <span class="sub-item">Referred Persons</span>
-                                            </a>
-                                        </li>
-                                        <li class="{{request()->is('companies')? 'active':''}}">
-                                            <a href="{{route('companies')}}">
-                                                <span class="sub-item">Companies</span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
                             <li class="submenu">
                                 <a data-bs-toggle="collapse" href="#policy" class="collapsed" aria-expanded="false">
-                                    <i class="fas fa-file-contract"></i> Policy
+                                    <i class="fas fa-file-contract"></i> Insurance
                                     <span class="caret"></span>
                                 </a>
-                                <div class="collapse  {{ request()->is('policycategories')
-                                ||request()->is('policyholders')
+                                <div class="collapse  {{ request()->is('policyholders')
                                 || request()->is('healthpolicies') 
-                                || request()->is('otherpolicies') ? 'show' : '' }}" id="policy" style="">
+                                || request()->is('otherpolicies') 
+                                || request()->is('creditcard_pay')
+                                || request()->is('expenses')
+                                || request()->is('leads')
+                                || request()->is('payments') ? 'show' : '' }}" id="policy" style="">
                                     <ul class="nav nav-collapse subnav">
-                                        <li class="{{request()->is('policycategories')? 'active':''}}">
-                                            <a href="{{route('policycategories')}}">
-                                                <span class="sub-item">Policy Categories</span>
-                                            </a>
-                                        </li>
                                         <li class="{{request()->is('policyholders')? 'active':''}}">
                                             <a href="{{route('policyholders')}}">
                                                 <span class="sub-item">Motor Vehicle Policies</span>
@@ -131,134 +97,48 @@ $role_id=auth()->user()->role_id;
                                                 <span class="sub-item">Other Policies</span>
                                             </a>
                                         </li>
-                                    </ul>
-                                </div>
-                            </li>
-                            <li class="{{request()->is('renews')? 'active':''}}">
-                                <a href="{{route('renews')}}">
-                                    <i class="menu-icon fa fa-redo"></i> Renews
-                                </a>
-                            </li>
-                            <li class="{{request()->is('creditcard_pay')? 'active':''}}">
-                                <a href="{{route('creditcard_pay')}}">
-                                    <i class="menu-icon fa fa-credit-card"></i>Credit Card Pay
-                                </a>
-                            </li>
-                            <li class="submenu">
-                                <a data-bs-toggle="collapse" href="#expense" class="collapsed" aria-expanded="false">
-                                    <i class="fa fa-money-bill-wave"></i>Expense
-                                    <span class="caret"></span>
-                                </a>
-                                <div class="collapse  {{ request()->is('expensetypes')
-                                ||request()->is('expenses') ? 'show' : '' }}" id="expense" style="">
-                                    <ul class="nav nav-collapse subnav">
-                                        <li class="{{request()->is('expensetypes')? 'active':''}}">
-                                            <a href="{{route('expensetypes')}}">
-                                                <span class="sub-item">Expense Types</span>
+                                        <li class="{{request()->is('creditcard_pay')? 'active':''}}">
+                                            <a href="{{route('creditcard_pay')}}">
+                                                <i class="menu-icon fa fa-credit-card"></i> Credit Card Pay
                                             </a>
                                         </li>
                                         <li class="{{request()->is('expenses')? 'active':''}}">
                                             <a href="{{route('expenses')}}">
-                                                <span class="sub-item">Expenses</span>
+                                                <i class="fa fa-money-bill-wave"></i> Expenses 
+                                            </a>
+                                        </li>
+                                        <li class="{{request()->is('leads')? 'active':''}}">
+                                            <a href="{{route('leads')}}">
+                                            <i class="menu-icon fa fa-bullhorn"></i>Leads
+                                            </a>
+                                        </li>
+                                        <li class="{{request()->is('payments')? 'active':''}}">
+                                            <a href="{{route('payments')}}">
+                                            <i class="menu-icon fa fa-money-bill"></i>Payments
                                             </a>
                                         </li>
                                     </ul>
                                 </div>
                             </li>
-                            <li class="{{request()->is('leads')? 'active':''}}">
-                                <a href="{{route('leads')}}">
-                                <i class="menu-icon fa fa-bullhorn"></i>Leads
+                            <li class="submenu">
+                                <a data-bs-toggle="collapse" href="#loan" class="collapsed" aria-expanded="false">
+                                    <i class="far fa-money-bill-alt"></i>Loan
+                                    <span class="caret"></span>
                                 </a>
+                                <div class="collapse  {{ request()->is('loans') ? 'show' : '' }}" id="loan" style="">
+                                    <ul class="nav nav-collapse subnav">
+                                        <li class="{{request()->is('loans')? 'active':''}}">
+                                            <a href="{{route('loans')}}">
+                                                <span class="sub-item">Loans</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
                             </li>
                         </ul>
                     </div>
                 </li>
-                <!-- <li class="nav-item">
-                    <a data-bs-toggle="collapse" href="#source">
-                        <i class="fas fa-coffee"></i>
-                        <p>Source</p>
-                        <span class="caret"></span>
-                    </a>
-                    <div class="collapse {{ request()->is('dealers')
-                    ||request()->is('insuranceproviders')
-                    || request()->is('referredPersons')
-                    || request()->is('companies') ? 'show' : '' }}" id="source">
-                        <ul class="nav nav-collapse">
-                            <li class="{{request()->is('insuranceproviders')? 'active':''}}">
-                                <a href="{{route('insuranceproviders')}}">
-                                <span class="sub-item">Insurence Porviders</span>
-                                </a>
-                            </li>
-                            <li class="{{request()->is('dealers')? 'active':''}}">
-                                <a href="{{route('dealers')}}">
-                                <span class="sub-item">Dealers</span>
-                                </a>
-                            </li>
-                            <li class="{{request()->is('referredPersons')? 'active':''}}">
-                                <a href="{{route('referredPersons')}}">
-                                <span class="sub-item">Referred Persons</span>
-                                </a>
-                            </li>
-                            <li class="{{request()->is('companies')? 'active':''}}">
-                                <a href="{{route('companies')}}">
-                                <span class="sub-item">Companies</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li> -->
-                <!-- <li class="nav-item {{request()->is('dealers')? 'active':''}}">
-                    <a href="{{route('dealers')}}">
-                        <i class="menu-icon fa fa-industry"></i>
-                        <p>Dealers</p>
-                    </a>
-                </li>
-                <li class="nav-item {{request()->is('insuranceproviders')? 'active':''}}">
-                    <a href="{{route('insuranceproviders')}}">
-                        <i class="menu-icon fa fa-industry"></i>
-                        <p>Insurence Porviders</p>
-                    </a>
-                </li>
-                <li class="nav-item {{request()->is('referredPersons')? 'active':''}}">
-                    <a href="{{route('referredPersons')}}">
-                        <i class="menu-icon fa fa-user-friends"></i>
-                        <p>References</p>
-                    </a>
-                </li>
-                <li class="nav-item  {{request()->is('companies')? 'active':''}}">
-                    <a href="{{route('companies')}}">
-                        <i class="menu-icon fa fa-building"></i>
-                        <p>Companies</p>
-                    </a>
-                </li> -->
                 @if($role_id==1)
-                <!-- <li class="nav-item">
-                    <a data-bs-toggle="collapse" href="#base">
-                        <i class="fa fa-money-bill-wave"></i>
-                        <p>Policy Holder</p>
-                        <span class="caret"></span>
-                    </a>
-                    <div class="collapse {{ request()->is('policyholders')||request()->is('policycategories') ? 'show' : '' }}" id="base">
-                        <ul class="nav nav-collapse">
-                            <li class="{{request()->is('policycategories')? 'active':''}}">
-                                <a href="{{route('policycategories')}}">
-                                    <span class="sub-item">Policy Categories</span>
-                                </a>
-                            </li>
-                            <li class="{{request()->is('policyholders')? 'active':''}}">
-                                <a href="{{route('policyholders')}}">
-                                    <span class="sub-item">Policy Holders</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="nav-item  {{request()->is('renews')? 'active':''}}">
-                    <a href="{{route('renews')}}">
-                        <i class="menu-icon fa fa-redo"></i>
-                        <p>Renews</p>
-                    </a>
-                </li> -->
                 @else
                 <li class="nav-item  {{request()->is('prepared_policies')? 'active':''}}">
                     <a href="{{route('prepared_policies')}}">
@@ -267,58 +147,63 @@ $role_id=auth()->user()->role_id;
                     </a>
                 </li>
                 @endif
-                <!-- <li class="nav-item  {{request()->is('creditcard_pay')? 'active':''}}">
-                    <a href="{{route('creditcard_pay')}}">
-                        <i class="menu-icon fa fa-credit-card"></i>
-                        <p>Credit Card Pay</p>
-                    </a>
-                </li> -->
-                <li class="nav-item {{request()->is('attendances')? 'active':''}}">
-                    <a href="{{route('attendances')}}">
-                        <i class="menu-icon fa fa-clock"></i>
-                        <p>Attendances</p>
-                    </a>
-                </li>
-                <!-- <li class="nav-item {{request()->is('leads')? 'active':''}}">
-                    <a href="{{route('leads')}}">
-                        <i class="menu-icon fa fa-bullhorn"></i>
-                        <p>Leads</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a data-bs-toggle="collapse" href="#expense">
-                        <i class="fa fa-money-bill-wave"></i>
-                        <p>Expense</p>
-                        <span class="caret"></span>
-                    </a>
-                    <div class="collapse {{ request()->is('expensetypes')||request()->is('expenses') ? 'show' : '' }}" id="expense">
-                        <ul class="nav nav-collapse">
-                            <li class="{{request()->is('expensetypes')? 'active':''}}">
-                                <a href="{{route('expensetypes')}}">
-                                    <span class="sub-item">Expense Types</span>
-                                </a>
-                            </li>
-                            <li class="{{request()->is('expenses')? 'active':''}}">
-                                <a href="{{route('expenses')}}">
-                                    <span class="sub-item">Expenses</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li> -->
                 <li class="nav-item">
                     <a data-bs-toggle="collapse" href="#base">
                         <i class="fas fa fa-cogs"></i>
-                        <p>Settings</p>
+                        <p>Settings Insr</p>
                         <span class="caret"></span>
                     </a>
                     <div class="collapse {{ request()->is('branches')||request()->is('departments')
                     ||request()->is('designations')||request()->is('roles')
                     ||request()->is('countries')||request()->is('states')||request()->is('districts')
                     ||request()->is('jobtypes') ||request()->is('leadsources')
-                    ||request()->is('prooftypes')
-                    ||request()->is('vehiclemodels') ? 'show' : '' }}" id="base">
+                    ||request()->is('prooftypes')||request()->is('agents')
+                    ||request()->is('vehiclemodels') ||request()->is('insuranceproviders')
+                    ||request()->is('cards')||request()->is('dealers')||request()->is('referredPersons')
+                    ||request()->is('companies') ||request()->is('loantypes')
+                    ||request()->is('policycategories')||request()->is('expensetypes')? 'show' : '' }}" id="base">
                         <ul class="nav nav-collapse">
+                             <li class="{{request()->is('agents')? 'active':''}}">
+                                <a href="{{route('agents')}}">
+                                    <span class="sub-item">
+                                        Agents</span>
+                                </a>
+                            </li>
+                            <li class="{{request()->is('loantypes')? 'active':''}}">
+                                <a href="{{route('loantypes')}}">
+                                    <span class="sub-item">Loan Types</span>
+                                </a>
+                            </li>
+                            <li class="{{request()->is('expensetypes')? 'active':''}}">
+                                <a href="{{route('expensetypes')}}">
+                                    <span class="sub-item">Expense Types</span>
+                                </a>
+                            </li>
+                            <li class="{{request()->is('insuranceproviders')? 'active':''}}">
+                                <a href="{{route('insuranceproviders')}}">
+                                    <span class="sub-item">Insurance Porviders</span>
+                                </a>
+                            </li>
+                            <li class="{{request()->is('dealers')? 'active':''}}">
+                                <a href="{{route('dealers')}}">
+                                    <span class="sub-item">Dealers</span>
+                                </a>
+                            </li>
+                            <li class="{{request()->is('referredPersons')? 'active':''}}">
+                                <a href="{{route('referredPersons')}}">
+                                    <span class="sub-item">Referred Persons</span>
+                                </a>
+                            </li>
+                            <li class="{{request()->is('companies')? 'active':''}}">
+                                <a href="{{route('companies')}}">
+                                    <span class="sub-item">Companies</span>
+                                </a>
+                            </li>
+                            <li class="{{request()->is('policycategories')? 'active':''}}">
+                                <a href="{{route('policycategories')}}">
+                                    <span class="sub-item">Policy Categories</span>
+                                </a>
+                            </li>
                             <li class="{{request()->is('branches')? 'active':''}}">
                                 <a href="{{route('branches')}}">
                                     <span class="sub-item">Branches</span>
@@ -376,6 +261,12 @@ $role_id=auth()->user()->role_id;
                             </li>
                         </ul>
                     </div>
+                </li>
+                <li class="nav-item {{request()->is('attendances')? 'active':''}}">
+                    <a href="{{route('attendances')}}">
+                        <i class="menu-icon fa fa-clock"></i>
+                        <p>Attendances</p>
+                    </a>
                 </li>
             </ul>
         </div>

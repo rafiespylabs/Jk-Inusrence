@@ -16,7 +16,7 @@ class Tbl_policyholders extends Model
     }
     public function vehicle_model()
     {
-        return $this->belongsTo(Tbl_vehiclemodels::class, 'vehicle_model_id','id');
+        return $this->belongsTo(Tbl_vehicle_models::class, 'vehicle_model_id','id');
     }
     public function company()
     {

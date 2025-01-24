@@ -9,24 +9,30 @@
                     <div class="d-flex align-items-center">
                         <h2>Payments</h2>
                         <button class="btn btn-primary btn-round ms-auto" data-bs-toggle="modal" data-bs-target="#CreateModal">
-                        <i class="fa fa-plus"></i> Create</button>
+                        <i class="fa fa-plus"></i> Add Payment</button>
                         <a href="{{ url()->previous() }}" class="ml-2"><button class="btn btn-info btn-round ms-auto">
                         <i class="fa fa-arrow-left"></i> Back</button></a>
                     </div>
+                    <h5>Filter</h5>
+                    <div class="row">
+                        <div class="col-4">
+                            <label>Policy Categroy <span>*</span></label>
+                            <select  name="policy_category_id" id="filter_policy_category_id" class="form-control">
+                                <option value="">Select One</option>
+                                @foreach( $policy_categories as $cat)
+                                <option value="{{$cat->id}}">{{$cat->policy_category}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-4">
+                            <label>Policy<span>*</span></label>
+                            <select  name="policy_id" id="filter_policy_id" class="form-control" required>
+                                <option value="">Select One</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
                 <div class="card-body">
-                    <p><b>Policy Holder  : {{$policy_holder->name}}</b>&nbsp; &nbsp;<b>Phone Number  : {{$policy_holder->primary_number}}</b></p>
-                    <p><b>Premium : {{$policy_holder->premium_amount}}</b></p>
-                    @php 
-                    $i=0;
-                    $totalpaid_amount=0;
-                    foreach ($policy_holder->payments as $pay)
-                    {
-                        $totalpaid_amount+=$pay->paid_amount;
-                    }
-                    @endphp
-                    <p><b>Balance : {{($policy_holder->premium_amount-$totalpaid_amount)}}</b></p>
-                    <hr>
                     <div id="preloader" style="display:none;">
                         <img src="{{asset('web/preloader.gif')}}">
                     </div>
@@ -35,6 +41,8 @@
                         <thead>
                             <tr>
                                 <th>Sl No</th>
+                                <th>Policy Category</th>
+                                <th>Policy</th>
                                 <th>Card/Company Direct</th>
                                 <th>Card</th>
                                 <th>Insurence Company</th>
@@ -47,6 +55,44 @@
                         </thead>
                         <tbody id="payment_tbody">
                         </tbody>
+                        <tfoot>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <th>Total Premium</th>
+                                <td id="total_premium"></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <th>Total Paid Amount</th>
+                                <td id="total_paid_amount"></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <th>Due Amount</th>
+                                <td id="balance_amount"></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
                     </table>
                     </div>
                 </div>
@@ -56,7 +102,7 @@
 </div>
 <!-- Create Modal -->
 <div class="modal fade" id="CreateModal" tabindex="-1" role="dialog" aria-labelledby="CreateModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Create</h5>
@@ -67,9 +113,22 @@
             <div class="modal-body">
               <form id="create_payment_form" class="form" enctype="multipart/form-data">
               @csrf
-                <input type="hidden" name="policy_id" value="{{$policy_id}}">
-                <input type="hidden" id="add_premium_amount" value="{{$policy_holder->premium_amount}}">
                 <div class="row form-group">
+                    <div class="col-4">
+                        <label>Policy Categroy <span>*</span></label>
+                        <select  name="policy_category_id" id="add_policy_category_id" class="form-control">
+                            <option value="">Select One</option>
+                            @foreach( $policy_categories as $cat)
+                            <option value="{{$cat->id}}">{{$cat->policy_category}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-4">
+                        <label>Policy<span>*</span></label>
+                        <select  name="policy_id" id="add_policy_id" class="form-control" required>
+                            <option value="">Select One</option>
+                        </select>
+                    </div>
                     <div class="col-4">
                         <label>Card/Company <span>*</span></label>
                         <select  name="payment_type" id="add_payment_type" class="form-control">
@@ -96,6 +155,8 @@
                             @endforeach
                         </select>
                     </div>
+                </div>
+                <div class="row form-group">
                     <div class="col-4">
                         <label>Payment Mode <span>*</span></label>
                         <select  name="payment_mode_id" class="form-control" required>
@@ -105,11 +166,10 @@
                             @endforeach
                         </select>
                     </div>
-                </div>
-                <div class="row form-group">
                     <div class="col-4">
                         <label>Paid Amount <span>*</span></label>
                         <input type="text"  name="paid_amount" id="add_paid_amount" class="form-control" required>
+                        <span id="due_amount" style="color:red;"> </span>
                     </div>
                     <div class="col-4">
                         <label>Remarks </label>
@@ -204,14 +264,15 @@
  @push('scripts')
 <script type="text/javascript">
     $(document).ready(function() {
-        function fetch_paymentData()
+        function fetch_paymentData(policy_id='',policy_cat_id='')
         {
             $('#payment_tbody').html('');
             $.ajax({ type: "POST",
                     url: "{{route('payment.list')}}",
                     data:{ "_token": "{{ csrf_token() }}",
-                            policy_id: {{$policy_id}}
-                        },
+                        policy_id:policy_id,
+                        policy_cat_id:policy_cat_id
+                    },
                     beforeSend: function() 
                     {
                         $('#preloader').show();
@@ -220,7 +281,10 @@
                     {
                         $('#preloader').hide();
                         $('#payment-datatable').DataTable().destroy();
-                        $('#payment_tbody').html(res);
+                        $('#payment_tbody').html(res.data);
+                        $('#total_paid_amount').text(res.total_paid_amount);
+                        $('#balance_amount').text(res.balance_amount);
+                        $('#total_premium').text(res.total_premium);
                         $('#payment-datatable').DataTable({
                             "bStateSave": true,
                             "fnStateSave": function (oSettings, oData) {
@@ -258,7 +322,6 @@
                             },
                         });
                         fetch_paymentData();
-                        location.reload();
                     } 
                     else 
                     {
@@ -293,7 +356,6 @@
                             },
                         });
                         fetch_paymentData();
-                        location.reload();
                     } 
                     else 
                     {
@@ -304,6 +366,11 @@
                     console.error('AJAX error:', error);
                 }
             });
+        });
+        $(document).on("change", "#filter_policy_id", function() {
+            var policy_id=$(this).val();
+            var policy_cat_id=$('#filter_policy_category_id').val();
+            fetch_paymentData(policy_id,policy_cat_id);
         });
     });
 </script>
@@ -362,6 +429,57 @@ $(document).on("change", "#edit_payment_type", function() {
         $('#edit_card_div').hide();
         $('#edit_provider_div').show();
    }
+});
+$(document).on("change", "#add_policy_category_id", function() {
+    var policy_category_id=$(this).val();
+    $('#add_policy_id').prop('disabled', true).html('<option value="">Loading...</option>');
+    $.ajax({ type: "POST",
+        url: "{{route('payment.getPolicyByCategory')}}",
+        data: { "_token": "{{ csrf_token() }}",
+                policy_category_id:policy_category_id
+              },
+        success: function(res) 
+        {
+            $('#add_policy_id').prop('disabled', false).html('<option value="">Select One</option>');
+            $.each(res.policies, function(index, policy) {
+                $('#add_policy_id').append('<option value="' +policy.id+'">'+policy.name	+'</option>');
+            });
+        }
+    });
+
+});
+$(document).on("change", "#filter_policy_category_id", function() {
+    var policy_category_id=$(this).val();
+    $('#filter_policy_id').prop('disabled', true).html('<option value="">Loading...</option>');
+    $.ajax({ type: "POST",
+        url: "{{route('payment.getPolicyByCategory')}}",
+        data: { "_token": "{{ csrf_token() }}",
+                policy_category_id:policy_category_id
+              },
+        success: function(res) 
+        {
+            $('#filter_policy_id').prop('disabled', false).html('<option value="">Select One</option>');
+            $.each(res.policies, function(index, policy) {
+                $('#filter_policy_id').append('<option value="' +policy.id+'">'+policy.name	+'</option>');
+            });
+        }
+    });
+});
+$(document).on("change", "#add_policy_id", function() {
+    var policy_id=$(this).val();
+    var policy_cat_id=$('#add_policy_category_id').val();
+    $.ajax({ type: "POST",
+        url: "{{route('payment.getPolicyDetails')}}",
+        data: { "_token": "{{ csrf_token() }}",
+                policy_id:policy_id,
+                policy_cat_id:policy_cat_id
+              },
+        success: function(res) 
+        {
+            $('#due_amount').text('Due is : '+res.due_amount);
+        }
+    });
+
 });
 </script>
 @endpush

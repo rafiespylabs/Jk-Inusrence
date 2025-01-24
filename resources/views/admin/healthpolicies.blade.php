@@ -1,4 +1,7 @@
 <x-admin1-layout>
+@push('styles')
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta2/dist/css/bootstrap-select.min.css">   
+@endpush
     <div class="page-inner">
         <div class="page-header"></div>
         <div class="row">
@@ -31,16 +34,18 @@
                                         <th>Weight</th>
                                         <th>Primary Number</th>
                                         <th>Secondary Number</th>
+                                        <th>Start Date</th>
                                         <th>Expiry Date</th>
                                         <th>Premium Amount</th>
                                         <th>Sum Insured</th>
-                                        <th>Term</th>
                                         <th>Nominee Name</th>
                                         <th>Nominee Relation</th>
                                         <th>Executive</th>
                                         <th>Status</th>
-                                        <th>Referesnce Perosn</th>
+                                        <th>Reference Perosn</th>
                                         <th>Insurance Provider</th>
+                                        <th>Document</th>
+                                        <th>Renew</th>
                                         <th>Note</th>
                                         <th>Action</th>
                                     </tr>
@@ -67,25 +72,28 @@
                                             <td>{{ $healthpolicy->weight}}</td>
                                             <td>{{ $healthpolicy->primary_number}}</td>
                                             <td>{{ $healthpolicy->secondary_number}}</td>
+                                            <td>{{ $healthpolicy->start_date}}</td>
                                             <td>{{ $healthpolicy->expiry_date}}</td>
                                             <td>{{ $healthpolicy->premium_amount}}</td>
                                             <td>{{ $healthpolicy->sum_insured}}</td>
-                                            <td>{{ $healthpolicy->term}}</td>
                                             <td>{{ $healthpolicy->nominee_name}}</td>
                                             <td>{{ $healthpolicy->nominee_relation}}</td>
                                             <td>{{ $healthpolicy->executive->user->name ?? 'N/A' }}</td>
                                             <td>{{ $healthpolicy->status == 1 ? 'Paid' : 'Not Paid' }}</td>
                                             <td>{{ $healthpolicy->referred->name ?? 'N/A' }}</td>                                            
-                                            <td>{{ $healthpolicy->provider->provider_name ?? 'N/A' }}</td>                                          
+                                            <td>{{ $healthpolicy->provider->provider_name ?? 'N/A' }}</td>    
+                                            <td><a href="{{route('healthPolicyDocs',$healthpolicy->id)}}" class="btn btn-primary btn-xs">Documents</a></td>   
+                                            <td><a href="{{route('healthPolicyRenew',$healthpolicy->id)}}" class="btn btn-primary btn-xs">Renew</a></td>                                                                                             
                                             <td>{{ $healthpolicy->note }}</td>                                        
-                                           
                                             <td>
                                                 <i class="fa fa-edit edit_healthpolicies"
                                                     data-id="{{ $healthpolicy->id }}" data-rowid="{{ $i }}" data-bs-toggle="modal"
                                                     data-bs-target="#EditModal"></i>
-
                                                     <i class="fa fa-trash delete_healthpolicies"
-                                                    data-id="{{ $healthpolicy->id }}"></i>    
+                                                    data-id="{{ $healthpolicy->id }}"></i>
+                                                    @if( $healthpolicy->type==1)
+                                                    <a href="{{route('healthPolicyMembers',$healthpolicy->id)}}" class="btn btn-info btn-xs">Add Members</a>
+                                                    @endif 
                                             </td>
                                         </tr>
                                         @php $i++; @endphp
@@ -93,6 +101,10 @@
                                 </tbody>
                             </table>
                         </div>
+                        <a href="{{route('payments')}}" class="btn btn-danger" style="margin-top:30px;">
+                            <i class="fa fa-money-bill"></i>
+                            Go To Payments
+                        </a>
                     </div>
                 </div>
             </div>
@@ -118,7 +130,7 @@
                                 </select>
                             </div>   
                             <div class="col-md-4">
-                                <label for="type" class="form-label">Policy Type</label>
+                                <label for="type" class="form-label">Policy Type <span>*</span></label>
                                 <select name="type" id="type" class="form-control" required>
                                     <option value="">Select One</option>
                                     <option value="1" {{ isset($policy) && $policy->type == 1 ? 'selected' : '' }}>Family</option>
@@ -128,21 +140,27 @@
                                 </select>
                             </div>
                             <div class="col-md-4" id="company_div" style="display:none;">
-                                <label for="company">Company</label>
-                                <select name="company_id" id="company_id" class="form-control">
-                                    @foreach ($company as $com)
-                                        <option value="{{ $com->id }}">{{ $com->company }}</option>
-                                    @endforeach
-                                </select>
+                                <label for="company">Company <span>*</span></label>
+                                <div class="input-group">
+                                    <select name="company_id" id="company_id" class="form-control  selectpicker with-ajax" data-live-search="true">
+                                            <option value="">Select One</option>
+                                        @foreach ($company as $com)
+                                            <option value="{{ $com->id }}">{{ $com->company }}</option>
+                                        @endforeach
+                                    </select>
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-info" id="openCompanyModal"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                                    </div>
+                                </div>
                             </div>    
                         </div>
                         <div class="row form-group">
                             <div class="col-md-4">
-                                <label for="name">Name</label>
+                                <label for="name">Name <span>*</span></label>
                                 <input type="text" name="name" id="name" class="form-control" required>
                             </div>
                             <div class="col-md-4">
-                                <label for="birth_date">Birth Date</label>
+                                <label for="birth_date">Birth Date <span>*</span></label>
                                 <input type="date" name="birth_date" id="birth_date" class="form-control" required>
                             </div>
                             <div class="col-md-4">
@@ -152,82 +170,97 @@
                         </div>
                         <div class="row form-group">
                             <div class="col-md-3">
-                                <label for="height">Height</label>
+                                <label for="height">Height <span>*</span></label>
                                 <input type="number" name="height" id="height" class="form-control" required>
                             </div>
                             <div class="col-md-3">
-                                <label for="weight">Weight</label>
+                                <label for="weight">Weight <span>*</span></label>
                                 <input type="number" name="weight" id="weight" class="form-control" required>
                             </div>
                             <div class="col-md-3">
-                                <label for="primary_number">Primary Number</label>
-                                <input type="number" name="primary_number" id="primary_number" class="form-control" required>
+                                <label for="primary_number">Primary Number <span>*</span></label>
+                                <input type="text" name="primary_number" id="primary_number" pattern="[0-9]{10}" 
+                                title="Phone number must be 10 digits" class="form-control" required>
                             </div>
                             <div class="col-md-3">
                                 <label for="secondary_number">Secondary Number</label>
-                                <input type="number" name="secondary_number" id="secondary_number" class="form-control">
+                                <input type="text" name="secondary_number" id="secondary_number" pattern="[0-9]{10}" 
+                                title="Phone number must be 10 digits" class="form-control">
                             </div>
                         </div>
                         <div class="row form-group">
                             <div class="col-md-4">
-                                <label for="expiry_date">Expiry Date</label>
-                                <input type="date" name="expiry_date" id="expiry_date" class="form-control" required>
+                                <label for="term">Term</label><br>
+                                <div class="form-check">
+                                    <input type="radio" name="term" id="term_1year" value="1year" class="form-check-input" checked>
+                                    <label for="term_1year" class="form-check-label">1 Year</label>
+                                </div>
                             </div>
                             <div class="col-md-4">
-                                <label for="premium_amount">Premium Amount</label>
+                                <label for="expiry_date">Start Date <span>*</span></label>
+                                <input type="date" name="start_date" id="add_start_date" class="form-control" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="expiry_date">Expiry Date <span>*</span></label>
+                                <input type="date" name="expiry_date" id="add_expiry_date" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-4">
+                                <label for="premium_amount">Premium Amount <span>*</span></label>
                                 <input type="number" name="premium_amount" id="premium_amount" class="form-control" required>
                             </div>
                             <div class="col-md-4">
-                                <label for="sum_insured">Sum Insured</label>
+                                <label for="sum_insured">Sum Insured <span>*</span></label>
                                 <input type="number" name="sum_insured" id="sum_insured" class="form-control" required>
-                            </div>
-                        </div>
-                        <div class="row form-group">
-                            <div class="col-md-4">
-                            <label for="term">Term</label><br>
-                            <div class="form-check">
-                                <input type="radio" name="term" id="term_1year" value="1year" class="form-check-input" checked>
-                                <label for="term_1year" class="form-check-label">1 Year</label>
-                            </div>
                             </div>
                             <div class="col-md-4">
                                 <label for="nominee_name">Nominee Name</label>
                                 <input type="text" name="nominee_name" id="nominee_name" class="form-control" >
                             </div>
+                        </div>
+                        <div class="row form-group">
                             <div class="col-md-4">
                                 <label for="nominee_relation">Nominee Relation</label>
                                 <input type="text" name="nominee_relation" id="nominee_relation" class="form-control">
                             </div>
-                        </div>
-                        <div class="row form-group">
                             <div class="col-md-4">
-                                <label for="executive">Executive</label>
+                                <label for="executive">Executive <span>*</span></label>
                                 <select name="executive_id" id="executive_id" class="form-control" required>
+                                        <option value="">Select One</option>
                                     @foreach ($executive as $exe)
                                         <option value="{{ $exe->user_id }}">{{ $exe->user->name }}</option>
                                     @endforeach
                                 </select>
                             </div>  
                             <div class="col-md-4">
-                                <label for="status" class="form-label">Status</label>
+                                <label for="status" class="form-label">Status <span>*</span></label>
                                 <select name="status" id="status" class="form-control" required>
+                                    <option value="">Select One</option>
                                     <option value="0" {{ isset($policy) && $policy->status == 0 ? 'selected' : '' }}>Not Paid</option>
                                     <option value="1" {{ isset($policy) && $policy->status == 1 ? 'selected' : '' }}>Paid</option>
                                 </select>
-                            </div> 
-                            <div class="col-md-4">
-                                <label for="referred">Referesnce Perosn</label>
-                                <select name="referred_id" id="referred_id" class="form-control" required>
-                                    @foreach ($referred as $ref)
-                                        <option value="{{ $ref->id }}">{{ $ref->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>     
+                            </div>   
                         </div>
                         <div class="row form-group">
                             <div class="col-md-4">
-                                <label for="provider">Insurance Provider</label>
+                                <label>C/O Person <span>*</span></label>
+                                <div class="input-group">
+                                    <select name="referred_id" id="referred_id" class="form-control selectpicker with-ajax" data-live-search="true" required>
+                                        <option value="">Select One</option>
+                                        @foreach ($referred as $ref)
+                                            <option value="{{ $ref->id }}">{{ $ref->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-info" id="openReferrenceModal"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                                    </div>
+                                </div>
+                            </div>   
+                            <div class="col-md-4">
+                                <label for="provider">Insurance Provider <span>*</span></label>
                                 <select name="provider_id" id="provider_id" class="form-control" required>
+                                    <option value="">Select One</option>
                                     @foreach ($provider as $prov)
                                         <option value="{{ $prov->id }}">{{ $prov->provider_name }}</option>
                                     @endforeach
@@ -235,7 +268,27 @@
                             </div>
                             <div class="col-md-4">
                                 <label for="note">Note</label>
-                                <input type="text" name="note" id="note" class="form-control">
+                                <textarea name="note" id="note" class="form-control"></textarea>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-4">
+                                <label for="executive">Prepared User <span>*</span></label>
+                                <select name="prepared_user_id" id="prepared_user_id" class="form-control" required>
+                                    <option value="">Select One</option>
+                                    @foreach ($executive as $exe)
+                                        <option value="{{ $exe->user_id }}">{{ $exe->user->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-4">
+                                <label>Payment Mode<span>*</span></label>
+                                <select  name="payment_mode_id" class="form-control" required>
+                                    <option value="">Select One</option>
+                                    @foreach($payment_modes as $mode)
+                                    <option value="{{$mode->id}}">{{$mode->payment_mode}}</option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
                         <div class="form-actions form-group">
@@ -261,8 +314,10 @@
                         @csrf
                         <input type="hidden" name="rowid" id="row_id">
                         <input type="hidden" name="id" id="healthpolicies_id">  
+                        <input type="hidden" name="policy_category_id" id="edit_policy_category_id">  
+                        <input type="hidden" name="type" id="edit_type">  
                         <div class="row form-group">
-                            <div class="col-md-4">
+                            <!-- <div class="col-md-4">
                                 <label for="policy_category">Policy Category</label>
                                 <select name="policy_category_id" id="edit_policy_category_id" class="form-control" required>
                                         <option value="1">Health Policy</option>
@@ -276,10 +331,11 @@
                                     <option value="3" {{ isset($policy) && $policy->type == 3 ? 'selected' : '' }}>Group (Company)</option>
                                     <option value="4" {{ isset($policy) && $policy->type == 4 ? 'selected' : '' }}>Top-Up</option>
                                 </select>
-                            </div>
-                            <div class="col-md-4">
+                            </div> -->
+                            <div class="col-md-4" id="edit_company_div">
                                 <label for="company">Company</label>
-                                <select name="company_id" id="edit_company_id" class="form-control" required>
+                                <select name="company_id" id="edit_company_id" class="form-control">
+                                    <option value="">Select One</option>
                                     @foreach ($company as $com)
                                         <option value="{{ $com->id }}">{{ $com->company }}</option>
                                     @endforeach
@@ -307,11 +363,13 @@
                             </div>
                             <div class="col-md-4">
                                 <label for="primary_number">Primary Number</label>
-                                <input type="number" name="primary_number" id="edit_primary_number" class="form-control" required>
+                                <input type="text" name="primary_number" id="edit_primary_number" pattern="[0-9]{10}" 
+                                title="Phone number must be 10 digits" class="form-control" required>
                             </div>
                             <div class="col-md-4">
                                 <label for="secondary_number">Secondary Number</label>
-                                <input type="number" name="secondary_number" id="edit_secondary_number" class="form-control">
+                                <input type="text" name="secondary_number" id="edit_secondary_number" pattern="[0-9]{10}" 
+                                title="Phone number must be 10 digits" class="form-control">
                             </div>
                         </div>
                         <div class="row form-group">
@@ -349,6 +407,7 @@
                             <div class="col-md-4">
                                 <label for="executive">Executive</label>
                                 <select name="executive_id" id="edit_executive_id" class="form-control" required>
+                                    <option value="">Select One</option>
                                     @foreach ($executive as $exe)
                                         <option value="{{ $exe->user_id }}">{{ $exe->user->name }}</option>
                                     @endforeach
@@ -357,13 +416,15 @@
                             <div class="col-md-4">
                                 <label for="status" class="form-label">Status</label>
                                 <select name="status" id="edit_status" class="form-control" required>
+                                    <option value="">Select One</option>
                                     <option value="0" {{ isset($policy) && $policy->status == 0 ? 'selected' : '' }}>Not Paid</option>
                                     <option value="1" {{ isset($policy) && $policy->status == 1 ? 'selected' : '' }}>Paid</option>
                                 </select>
                             </div> 
                             <div class="col-md-4">
-                                <label for="referred">Referesnce Perosn</label>
+                                <label for="referred">C/O Perosn</label>
                                 <select name="referred_id" id="edit_referred_id" class="form-control" required>
+                                    <option value="">Select One</option>
                                     @foreach ($referred as $ref)
                                         <option value="{{ $ref->id }}">{{ $ref->name }}</option>
                                     @endforeach
@@ -374,6 +435,7 @@
                             <div class="col-md-4">
                                 <label for="provider">Insurance Provider</label>
                                 <select name="provider_id" id="edit_provider_id" class="form-control" required>
+                                    <option value="">Select One</option>
                                     @foreach ($provider as $prov)
                                         <option value="{{ $prov->id }}">{{ $prov->provider_name }}</option>
                                     @endforeach
@@ -381,7 +443,7 @@
                             </div>
                             <div class="col-md-4">
                                 <label for="note">Note</label>
-                                <input type="text" name="note" id="edit_note" class="form-control">
+                                <textarea name="note" id="edit_note" class="form-control"></textarea>
                             </div>
                         </div>
                         <div class="form-actions form-group">
@@ -393,6 +455,76 @@
             </div>
         </div>
     </div>    
+<!-- Create Reference Modal -->
+<div class="modal fade" id="CreateReferencemodel" tabindex="-1" role="dialog" aria-labelledby="CreateReferencemodelLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Create</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+              <form id="create_reference_form" class="form" enctype="multipart/form-data">
+              @csrf
+                <div class="row form-group">
+                    <div class="col-6">
+                        <label>Name<span>*</span></label>
+                        <input type="text"  name="name" class="form-control" required>
+                    </div>
+                    <div class="col-6">
+                        <label>Phone Number<span>*</span></label>
+                        <input type="text"  name="phone_number" class="form-control" required>
+                    </div>
+                </div>
+                <div class="form-actions form-group">
+                  <button type="submit" class="btn btn-primary btn-sm">Submit</button>
+                  <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Create Reference Modal -->
+ <!-- Create Company  Modal -->
+<div class="modal fade" id="CreateCompanymodel" tabindex="-1" role="dialog" aria-labelledby="CreateCompanymodelLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Create Company</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+              <form id="create_company_form" class="form" enctype="multipart/form-data">
+              @csrf
+                <div class="row form-group">
+                    <div class="col-4">
+                        <label>Company<span>*</span></label>
+                        <input type="text"  name="company" class="form-control" required>
+                    </div>
+                    <div class="col-4">
+                        <label>Phone Number</label>
+                        <input type="text"  name="phone" class="form-control">
+                    </div>
+                </div>
+                <div class="form-actions form-group">
+                  <button type="submit" class="btn btn-primary btn-sm">Submit</button>
+                  <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Create Company  Modal -->
     @push('scripts')
         <script>
             $(document).ready(function() {
@@ -413,7 +545,7 @@
 
                                 $('#create_healthpolicies_form')[0].reset(); 
 
-                                swal("Success!", "Health policy added successfully!", {
+                                swal("Success!", response.message, {
                                     icon: "success",
                                     buttons: {
                                         confirm: {
@@ -423,11 +555,42 @@
                                 });
 
                                 var table = $('#healthpolicies-datatable').DataTable();
+                                var addMembers='';
+                                var status='';
+                                if( response.data.type==1)
+                                {
+                                    addMembers='<a href="" class="btn btn-info btn-xs">Add Members</a>';
+                                }   
+                                if(response.data.status==0)
+                                {
+                                    status='Not Paid';
+                                }
+                                else if(response.data.status==1)
+                                {
+                                    status='Paid';
+                                }
+                                var type='';
+                                if(response.data.type==1)
+                                {
+                                  type='family';
+                                }
+                                else if(response.data.type==2)
+                                {
+                                    type='individual';
+                                }
+                                else if(response.data.type==3)
+                                {
+                                    type='group(company)';
+                                }
+                                else if(response.data.type==4)
+                                {
+                                    type='Topup';
+                                }
                                 var lastRowNumber = table.data().count() > 0 ? parseInt(table.row(':last').data()[0]) + 1 : 0;
                                 var newRow = table.row.add([
                                     lastRowNumber,  
                                     response.data.policy_category,                        
-                                    response.data.type, 
+                                    type, 
                                     response.data.company, 
                                     response.data.name, 
                                     response.data.birth_date, 
@@ -436,19 +599,22 @@
                                     response.data.weight, 
                                     response.data.primary_number,                                    
                                     response.data.secondary_number,                                    
+                                    response.data.start_date, 
                                     response.data.expiry_date,                                    
                                     response.data.premium_amount,                                    
                                     response.data.sum_insured,                                    
-                                    response.data.term,                                    
                                     response.data.nominee_name,                                    
                                     response.data.nominee_relation,                                    
                                     response.data.user_id,                                    
-                                    response.data.status,                                    
+                                    status,                                    
                                     response.data.referred,                                    
-                                    response.data.provider,                                    
+                                    response.data.provider,  
+                                    '<a href="/healthPolicyDocs/'+response.data.id+'" class="btn btn-primary btn-xs">Documents</a>',                                   
+                                    '<a href="/healthPolicyRenew/'+response.data.id+'" class="btn btn-primary btn-xs">Renew</a>',                                   
                                     response.data.note,                                                                     
                                     '<i class="fa fa-edit edit_healthpolicies" data-rowid="'+ lastRowNumber +'" data-id="' + response.data.id + '" data-bs-toggle="modal" data-bs-target="#EditModal"></i>' +
-                                    '<i class="fa fa-trash delete_healthpolicies" data-rowid="'+ lastRowNumber +'" data-id="' + response.data.id + '"></i>'
+                                    '<i class="fa fa-trash delete_healthpolicies" data-rowid="'+ lastRowNumber +'" data-id="' + response.data.id + '"></i>'+
+                                    addMembers
                                 ]).draw(false);
 
                                 table.page('last').draw(false);  
@@ -507,7 +673,16 @@
                                 $('#edit_birth_date').val(response.data.birth_date);
                                 $('#edit_height').val(response.data.height);
                                 $('#edit_weight').val(response.data.weight);
-                                $('#edit_company_id').val(response.data.company_id);
+                                if(response.data.type==3)
+                                {
+                                    $('#edit_company_div').show();
+                                    $('#edit_company_id').val(response.data.company_id);
+                                }
+                                else
+                                {
+                                    $('#edit_company_div').hide();
+                                    $('#edit_company_id').val('');
+                                }
                                 $('#edit_primary_number').val(response.data.primary_number);
                                 $('#edit_secondary_number').val(response.data.secondary_number);
                                 $('#edit_expiry_date').val(response.data.expiry_date);
@@ -564,15 +739,15 @@
                                 {
                                     type='Family';
                                 }
-                                else if(esponse.data.type==2)
+                                else if(response.data.type==2)
                                 {
                                     type='Individual';
                                 }
-                                else if(esponse.data.type==3)
+                                else if(response.data.type==3)
                                 {
                                     type='Group (Company)';
                                 }
-                                else if(esponse.data.type==4)
+                                else if(response.data.type==4)
                                 {
                                     type='Top-Up';
                                 }
@@ -580,10 +755,15 @@
                                 {
                                     status='Not Paid';
                                 }
-                                else if(esponse.data.type==1)
+                                else if(response.data.type==1)
                                 {
                                    status='Paid';
                                 }
+                                var addMembers='';
+                                if( response.data.type==1)
+                                {
+                                    addMembers='<a href="" class="btn btn-info btn-xs">Add Members</a>';
+                                }   
                                 var row = table.row('#row' + response.data.id); 
                                 row.data([
                                     rowId,   
@@ -607,9 +787,13 @@
                                     status,                                    
                                     response.data.referred,   
                                     response.data.provider,                                  
-                                    response.data.note,                                    
+                                    '<a href="/healthPolicyDocs/'+response.data.id+'" class="btn btn-primary btn-xs">Documents</a>',                                   
+                                    '<a href="/healthPolicyRenew/'+response.data.id+'" class="btn btn-primary btn-xs">Renew</a>', 
+                                    response.data.note, 
                                     '<i class="fa fa-edit edit_healthpolicies" data-rowid="'+ rowId +'" data-id="' + response.data.id + '" data-bs-toggle="modal" data-bs-target="#EditModal"></i>' +
-                                    '<i class="fa fa-trash delete_healthpolicies" data-rowid="'+ rowId +'" data-id="' + response.data.id + '"></i>' 
+                                    '<i class="fa fa-trash delete_healthpolicies" data-rowid="'+ rowId +'" data-id="' + response.data.id + '"></i>'+
+                                   
+                                    addMembers
                                 ]).draw(false); 
                                 } else {
                                     alert('Error updating data: ' + response.message);
@@ -620,7 +804,6 @@
                         }
                     });
                 });
-
                 $(document).on('click', '.delete_healthpolicies', function () {
                     var healthpoliciesId = $(this).data('id'); 
                     var rowSelector = '#row' + healthpoliciesId; 
@@ -664,7 +847,6 @@
                         }
                     });
                 });
-
             });
             $(document).on("change", "#type", function() {
                 var healthpolicy_type=$(this).val();
@@ -678,6 +860,58 @@
                     $('#company_div').hide();
                     $('#company_id').prop('required', false);
                 }
+            });
+            function getreference_persons()
+            {
+                $('#referred_id').empty();
+                $.ajax({
+                    url: "{{ route('referredPersons') }}",
+                    type: 'POST',
+                    data: { "_token": "{{ csrf_token() }}"
+                        },
+                    success: function(response) {
+                        $('#referred_id').append('<option value="">Select One</option>');
+                        $.each(response, function(index, reference) {
+                            $('#referred_id').append('<option value="' + reference.id + '">' + reference.name + '</option>');
+                        });
+                        $('#referred_id').selectpicker('refresh'); 
+                    }
+                });
+            }
+            $('#create_reference_form').submit(function(event) 
+            {
+                event.preventDefault();
+                var formData = new FormData($(this)[0]); 
+                $.ajax({
+                    url: "{{route('referredPerson.store')}}",
+                    method: "POST",
+                    data: formData,
+                    contentType: false, 
+                    processData: false,
+                    success: function(response) {
+                        if (response.success) 
+                        {
+                            $('#CreateReferencemodel').modal('hide');
+                            $('#create_reference_form')[0].reset();
+                            swal("Good job!", response.message, {
+                                icon: "success",
+                                buttons: {
+                                    confirm: {
+                                    className: "btn btn-success",
+                                    },
+                                },
+                            });
+                            getreference_persons();
+                        } 
+                        else 
+                        {
+                            alert( response.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX error:', error);
+                    }
+                });
             });
         </script>
         <script>
@@ -699,6 +933,91 @@
                 var age = calculateAge(birthDate);
                 $("#age").val(age); 
             });
+            $(document).on("change", "#add_start_date", function() {
+                var startDate = new Date($(this).val());
+                var expiryDate = new Date(startDate);
+                expiryDate.setFullYear(expiryDate.getFullYear() + 1);
+                var formattedDate = expiryDate.getFullYear() + 
+                                "-" + (expiryDate.getMonth() + 1 < 10 ? '0' + (expiryDate.getMonth() + 1) : expiryDate.getMonth() + 1) + 
+                                "-" + (expiryDate.getDate() < 10 ? '0' + expiryDate.getDate() : expiryDate.getDate());
+                $('#add_expiry_date').val(formattedDate);
+            });
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta2/dist/js/bootstrap-select.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/ajax-bootstrap-select@1.4.4/dist/js/ajax-bootstrap-select.min.js"></script>
+        <script>
+            document.getElementById('openReferrenceModal').addEventListener('click', function () 
+            {
+                const secondModal = new bootstrap.Modal(document.getElementById('CreateReferencemodel'));
+                secondModal.show();
+                document.getElementById('CreateModal').classList.add('show');
+                document.getElementById('CreateModal').style.display = 'block';
+            });
+            document.getElementById('openCompanyModal').addEventListener('click', function () {
+                const CompanyModal = new bootstrap.Modal(document.getElementById('CreateCompanymodel'));
+                CompanyModal.show();
+                document.getElementById('CreateModal').classList.add('show');
+                document.getElementById('CreateModal').style.display = 'block';
+            });
+        </script>
+        <script>
+            $(document).ready(function(){
+                $(".selectpicker").selectpicker({
+                });
+            });
+        </script>
+        <script>
+        function getcompanies()
+        {
+            $('#company_id').empty();
+            $.ajax({
+                url: "{{ route('companies') }}",
+                type: 'POST',
+                data: { "_token": "{{ csrf_token() }}"},
+                success: function(response) {
+                    $('#company_id').append('<option value="">Select One</option>');
+                    $.each(response, function(index, company) {
+                        $('#company_id').append('<option value="' +company.id + '">' + company.company + '</option>');
+                    });
+                    $('#company_id').selectpicker('refresh'); 
+                }
+            });
+        }
+        $('#create_company_form').submit(function(event) 
+        {
+            event.preventDefault();
+            var formData = new FormData($(this)[0]); 
+            $.ajax({
+                url: "{{route('companies.store')}}",
+                method: "POST",
+                data: formData,
+                contentType: false, 
+                processData: false,
+                success: function(response) {
+                    if (response.success) 
+                    {
+                        $('#CreateCompanymodel').modal('hide');
+                        $('#create_company_form')[0].reset();
+                        swal("Good job!", response.message, {
+                            icon: "success",
+                            buttons: {
+                                confirm: {
+                                className: "btn btn-success",
+                                },
+                            },
+                        });
+                        getcompanies();
+                    } 
+                    else 
+                    {
+                        alert( response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX error:', error);
+                }
+            });
+        });
         </script>
     @endpush
 </x-admin1-layout>
