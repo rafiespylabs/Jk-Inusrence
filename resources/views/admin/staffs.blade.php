@@ -109,7 +109,7 @@
                 <div class="row form-group">
                     <div class="col-4">
                         <label>Department</label>
-                        <select  name="dept_id" id="adddept_id" class="form-control">
+                        <select  name="dept_id" id="adddept_id" class="form-control" required>
                             <option value="">Select One</option>
                             @foreach($departments as $dept)
                             <option value="{{$dept->id}}">{{$dept->department}}</option>
@@ -118,7 +118,7 @@
                     </div>
                     <div class="col-4">
                         <label>Designation</label>
-                        <select  name="design_id" id="adddesign_id" class="form-control">
+                        <select  name="design_id" id="adddesign_id" class="form-control" required>
                             <option value="">Select One</option>
                             @foreach($designations as $design)
                             <option value="{{$design->id}}">{{$design->designation}}</option>
@@ -209,7 +209,7 @@
                         </div>
                         <div class="col-4">
                             <label>Department</label>
-                            <select  name="dept_id" id="editdept_id" class="form-control">
+                            <select  name="dept_id" id="editdept_id" class="form-control" required>
                                 <option value="">Select One</option>
                                 @foreach($departments as $dept)
                                 <option value="{{$dept->id}}">{{$dept->department}}</option>
@@ -218,7 +218,7 @@
                         </div>
                         <div class="col-4">
                             <label>Designation </label>
-                            <select  name="design_id" id="editdesign_id" class="form-control">
+                            <select  name="design_id" id="editdesign_id" class="form-control" required>
                                 <option value="">Select One</option>
                                 @foreach($designations as $design)
                                 <option value="{{$design->id}}">{{$design->designation}}</option>

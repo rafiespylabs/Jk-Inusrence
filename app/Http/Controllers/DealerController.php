@@ -44,6 +44,15 @@ class DealerController extends Controller
     }
     public function store(Request $request)
     {
+        if(Tbl_dealers::where('dealer_name',$request->dealer_name)
+        ->orWhere('phone_number', $request->phone_number)
+        ->exists())
+        {
+            return response()->json([
+                'success' => false,
+                'message' => 'Already exist This Dealer Or Phone Number',
+            ]);
+        }
        $created_by=Auth::user()->id;
        $dealer=new Tbl_dealers;
        $dealer->dealer_name=$request->dealer_name;
@@ -63,6 +72,15 @@ class DealerController extends Controller
     }
     public function update(Request $request)
     {
+        if(Tbl_dealers::where('dealer_name',$request->dealer_name)
+        ->orWhere('phone_number', $request->phone_number)
+        ->exists())
+        {
+            return response()->json([
+                'success' => false,
+                'message' => 'Already Updated This Dealer Or Phone Number',
+            ]);
+        }
         $dealer_id=$request->dealer_id;
         $dealer=Tbl_dealers::find($dealer_id);
         $dealer->dealer_name=$request->dealer_name;

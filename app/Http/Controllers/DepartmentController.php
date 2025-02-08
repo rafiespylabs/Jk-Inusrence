@@ -14,6 +14,14 @@ class DepartmentController extends Controller
     }
     public function store(Request $request)
     {
+        if(Tbl_departments::where('department',$request->department)
+        ->exists())
+        {
+            return response()->json([
+                'success' => false,
+                'message' => 'Already Exist This department',
+            ]);
+        }
         $department=new Tbl_departments;
         $department->department=$request->department;
         $department->save();
@@ -27,6 +35,14 @@ class DepartmentController extends Controller
     }
     public function update(Request $request)
     {
+        if(Tbl_departments::where('department',$request->department)
+        ->exists())
+        {
+            return response()->json([
+                'success' => false,
+                'message' => 'Already Added This department',
+            ]);
+        }
         $department_id=$request->department_id;
         $department=Tbl_departments::find($department_id);
         $department->department=$request->department;

@@ -54,7 +54,8 @@
                     </div>
                     <div class="col-6">
                         <label>Phone Number</label>
-                        <input type="text"  name="phone_number" class="form-control">
+                        <input type="text"  name="phone_number" class="form-control" required
+                         pattern="[6789][0-9]{9}" title="Please enter valid phone number">
                     </div>
                 </div>
                 <div class="form-actions form-group">
@@ -90,7 +91,8 @@
                         </div>
                         <div class="col-6">
                             <label>Phone Number</label>
-                            <input type="text"  name="phone_number" id="phone_number"  class="form-control">
+                            <input type="text"  name="phone_number" id="phone_number"  class="form-control" required
+                            pattern="[6789][0-9]{9}" title="Please enter valid phone number">
                         </div>
                     </div>
                     <div class="form-actions form-group">

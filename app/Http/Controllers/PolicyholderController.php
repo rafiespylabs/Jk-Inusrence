@@ -13,6 +13,7 @@ use App\Models\Tbl_referred_persons;
 use App\Models\Tbl_insurence_providers;
 use App\Models\Tbl_policy_categories;
 use App\Models\Tbl_vehiclepolicy_renews;
+use App\Models\Tbl_payments;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Auth;
 use Response;
@@ -41,14 +42,26 @@ class PolicyholderController extends Controller
         $i=1;
         foreach($policyholders as $holder)
         {
+            $renew_created_by=Tbl_vehiclepolicy_renews::with('added_user')->where('policy_id',$holder->id)->first();
             $added_executive=$holder->added_executive->name??'';
-            $vehicle_model=$holder->vehicle_model->vehicle_model??'';
+            $vehicle_model=$holder->vehicle_model->model??'';
             $company=$holder->company->company??'';
             $agent=$holder->agent->agent_name??'';
             $dealer=$holder->dealer->dealer_name??'';
             $prepared_by=$holder->prepared_user->name??'';
             $payment_mode=$holder->payment_mode->payment_mode??"";
             $referred_person=$holder->reffered->name??"";
+            $created_by=$renew_created_by->added_user->name ?? "";
+            $premium=$holder->premium_amount ?? 0;
+            $total_paid_amount=0;
+            $payments=Tbl_payments::where('policy_id',$holder->id)->where('policy_cat_id',9)
+            ->get();
+            foreach($payments as $pay)
+            {
+                $total_paid_amount+=$pay->paid_amount;
+            }
+            $balance_amount= $premium-$total_paid_amount ?? 0;
+            $pay_status='';
             $html.='<tr>';
             $html.='<td>'.$i.'</td>';
             $html.='<td>'.$agent.'</td>';
@@ -62,12 +75,15 @@ class PolicyholderController extends Controller
             $html.='<td>'.$vehicle_model.'</td>';
             $html.='<td>'.$company.'</td>';
             $html.='<td>'.$holder->premium_amount.'</td>';
+            $html.='<td>'.$holder->paid_amount.'</td>';
+            $html.='<td>'.$holder->due_amount.'</td>';
             $html.='<td>'.$holder->valuation_amount.'</td>';
             $html.='<td>'.$holder->total_cost.'</td>';
             $html.='<td>'.$payment_mode.'</td>';
             $html.='<td>'.$added_executive.'</td>';
             $html.='<td>'.$prepared_by.'</td>';
             $html.='<td>'.$referred_person.'</td>';
+            $html.='<td>'.$created_by.'</td>';
             $html.='<td>'.$holder->created_date.'</td>';
             $html.='<td>';
             $html.='<a href="/vehicle_policydocuments/'.$holder->id.'"><button class="btn btn-primary btn-xs" data-id="'.$holder->id.'"><i class="fa fa-file"></i> Documents</button></a>';
@@ -80,6 +96,22 @@ class PolicyholderController extends Controller
             $html.='</td>';
             $html.='<td>'.$holder->assigned_date.'</td>';
             $html.='<td>';
+            if($total_paid_amount==0)
+            {
+                $html.='<span class="badge badge-warning mb-2">Not Paid</span>';
+                $html.='<a href="/policypayments/9/'.$holder->id.'"><button class="btn btn-danger btn-xs" data-id="'.$holder->id.'"><i class="fas fa-wallet"></i> Pay Now</button></a>';
+            }
+            elseif($total_paid_amount!=0 && $premium != $total_paid_amount)
+            {
+                $html.='<span class="badge badge-danger mb-2">Partial Paid</span>';
+                $html.='<a href="/policypayments/9/'.$holder->id.'"><button class="btn btn-danger btn-xs" data-id="'.$holder->id.'"><i class="fas fa-wallet"></i> Pay Now</button></a>';
+            }
+            elseif($premium == $total_paid_amount)
+            {
+                $html.='<span class="badge badge-success">Full Paid</span>';
+            }
+            $html.='</td>';
+            $html.='<td>';
             $html.='<i class="fa fa-edit edit_policyholder" data-id="'.$holder->id.'" data-bs-toggle="modal"   data-bs-target="#EditModal"></i>';
             $html.='</td>';
             $html.='</tr>';
@@ -91,9 +123,14 @@ class PolicyholderController extends Controller
     {
         $created_by=Auth::user()->id;
         $existingRecord =Tbl_policyholders::where('name',$request->name )->exists();
+        $existVehicleNumber =Tbl_policyholders::where('vehicle_number',$request->vehicle_number )->exists();
         if($existingRecord)
         {
-            return Response::json([ 'success' => false,'message'=>'Policy Already Exist']);
+            return Response::json(['success' => false,'message'=>'Policy Already Exist']);
+        }
+        if($existVehicleNumber)
+        {
+            return Response::json(['success' => false,'message'=>'Vehicle Number Already Exist']);
         }
         $policyholder=new Tbl_policyholders;
         $policyholder->policy_type=$request->policy_type;
@@ -118,7 +155,8 @@ class PolicyholderController extends Controller
         $policyholder->broker_name =$request->broker_name;
         $policyholder->total_cost =$request->total_cost;
         $policyholder->provider_id =$request->provider_id;
-        $policyholder->created_date=date('Y-m-d');
+        $policyholder->created_date=date('Y-m-d H:i:s');
+        $policyholder->created_by=$created_by;
         $policyholder->note=$request->note;
         $policyholder->assigned_userid=$request->assigned_userid;
         $policyholder->assigned_date=date('Y-m-d');
@@ -149,12 +187,24 @@ class PolicyholderController extends Controller
     }
     public function update(Request $request)
     {
+        $edited_by=Auth::user()->id;
         $policyholder_id=$request->policyholder_id;
+        $existingRecord =Tbl_policyholders::where('name',$request->name )->where('id','!=',$policyholder_id)->exists();
+        $existVehicleNumber =Tbl_policyholders::where('vehicle_number',$request->vehicle_number )->where('id','!=',$policyholder_id)->exists();
+        if($existingRecord)
+        {
+            return Response::json(['success' => false,'message'=>'Policy Name Already Updated']);
+        }
+        if($existVehicleNumber)
+        {
+            return Response::json(['success' => false,'message'=>'Vehicle Number Already Updated']);
+        }
         $policyholder=Tbl_policyholders::find($policyholder_id);
         $policyholder->name=$request->name;
         $policyholder->vehicle_number=$request->vehicle_number;
         $policyholder->primary_number=$request->primary_number;
         $policyholder->secondary_number=$request->secondary_number;
+        $policyholder->start_date=$request->start_date;
         $policyholder->expiry_date=$request->expiry_date;
         $policyholder->vehicle_model_id=$request->vehicle_model_id;
         $policyholder->company_id=$request->company_id;
@@ -167,6 +217,8 @@ class PolicyholderController extends Controller
         $policyholder->broker_name =$request->broker_name;
         $policyholder->total_cost =$request->total_cost;
         $policyholder->provider_id =$request->provider_id;
+        $policyholder->edited_by=$edited_by;
+        $policyholder->edited_date=date('Y-m-d H:i:s');
         $policyholder->save();
         return Response::json([ 'success' => true,'message'=>'Policy Updated successfully']);
     }

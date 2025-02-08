@@ -34,7 +34,7 @@ class OtherpoliciesController extends Controller
         $validatedData = $request->validate([
             'policy_category_id' => 'required|exists:tbl_policy_categories,id',
             'name' => 'required|string|max:255',
-            'primary_number' => 'required|string|max:15',
+            'primary_number' => 'nullable|string|max:15',
             'secondary_number' => 'nullable|string|max:15',
             'start_date' => 'required|date',
             'expiry_date' => 'required|date',
@@ -49,6 +49,15 @@ class OtherpoliciesController extends Controller
             'payment_mode_id'=>'nullable|integer|exists:tbl_payment_modes,id'
         ]);
         try {
+            if(Tbl_other_policies::where('name',$validatedData['name'])
+            ->orWhere('primary_number', $validatedData['primary_number'])
+            ->exists())
+            {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Already Exist This Policy Name Or Phone Number',
+                ]);
+            }
             $current_user_id=Auth::user()->id;
             $otherpolicies = new Tbl_other_policies();
             $otherpolicies->policy_category_id = $validatedData['policy_category_id'];
@@ -64,7 +73,9 @@ class OtherpoliciesController extends Controller
             $otherpolicies->status = $validatedData['status'];           
             $otherpolicies->referred_id = $validatedData['referred_id'];           
             $otherpolicies->provider_id = $validatedData['provider_id'];           
-            $otherpolicies->note = $validatedData['note'];           
+            $otherpolicies->note = $validatedData['note'];  
+            $otherpolicies->created_by= $current_user_id ;     
+            $otherpolicies->created_date=date('Y-m-d H:i:s') ;            
             if($otherpolicies->save())
             {
                 $otherpolicy_renew = new Tbl_other_policy_renews();
@@ -89,6 +100,10 @@ class OtherpoliciesController extends Controller
             $otherpolicies->referred = $referred->name;
             $provider = Tbl_insurence_providers::find($validatedData['provider_id']);
             $otherpolicies->provider = $provider->provider_name;
+
+            $otherpolicyNew = Tbl_other_policies::find($otherpolicies->id);
+            $otherpolicies->paid_amount=$otherpolicyNew->paid_amount;
+            $otherpolicies->due_amount=$otherpolicyNew->due_amount;
             return response()->json([
                 'success' => true,
                 'message' => 'Other policy created successfully',
@@ -136,7 +151,7 @@ class OtherpoliciesController extends Controller
             'id' => 'required|exists:tbl_other_policies,id',
             'policy_category_id' => 'required|exists:tbl_policy_categories,id',
             'name' => 'required|string|max:255',
-            'primary_number' => 'required|string|max:15',
+            'primary_number' => 'nullable|string|max:15',
             'secondary_number' => 'nullable|string|max:15',
             'start_date' => 'required|date',
             'expiry_date' => 'required|date',
@@ -149,9 +164,17 @@ class OtherpoliciesController extends Controller
             'provider_id' => 'required|integer|exists:tbl_insurence_providers,id',
             'note' => 'nullable|string',     
         ]);
-
-        $otherpolicies = Tbl_other_policies::find($validatedData['id']);
-
+            // if(Tbl_other_policies::where('name',$validatedData['name'])
+            // ->orWhere('primary_number', $validatedData['primary_number'])
+            // ->exists())
+            // {
+            //     return response()->json([
+            //         'success' => false,
+            //         'message' => 'Already Updated  Policy Name Or Phone Number',
+            //     ]);
+            // }
+            $current_user_id=Auth::user()->id;
+            $otherpolicies = Tbl_other_policies::find($validatedData['id']);
             $otherpolicies->policy_category_id = $validatedData['policy_category_id'];
             $otherpolicies->name = $validatedData['name'];
             $otherpolicies->primary_number = $validatedData['primary_number'];           
@@ -165,7 +188,9 @@ class OtherpoliciesController extends Controller
             $otherpolicies->status = $validatedData['status'];           
             $otherpolicies->referred_id = $validatedData['referred_id'];           
             $otherpolicies->provider_id = $validatedData['provider_id'];           
-            $otherpolicies->note = $validatedData['note'];           
+            $otherpolicies->note = $validatedData['note']; 
+            $otherpolicies->edited_by= $current_user_id ;     
+            $otherpolicies->edited_date=date('Y-m-d H:i:s') ;          
             $otherpolicies->save();
 
             $policy_category = Tbl_policy_categories::find($validatedData['policy_category_id']);
@@ -175,7 +200,6 @@ class OtherpoliciesController extends Controller
             if (!$executive) {
                 throw new \Exception('Staff user not found');
             }
-
             $otherpolicies->user_id = $executive->user_id;
 
             $referred = Tbl_referred_persons::find($validatedData['referred_id']);
@@ -183,8 +207,6 @@ class OtherpoliciesController extends Controller
 
             $provider = Tbl_insurence_providers::find($validatedData['provider_id']);
             $otherpolicies->provider = $provider->provider_name;
-       
-           
         return response()->json([
             'success' => true,
             'message' => 'Other policy updated successfully',

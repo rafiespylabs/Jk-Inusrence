@@ -24,6 +24,7 @@
                             <th>Card Holder Name</th>
                             <th>Expiry Date</th>
                             <th>Bank</th>
+                            <th>Current Amount</th>
                             <th>Created By</th>
                             <th>Created Date</th>
                             <th>Action</th>

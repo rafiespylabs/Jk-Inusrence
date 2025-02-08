@@ -70,6 +70,7 @@
                         <div class="form-group">
                             <label for="category_name">Category</label>
                             <select name="cat_id" id="cat_id" class="form-control" required>
+                                    <option value="">Select One</option>
                                 @foreach ($category as $cat)
                                     <option value="{{ $cat->id }}">{{ $cat->category_name }}</option>
                                 @endforeach
@@ -108,6 +109,7 @@
                             <div class="form-group">
                             <label for="category">Category</label>
                             <select name="cat_id" id="edit_cat_id" class="form-control" required>
+                                    <option value="">Select One</option>
                                 @foreach ($category as $cat)
                                     <option value="{{ $cat->id }}">{{ $cat->category_name }}</option>
                                 @endforeach

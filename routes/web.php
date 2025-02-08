@@ -45,6 +45,15 @@ use App\Http\Controllers\HealthPolicyDocumentController;
 use App\Http\Controllers\HealthpolicyRenewController;
 use App\Http\Controllers\OtherPolicyDocumentController;
 use App\Http\Controllers\OtherpolicyRenewController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\SubcategoryController;
+use App\Http\Controllers\UnitController;
+use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\ClientController;
+use App\Http\Controllers\ItemController;
+use App\Http\Controllers\PolicyPaymentController;
+use App\Http\Controllers\RePaymentController;
+use App\Http\Controllers\PurchaseCardController;
 use Illuminate\Support\Facades\Route;
 // Route::get('/', [ComingsoonController::class, 'index'])->name('comingsoon');
 Route::get('/', function () {return redirect(route('login'));});
@@ -179,7 +188,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/payment/getPolicyDetails', [PaymentController::class, 'getPolicyDetails'])->name('payment.getPolicyDetails');
 
     Route::get('/creditcard_pay', [CreditCardPayController::class, 'index'])->name('creditcard_pay');
-    Route::get('/creditcard_pay/list', [CreditCardPayController::class, 'list'])->name('creditcard_pay.list');
+    Route::any('/creditcard_pay/list', [CreditCardPayController::class, 'list'])->name('creditcard_pay.list');
     Route::post('/creditcard_pay/store', [CreditCardPayController::class, 'store'])->name('creditcard_pay.store');
     Route::post('/creditcard_pay/show', [CreditCardPayController::class, 'show'])->name('creditcard_pay.show');
     Route::post('/creditcard_pay/update', [CreditCardPayController::class, 'update'])->name('creditcard_pay.update');
@@ -290,5 +299,61 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/otherPolicyRenew/{id}', [OtherpolicyRenewController::class, 'index'])->name('otherPolicyRenew');
     Route::post('/otherPolicyRenew/store', [OtherpolicyRenewController::class, 'store'])->name('otherPolicyRenew.store');
+
+    //Tyres
+    Route::get('/categories', [CategoryController::class, 'index'])->name('categories');
+    Route::post('/categories/store', [CategoryController::class, 'store'])->name('categories.store');
+    Route::post('/categories/edit', [CategoryController::class, 'edit'])->name('categories.edit');
+    Route::post('/categories/update', [CategoryController::class, 'update'])->name('categories.update');
+    Route::post('/categories/destroy', [CategoryController::class, 'destroy'])->name('categories.destroy');
+
+    Route::get('/subcategories', [SubcategoryController::class, 'index'])->name('subcategories');
+    Route::post('/subcategories/store', [SubcategoryController::class, 'store'])->name('subcategories.store');
+    Route::post('/subcategories/edit', [SubcategoryController::class, 'edit'])->name('subcategories.edit');
+    Route::post('/subcategories/update', [SubcategoryController::class, 'update'])->name(name: 'subcategories.update');
+    Route::post('/subcategories/destroy', [SubcategoryController::class, 'destroy'])->name('subcategories.destroy');
+
+    Route::get('/units', [UnitController::class, 'index'])->name('units');
+    Route::post('/units/store', [UnitController::class, 'store'])->name('units.store');
+    Route::post('/units/edit', [UnitController::class, 'edit'])->name('units.edit');
+    Route::post('/units/update', [UnitController::class, 'update'])->name('units.update');
+    Route::post('/units/destroy', [UnitController::class, 'destroy'])->name('units.destroy');
+
+    Route::get('/suppliers', [SupplierController::class, 'index'])->name('suppliers');
+    Route::post('/suppliers/store', [SupplierController::class, 'store'])->name('suppliers.store');
+    Route::post('/suppliers/edit', [SupplierController::class, 'edit'])->name('suppliers.edit');
+    Route::post('/suppliers/update', [SupplierController::class, 'update'])->name('suppliers.update');
+    Route::post('/suppliers/destroy', [SupplierController::class, 'destroy'])->name('suppliers.destroy');
+
+    Route::get('/clients', [ClientController::class, 'index'])->name('clients');
+    Route::post('/clients/store', [ClientController::class, 'store'])->name('clients.store');
+    Route::post('/clients/edit', [ClientController::class, 'edit'])->name('clients.edit');
+    Route::post('/clients/update', [ClientController::class, 'update'])->name('clients.update');
+    Route::post('/clients/destroy', [ClientController::class, 'destroy'])->name('clients.destroy');
+
+    Route::get('/items', [ItemController::class, 'index'])->name('items');
+    Route::post('/items/store', [ItemController::class, 'store'])->name('items.store');
+    Route::post('/items/edit', [ItemController::class, 'edit'])->name('items.edit');
+    Route::post('/items/update', [ItemController::class, 'update'])->name('items.update');
+    Route::post('/items/destroy', [ItemController::class, 'destroy'])->name('items.destroy');
+    Route::post('/get-subcategories', [ItemController::class, 'getSubcategories'])->name('get.subcategories');
+
+    Route::get('/policypayments/{pcatid}/{pid}', [PolicyPaymentController::class, 'index'])->name('policypayments');
+    Route::post('/policypayment/list', [PolicyPaymentController::class, 'list'])->name('policypayment.list');
+    Route::post('/policypayment/store', [PolicyPaymentController::class, 'store'])->name('policypayment.store');
+    Route::post('/policypayment/show', [PolicyPaymentController::class, 'show'])->name('policypayment.show');
+    Route::post('/policypayment/update', [PolicyPaymentController::class, 'update'])->name('policypayment.update');
+
+    Route::get('/credit_repayment/{id}', [RePaymentController::class, 'index'])->name('credit_repayment');
+    Route::any('/credit_repayment/list', [RePaymentController::class, 'list'])->name('credit_repayment.list');
+    Route::post('/credit_repayment/store', [RePaymentController::class, 'store'])->name('credit_repayment.store');
+    Route::post('/credit_repayment/show', [RePaymentController::class, 'show'])->name('credit_repayment.show');
+    Route::post('/credit_repayment/update', [RePaymentController::class, 'update'])->name('credit_repayment.update');
+    Route::post('/credit_repayment/status_update', [RePaymentController::class, 'status_update'])->name('credit_repayment.status_update');
+
+    Route::get('/purchase_cards/{pcatid}/{pid}', [PurchaseCardController::class, 'index'])->name('purchase_cards');
+    Route::any('/purchase_card/list', [PurchaseCardController::class, 'list'])->name('purchase_card.list');
+    Route::post('/purchase_card/store', [PurchaseCardController::class, 'store'])->name('purchase_card.store');
+
 });
 require __DIR__.'/auth.php';

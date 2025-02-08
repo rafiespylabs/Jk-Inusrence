@@ -41,6 +41,15 @@ class CompanyController extends Controller
     }
     public function store(Request $request)
     {
+        if(Tbl_companies::where('company',$request->company)
+        ->orWhere('phone', $request->phone)
+        ->exists())
+        {
+            return response()->json([
+                'success' => false,
+                'message' => 'Already exist This Company or Phone',
+            ]);
+        }
         $created_by=Auth::user()->id;
         $company=new Tbl_companies;
         $company->company=$request->company;
@@ -58,6 +67,15 @@ class CompanyController extends Controller
     }
     public function update(Request $request)
     {
+        if(Tbl_companies::where('company',$request->company)
+        ->orWhere('phone', $request->phone)
+        ->exists())
+        {
+            return response()->json([
+                'success' => false,
+                'message' => 'Already Updated This Company or Phone',
+            ]);
+        }
        $company_id=$request->company_id;
        $company=Tbl_companies::find($company_id);
        $company->company=$request->company;

@@ -33,7 +33,7 @@ class AgentController extends Controller
             $html.='<td>'.$added_by.'</td>';
             $html.='<td>'.$agent->created_date.'</td>';
             $html.='<td><i class="fa fa-edit edit_agent" data-id="'.$agent->id.'" data-bs-toggle="modal" data-bs-target="#EditModal"></i>
-            <i class="fa fa-trash delete_agent" data-id="'.$agent->id.'"></i></td>';
+           </td>';
             $html.='</tr>';
             $i++;
         }
@@ -41,6 +41,15 @@ class AgentController extends Controller
     }
     public function store(Request $request)
     {
+        if(Tbl_agents::where('agent_name',$request->agent_name)
+        ->orWhere('phone_number', $request->phone_number)
+        ->exists())
+        {
+            return response()->json([
+                'success' => false,
+                'message' => 'Already Exist This Agent Name Or Phone Number',
+            ]);
+        }
         $created_by=Auth::user()->id;
         $agent=new Tbl_agents;
         $agent->agent_name=$request->agent_name;
@@ -60,6 +69,15 @@ class AgentController extends Controller
     }
     public function update(Request $request)
     {
+        if(Tbl_agents::where('agent_name',$request->agent_name)
+        ->orWhere('phone_number', $request->phone_number)
+        ->exists())
+        {
+            return response()->json([
+                'success' => false,
+                'message' => 'Already Updated This Agent Name Or Phone Number',
+            ]);
+        }
         $agent_id=$request->agent_id;
         $agent=Tbl_agents::find($agent_id);
         $agent->agent_name=$request->agent_name;

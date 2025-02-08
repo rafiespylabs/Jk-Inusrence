@@ -20,6 +20,14 @@ class PolicycategoryController extends Controller
         ]);
 
         try {
+            if(Tbl_policy_categories::where('policy_category',$validatedData['policycategories'])
+            ->exists())
+            {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Already exist This Policy Category',
+                ]);
+            }
             $policycategories = new Tbl_policy_categories();
             $policycategories->policy_category = $validatedData['policycategories'];           
             $policycategories->save();
@@ -58,7 +66,14 @@ class PolicycategoryController extends Controller
             'policycategories' => 'required|string|max:100',
             
         ]);
-
+        if(Tbl_policy_categories::where('policy_category',$validatedData['policycategories'])
+        ->exists())
+        {
+            return response()->json([
+                'success' => false,
+                'message' => 'Already Updated This Policy Category',
+            ]);
+        }
         $policycategories = Tbl_policy_categories::find($validatedData['id']);
         $policycategories->policy_category = $validatedData['policycategories'];             
         $policycategories->save();

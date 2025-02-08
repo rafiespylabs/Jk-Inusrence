@@ -14,6 +14,14 @@ class DesignationController extends Controller
     }
     public function store(Request $request)
     {
+        if(Tbl_designations::where('designation',$request->designation)
+        ->exists())
+        {
+            return response()->json([
+                'success' => false,
+                'message' => 'Already Exist This designation',
+            ]);
+        }
         $designation=new Tbl_designations;
         $designation->designation=$request->designation;
         $designation->save();
@@ -27,6 +35,14 @@ class DesignationController extends Controller
     }
     public function update(Request $request)
     {
+        if(Tbl_designations::where('designation',$request->designation)
+        ->exists())
+        {
+            return response()->json([
+                'success' => false,
+                'message' => 'Already Added This designation',
+            ]);
+        }
         $designation_id=$request->designation_id;
         $designation=Tbl_designations::find($designation_id);
         $designation->designation=$request->designation;

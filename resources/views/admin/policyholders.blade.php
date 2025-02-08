@@ -35,17 +35,21 @@
                             <th>Vehicle Model</th>
                             <th>Company</th>
                             <th>Premium</th>
+                            <th>Paid Amount</th>
+                            <th>Due Amount</th>
                             <th>Valuation Amount</th>
                             <th>Total Cost</th>
                             <th>Payment Mode</th>
                             <th>Executive</th>
                             <th>Prepared Staff</th>
                             <th>Reference</th>
+                            <th>Created By</th>
                             <th>Created Date</th>
                             <th>Documents</th>
                             <th>Renew</th>
                             <th>Assign</th>
                             <th>Assigned Date</th>
+                            <th>Payment</th>
                             <th>Action</th>
                             </tr>
                         </thead>
@@ -145,7 +149,7 @@
                     <div class="col-4">
                         <label>Primary Contact<span>*</span></label>
                         <input type="text"  name="primary_number" class="form-control" pattern="[0-9]{10}" 
-                        title="Phone number must be 10 digits"  required>
+                        title="Phone number must be 10 digits" >
                     </div>
                 </div>
                 <div class="row form-group">
@@ -236,8 +240,9 @@
                 </div>
                 <div class="row form-group">
                     <div class="col-4">
-                        <label>Payment Mode<span>*</span></label>
-                        <select  name="payment_mode_id" class="form-control" required>
+                        <label>Payment Mode</label>
+                        <select  name="payment_mode_id" class="form-control">
+                            <option value="">Select One</option>
                             @foreach($payment_modes as $mode)
                             <option value="{{$mode->id}}">{{$mode->payment_mode}}</option>
                             @endforeach
@@ -259,8 +264,8 @@
                 </div>
                 <div class="row form-group">
                     <div class="col-4">
-                        <label>Prepared User<span>*</span></label>
-                        <select  name="prepared_user_id" class="form-control" required>
+                        <label>Prepared User</label>
+                        <select  name="prepared_user_id" class="form-control">
                             <option value="">Select One</option>
                             @foreach($staffs as $staff)
                                 <option value="{{$staff->user_id}}">{{$staff->user->name}}</option>
@@ -315,9 +320,9 @@
                             <input type="text"  name="vehicle_number" id="vehicle_number" class="form-control" required>
                         </div>
                         <div class="col-4">
-                            <label>Primary Contact<span>*</span></label>
+                            <label>Primary Contact</label>
                             <input type="text"  name="primary_number" id="primary_number" pattern="[0-9]{10}" 
-                            title="Phone number must be 10 digits" class="form-control" required>
+                            title="Phone number must be 10 digits" class="form-control">
                         </div>
                     </div>
                     <div class="row form-group">
@@ -327,9 +332,15 @@
                             title="Phone number must be 10 digits" class="form-control">
                         </div>
                         <div class="col-4">
+                            <label>Start Date<span>*</span></label>
+                            <input type="date"  name="start_date" id="start_date" class="form-control" value="" required>
+                        </div>
+                        <div class="col-4">
                             <label>Expiry Date<span>*</span></label>
                             <input type="date"  name="expiry_date" id="expiry_date" class="form-control" required>
                         </div>
+                    </div>
+                    <div class="row form-group">
                         <div class="col-4">
                             <label>Vehicle Model<span>*</span></label>
                             <select  name="vehicle_model_id" id="vehicle_model_id" class="form-control" required>
@@ -339,8 +350,6 @@
                                 @endforeach
                             </select>
                         </div>
-                    </div>
-                    <div class="row form-group">
                         <div class="col-4">
                             <label>Premium Amount<span>*</span></label>
                             <input type="text"  name="premium_amount" id="premium_amount" class="form-control" required>
@@ -349,12 +358,12 @@
                             <label>Valuation Amount</label>
                             <input type="text"  name="valuation_amount" id="valuation_amount" class="form-control">
                         </div>
+                    </div>
+                    <div class="row form-group">
                         <div class="col-4">
                             <label>Total Cost</label>
                             <input type="text"  name="total_cost" id="edit_total_cost" value="0" readonly class="form-control">
                         </div>
-                    </div>
-                    <div class="row form-group">
                         <div class="col-4">
                             <label>Sum Inusred</label>
                             <input type="number" step="any" name="sum_insured" id="edit_sum_insured" required class="form-control">
@@ -368,6 +377,8 @@
                                 @endforeach
                             </select>
                         </div>
+                    </div>
+                    <div class="row form-group">
                         <div class="col-4">
                             <label>Buying Type <span>*</span></label>
                             <select  name="buying_type" class="form-control" id="edit_buying_type" required>
@@ -376,8 +387,6 @@
                                 <option value="2">Broker</option>
                             </select>
                         </div>
-                    </div>
-                    <div class="row form-group">
                         <div class="col-4" id="edit_broker_div">
                             <label>Broker Name </label>
                             <input type="text"  name="broker_name" id="broker_name" class="form-control">
@@ -391,9 +400,12 @@
                                 @endforeach
                             </select>
                         </div>
+                    </div>
+                    <div class="row form-group">
                         <div class="col-4">
-                            <label>Payment Mode<span>*</span></label>
-                            <select  name="payment_mode_id" id="payment_mode_id" class="form-control" required>
+                            <label>Payment Mode</label>
+                            <select  name="payment_mode_id" id="payment_mode_id" class="form-control">
+                                <option value="">Select One</option>
                                 @foreach($payment_modes as $mode)
                                 <option value="{{$mode->id}}">{{$mode->payment_mode}}</option>
                                 @endforeach
@@ -1070,6 +1082,7 @@
             $('#vehicle_number').val(response.vehicle_number);
             $('#primary_number').val(response.primary_number);
             $('#secondary_number').val(response.secondary_number);
+            $('#start_date').val(response.start_date);
             $('#expiry_date').val(response.expiry_date);
             $('#vehicle_model_id').val(response.vehicle_model_id);
             $('#company_id').val(response.company_id);
@@ -1239,6 +1252,15 @@ $(document).on("change", "#add_start_date", function() {
                       "-" + (expiryDate.getMonth() + 1 < 10 ? '0' + (expiryDate.getMonth() + 1) : expiryDate.getMonth() + 1) + 
                       "-" + (expiryDate.getDate() < 10 ? '0' + expiryDate.getDate() : expiryDate.getDate());
     $('#add_expiry_date').val(formattedDate);
+});
+$(document).on("change", "#start_date", function() {
+    var startDate = new Date($(this).val());
+    var expiryDate = new Date(startDate);
+    expiryDate.setFullYear(expiryDate.getFullYear() + 1);
+    var formattedDate = expiryDate.getFullYear() + 
+                      "-" + (expiryDate.getMonth() + 1 < 10 ? '0' + (expiryDate.getMonth() + 1) : expiryDate.getMonth() + 1) + 
+                      "-" + (expiryDate.getDate() < 10 ? '0' + expiryDate.getDate() : expiryDate.getDate());
+    $('#expiry_date').val(formattedDate);
 });
 </script>
 @endpush

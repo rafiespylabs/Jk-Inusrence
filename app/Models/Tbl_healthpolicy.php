@@ -34,5 +34,9 @@ class Tbl_healthpolicy extends Model
     {
         return $this->belongsTo(Tbl_policy_categories::class, 'policy_category_id','id');
     }
+    public function created_user()
+    {
+        return $this->belongsTo(User::class, 'created_by','id');
+    }
 
 }

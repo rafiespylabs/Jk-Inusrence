@@ -54,10 +54,10 @@ class StaffController extends Controller
    public function store(Request $request)
    {
       $existRecord=User::where('user_name',$request->user_name)
-      ->orWhere('email', $request->email)->exists();
+      ->orWhere('email', $request->email)->orWhere('email', $request->email)->exists();
       if($existRecord)
       {
-         return Response::json([ 'success' => false,'message'=>'Already Taken Email or Username']);
+         return Response::json([ 'success' => false,'message'=>'Already Taken Email or Username or Mobile Number']);
       }
       $user=new User;
       $user->name=$request->name;
@@ -90,6 +90,12 @@ class StaffController extends Controller
    }
    public function update(Request $request)
    {
+      $existRecord=User::where('user_name',$request->user_name)
+      ->orWhere('email', $request->email)->orWhere('email', $request->email)->exists();
+      if($existRecord)
+      {
+         return Response::json([ 'success' => false,'message'=>'Already Updated Email, Username and Mobile Number']);
+      }
       $staff_id=$request->staff_id;
       $staff=Tbl_staffs::find($staff_id);
       $staff->Join_date=$request->join_date;

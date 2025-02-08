@@ -32,9 +32,10 @@
                                         <th>Expiry Date</th>
                                         <th>Premium Amount</th>
                                         <th>Sum Insured</th>
-                                        <th>Term</th>
                                         <th>Executive</th>
                                         <th>Status</th>
+                                        <th>Paid Amount</th>
+                                        <th>Due Amount</th>
                                         <th>Referesnce Perosn</th>
                                         <th>Insurance Provider</th>
                                         <th>Document</th>
@@ -56,9 +57,20 @@
                                             <td>{{ $otherpolicy->expiry_date}}</td>
                                             <td>{{ $otherpolicy->premium_amount}}</td>
                                             <td>{{ $otherpolicy->sum_insured}}</td>
-                                            <td>{{ $otherpolicy->term}}</td>
                                             <td>{{ $otherpolicy->executive->user->name ?? 'N/A' }}</td>
-                                            <td>{{ $otherpolicy->status == 1 ? 'Paid' : 'Not Paid' }}</td>
+                                            <td>
+                                                @if($otherpolicy->paid_amount==0)
+                                                <span class="badge badge-warning mb-2">Not Paid</span>
+                                                <a href="/policypayments/{{$otherpolicy->policy_category_id}}/{{$otherpolicy->id}}"><button class="btn btn-danger btn-xs" data-id="{{$otherpolicy->id}}"><i class="fas fa-wallet"></i> Pay Now</button></a>
+                                                @elseif(($otherpolicy->paid_amount!=0 &&  $otherpolicy->premium_amount != $otherpolicy->paid_amount))
+                                                <span class="badge badge-danger mb-2">Partial Paid</span>
+                                                <a href="/policypayments/{{$otherpolicy->policy_category_id}}/{{$otherpolicy->id}}"><button class="btn btn-danger btn-xs" data-id="{{$otherpolicy->id}}"><i class="fas fa-wallet"></i> Pay Now</button></a>
+                                                @elseif($otherpolicy->paid_amount == $otherpolicy->premium_amount)
+                                                <span class="badge badge-success">Full Paid</span>
+                                                @endif
+                                            </td>
+                                            <td>{{ $otherpolicy->paid_amount}}</td>
+                                            <td>{{ $otherpolicy->due_amount}}</td>
                                             <td>{{ $otherpolicy->referred->name ?? 'N/A' }}</td>                                            
                                             <td>{{ $otherpolicy->provider->provider_name ?? 'N/A' }}</td>   
                                             <td><a href="{{route('otherPolicyDocs',$otherpolicy->id)}}" class="btn btn-primary btn-xs">Documents</a></td>     
@@ -114,9 +126,9 @@
                                 <input type="text" name="name" id="name" class="form-control" required>
                             </div>
                             <div class="col-4">
-                                <label for="primary_number">Primary Number <span>*</span></label>
+                                <label for="primary_number">Primary Number </label>
                                 <input type="text" name="primary_number" id="primary_number" pattern="[0-9]{10}" 
-                                title="Phone number must be 10 digits" class="form-control" required>
+                                title="Phone number must be 10 digits" class="form-control" >
                             </div>
                         </div>    
                         <div class="row form-group">
@@ -199,8 +211,8 @@
                                 <input type="text" name="note" id="note" class="form-control">
                             </div>
                             <div class="col-4">
-                                <label>Payment Mode<span>*</span></label>
-                                <select  name="payment_mode_id" class="form-control" required>
+                                <label>Payment Mode</label>
+                                <select  name="payment_mode_id" class="form-control">
                                     <option value="">Select One</option>
                                     @foreach($payment_modes as $mode)
                                     <option value="{{$mode->id}}">{{$mode->payment_mode}}</option>
@@ -246,9 +258,9 @@
                                 <input type="text" name="name" id="edit_name" class="form-control" required>
                             </div>
                             <div class="col-4">
-                                <label for="primary_number">Primary Number <span>*</span></label>
+                                <label for="primary_number">Primary Number </label>
                                 <input type="text" name="primary_number" id="edit_primary_number" pattern="[0-9]{10}" 
-                                title="Phone number must be 10 digits" class="form-control" required>
+                                title="Phone number must be 10 digits" class="form-control">
                             </div>
                         </div>
                         <div class="row form-group">
@@ -399,13 +411,19 @@
                                 var table = $('#otherpolicies-datatable').DataTable();
                                 var lastRowNumber = table.data().count() > 0 ? parseInt(table.row(':last').data()[0]) + 1 : 0;
                                 var status='';
-                                if(response.data.status==0)
+                                if(response.data.paid_amount==0)
                                 {
-                                    status='Not Paid';
+                                    status='<span class="badge badge-warning mb-2">Not Paid</span>';
+                                    status+='<a href="/policypayments/'+response.data.policy_category_id+'/'+response.data.id+'"><button class="btn btn-danger btn-xs" data-id="'+response.data.id+'"><i class="fas fa-wallet"></i> Pay Now</button></a>';
                                 }
-                                else if(response.data.status==1)
+                                else if(response.data.paid_amount!=0 && response.data.premium_amount != response.data.paid_amount)
                                 {
-                                    status='Paid';
+                                    status='<span class="badge badge-danger mb-2">Partial Paid</span>';
+                                    status+='<a href="/policypayments/'+response.data.policy_category_id+'/'+response.data.id+'"><button class="btn btn-danger btn-xs" data-id="'+response.data.id+'"><i class="fas fa-wallet"></i> Pay Now</button></a>';
+                                }
+                                else if(response.data.paid_amount==response.data.premium_amount)
+                                {
+                                    status='<span class="badge badge-success">Full Paid</span>';
                                 }
                                 var newRow = table.row.add([
                                     lastRowNumber,                         
@@ -417,9 +435,10 @@
                                     response.data.expiry_date,                                    
                                     response.data.premium_amount,                                    
                                     response.data.sum_insured,                                    
-                                    response.data.term,                                    
                                     response.data.user_id,                                    
-                                    status,                                    
+                                    status,     
+                                    response.data.paid_amount,
+                                    response.data.due_amount,                                       
                                     response.data.referred,                                    
                                     response.data.provider,     
                                     '<a href="/otherPolicyDoc/'+response.data.id+'" class="btn btn-primary btn-xs">Documents</a>',                                   
@@ -529,13 +548,19 @@
                                 var table = $('#otherpolicies-datatable').DataTable();
                                 var row = table.row('#row' + response.data.id); 
                                 var status='';
-                                if(response.data.status==0)
+                                if(response.data.paid_amount==0)
                                 {
-                                    status='Not Paid';
+                                    status='<span class="badge badge-warning mb-2">Not Paid</span>';
+                                    status+='<a href="/policypayments/'+response.data.policy_category_id+'/'+response.data.id+'"><button class="btn btn-danger btn-xs" data-id="'+response.data.id+'"><i class="fas fa-wallet"></i> Pay Now</button></a>';
                                 }
-                                else if(response.data.status==1)
+                                else if(response.data.paid_amount!=0 && response.data.premium_amount != response.data.paid_amount)
                                 {
-                                    status='Paid';
+                                    status='<span class="badge badge-danger mb-2">Partial Paid</span>';
+                                    status+='<a href="/policypayments/'+response.data.policy_category_id+'/'+response.data.id+'"><button class="btn btn-danger btn-xs" data-id="'+response.data.id+'"><i class="fas fa-wallet"></i> Pay Now</button></a>';
+                                }
+                                else if(response.data.paid_amount == response.data.premium_amount)
+                                {
+                                    status='<span class="badge badge-success">Full Paid</span>';
                                 }
                                 row.data([
                                     rowId,                        
@@ -547,9 +572,10 @@
                                     response.data.expiry_date,                                    
                                     response.data.premium_amount,                                    
                                     response.data.sum_insured,                                    
-                                    response.data.term,                                    
                                     response.data.user_id,                                    
-                                    status,                                    
+                                    status,     
+                                    response.data.paid_amount,
+                                    response.data.due_amount,                                
                                     response.data.referred,   
                                     response.data.provider,    
                                     '<a href="/otherPolicyDoc/'+response.data.id+'" class="btn btn-primary btn-xs">Documents</a>',                                   

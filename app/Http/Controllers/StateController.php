@@ -16,6 +16,14 @@ class StateController extends Controller
     }
     public function store(Request $request)
     {
+        if(Tbl_states::where('state',$request->state)
+        ->exists())
+        {
+            return response()->json([
+                'success' => false,
+                'message' => 'Already Exist This state',
+            ]);
+        }
         $state=new Tbl_states;
         $state->country_id=$request->country_id;
         $state->state=$request->state;
@@ -30,6 +38,14 @@ class StateController extends Controller
     }
     public function update(Request $request)
     {
+        if(Tbl_states::where('state',$request->state)
+        ->exists())
+        {
+            return response()->json([
+                'success' => false,
+                'message' => 'Already Updated This state',
+            ]);
+        }
         $state_id=$request->state_id;
         $state=Tbl_states::find($state_id);
         $state->country_id=$request->country_id;

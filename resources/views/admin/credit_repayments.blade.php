@@ -7,31 +7,43 @@
             <div class="card">
                 <div class="card-header">
                     <div class="d-flex align-items-center">
-                        <h2>Credit Card Payments</h2>
+                        <h2>Credit Card RePayments</h2>
                         <button class="btn btn-primary btn-round ms-auto" data-bs-toggle="modal" data-bs-target="#CreateModal">
-                        <i class="fa fa-plus"></i> Create</button>
+                        <i class="fa fa-plus"></i> Add Repay</button>
+                        <a href="{{ url()->previous() }}" class="ml-2"><button class="btn btn-info btn-round ms-auto">
+                        <i class="fa fa-arrow-left"></i> Back</button></a>
                     </div>
+                    <div class="d-flex align-items-center"> 
+                        <p>CARD NAME : {{$credit_cardayment->card->holder_name ?? "N/A" }}<br>
+                        CREDIT AMOUNT : {{$credit_cardayment->credit }}</p>
+                    </div>
+                    @if($credit_cardayment->status==0)
+                        <button class="btn btn-danger btn-sm pay_status" data-id="{{$credit_cardayment->id}}" data-bs-toggle="modal" data-bs-target="#PayStatusModal">
+                            Due
+                        </button>
+                    @elseif($credit_cardayment->status==1)
+                        <button class="btn btn-success btn-sm">
+                           Full Paid
+                        </button>
+                    @endif
                 </div>
                 <div class="card-body">
                     <div id="preloader" style="display:none;">
                         <img src="{{asset('web/preloader.gif')}}">
                     </div>
                     <div class="table-responsive">
-                    <table id="creditcard_pay-datatable" class="table table-striped table-bordered">
+                    <table id="credit_repay-datatable" class="table table-striped table-bordered">
                         <thead>
                             <tr>
                             <th>Sl No</th>
-                            <th>Card</th>
-                            <th>Credit</th>
-                            <th>Credited Date</th>
-                            <th>Purpose</th>
-                            <th>Due Date</th>
-                            <th>Created By</th>
-                            <th>Created Date</th>
+                            <th>Repay Amount</th>
+                            <th>Repay Date</th>
+                            <th>Added By</th>
+                            <th>Added Date</th>
                             <th>Action</th>
                             </tr>
                         </thead>
-                        <tbody id="creditcard_pay_tbody">
+                        <tbody id="credit_repay_tbody">
                         </tbody>
                     </table>
                     </div>
@@ -51,35 +63,17 @@
                 </button>
             </div>
             <div class="modal-body">
-              <form id="create_creditcard_pay_form" class="form" enctype="multipart/form-data">
+              <form id="create_credit_repay_form" class="form" enctype="multipart/form-data">
               @csrf
+                <input type="hidden" name="credit_pay_id" value="{{$credit_pay_id}}">
                 <div class="row form-group">
                     <div class="col-6">
-                        <label>Card<span>*</span></label>
-                        <select  name="card_id" class="form-control" required>
-                            <option value="">Select One</option>
-                            @foreach($cards as $card)
-                            <option value="{{$card->id}}">{{$card->holder_name}}</option>
-                            @endforeach
-                        </select>
+                        <label>Repay Amount<span>*</span></label>
+                        <input type="text"  name="repay_amount" class="form-control" required>
                     </div>
                     <div class="col-6">
-                        <label>Credit<span>*</span></label>
-                        <input type="text"  name="credit" class="form-control" required>
-                    </div>
-                </div>
-                <div class="row form-group">
-                    <div class="col-6">
-                        <label>Credited Date <span>*</span></label>
-                        <input type="date"  name="credited_date" class="form-control" required>
-                    </div>
-                    <div class="col-6">
-                        <label>Purpose</label>
-                        <textarea  name="purpose" class="form-control"></textarea>
-                    </div>
-                    <div class="col-6">
-                        <label>Due Date <span>*</span></label>
-                        <input type="date"  name="due_date" class="form-control" required>
+                        <label>Repay Date <span>*</span></label>
+                        <input type="date"  name="repay_date" class="form-control" required>
                     </div>
                 </div>
                 <div class="form-actions form-group">
@@ -105,37 +99,18 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="update_creditcard_pay_form" class="form" enctype="multipart/form-data">
+                <form id="update_credit_repay_form" class="form" enctype="multipart/form-data">
                     @csrf
-                    <input type="hidden" name="creditcard_payid" id="creditcard_payid" value="">
+                    <input type="hidden" name="id" id="credit_repay_id" value="">
                     <input type="hidden" name="rowid" id="row_id">
                     <div class="row form-group">
                         <div class="col-6">
-                            <label>Card<span>*</span></label>
-                            <select  name="card_id" id="card_id" class="form-control" required>
-                                <option value="">Select One</option>
-                                @foreach($cards as $card)
-                                <option value="{{$card->id}}">{{$card->holder_name}}</option>
-                                @endforeach
-                            </select>
+                            <label>Repay Amount<span>*</span></label>
+                            <input type="text"  name="repay_amount" id="repay_amount" class="form-control" required>
                         </div>
                         <div class="col-6">
-                            <label>Credit<span>*</span></label>
-                            <input type="text"  name="credit" id="credit"  class="form-control" readonly>
-                        </div>
-                    </div>
-                    <div class="row form-group">
-                        <div class="col-6">
-                            <label>Credited Date<span>*</span></label>
-                            <input type="date"  name="credited_date" id="credited_date"  class="form-control" required>
-                        </div>
-                        <div class="col-6">
-                            <label>Purpose</label>
-                            <textarea  name="purpose" id="purpose" class="form-control"></textarea>
-                        </div>
-                        <div class="col-6">
-                            <label>Due Date <span>*</span></label>
-                            <input type="date"  name="due_date" id="due_date"  class="form-control" required>
+                            <label>Repay Date <span>*</span></label>
+                            <input type="date"  name="repay_date" id="repay_date" class="form-control" required>
                         </div>
                     </div>
                     <div class="form-actions form-group">
@@ -150,27 +125,27 @@
     </div>
 </div>
  <!-- Edit Modal -->
-<!-- Status Modal -->
-<div class="modal fade" id="StatusModal" tabindex="-1" role="dialog" aria-labelledby="StatusModalLabel" aria-hidden="true">
+  <!-- Status Modal -->
+<div class="modal fade" id="PayStatusModal" tabindex="-1" role="dialog" aria-labelledby="PayStatusModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Edit</h5>
+                <h5 class="modal-title">Do You Complete Payment?</h5>
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">×</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form id="update_creditcard_status_form" class="form" enctype="multipart/form-data">
+                <form id="update_pay_status_form" class="form" enctype="multipart/form-data">
                     @csrf
-                    <input type="hidden" name="creditcard_statusid" id="creditcard_statusid" value="">
+                    <input type="hidden" name="id" id="creditcard_statusid" value="">
                     <div class="row form-group">
                         <div class="col-6">
                             <label>Status<span>*</span></label>
-                            <select  name="status" id="status" class="form-control" required>
+                            <select  name="status" class="form-control" required>
                                 <option value="">Select One</option>
-                                <option value="0">Pending</option>
-                                <option value="1">Paid</option>
+                                <option value="0">Due</option>
+                                <option value="1">Full Paid</option>
                             </select>
                         </div>
                     </div>
@@ -190,24 +165,25 @@
 <script type="text/javascript">
     $(document).ready(function() {
         $.fn.dataTable.ext.errMode = 'none';
-        var table = $('#creditcard_pay-datatable').DataTable({
+        var table = $('#credit_repay-datatable').DataTable({
             processing: true,
             serverSide: true,
             pageLength: 10, 
             lengthMenu: [10, 25, 50, 100], 
             ajax: {
-                url: "{{ route('creditcard_pay.list') }}",
-                type: "GET"
+                url: "{{ route('credit_repayment.list') }}",
+                type: "POST",
+                data: {
+                    "_token": "{{ csrf_token() }}",
+                    "credit_pay_id": {{$credit_pay_id}}
+                },
             },
             columns: [
                 {data: "sl_no",name: "sl_no", orderable: false, searchable: false  },
-                {data:"card_name",name: "card_name" },
-                {data: "credit" ,name: "credit"},
-                {data: "credited_date" ,name: "credited_date"},
-                {data: "purpose" ,name: "purpose"},
-                {data: "due_date" ,name: "due_date"},
-                {data: "created_by",name: "created_by" },
-                {data: "created_date",name: "created_date"},
+                {data:"repay_amount",name: "repay_amount" },
+                {data: "repay_date" ,name: "repay_date"},
+                {data: "added_by" ,name: "added_by"},
+                {data: "added_date" ,name: "added_date"},
                 { 
                     data: "action", 
                     name: "action", 
@@ -219,12 +195,12 @@
                 $(row).attr('id', 'row' + data.id);
             }
         });
-        $('#create_creditcard_pay_form').submit(function(event) 
+        $('#create_credit_repay_form').submit(function(event) 
         {
             event.preventDefault();
             var formData = new FormData($(this)[0]); 
             $.ajax({
-                url: "{{route('creditcard_pay.store')}}",
+                url: "{{route('credit_repayment.store')}}",
                 method: "POST",
                 data: formData,
                 contentType: false, 
@@ -233,7 +209,7 @@
                     if (response.success) 
                     {
                         $('#CreateModal').modal('hide');
-                        $('#create_creditcard_pay_form')[0].reset();
+                        $('#create_credit_repay_form')[0].reset();
                         swal("Good job!",response.message, {
                             icon: "success",
                             buttons: {
@@ -242,17 +218,14 @@
                                 },
                             },
                         });
-                        var table = $('#creditcard_pay-datatable').DataTable();
+                        var table = $('#credit_repay-datatable').DataTable();
                             var newRow = table.row.add([
                             String(response.data.sl_no), 
-                            response.data.card_name, 
-                            response.data.credit,
-                            response.data.credited_date, 
-                            response.data.purpose, 
-                            response.data.due_date, 
-                            response.data.created_by, 
-                            response.data.created_date,
-                            '<i class="fa fa-edit edit_creditcard_pay" data-rowid="'+ response.data.id +'" data-id="' + response.data.id + '" data-bs-toggle="modal" data-bs-target="#EditModal"></i>'
+                            response.data.repay_amount, 
+                            response.data.repay_date,
+                            response.data.added_by, 
+                            response.data.added_date, 
+                            '<i class="fa fa-edit edit_credit_repay" data-rowid="'+ response.data.id +'" data-id="' + response.data.id + '" data-bs-toggle="modal" data-bs-target="#EditModal"></i>'
                         ]).draw(false);
                         table.page('first').draw(false);  
                         $(newRow.node()).attr('id', 'row' + response.data.id);
@@ -267,12 +240,12 @@
                 }
             });
         });
-        $('#update_creditcard_pay_form').submit(function(event) {
+        $('#update_credit_repay_form').submit(function(event) {
             event.preventDefault();
             var formData = new FormData($(this)[0]);
             var rowId = $('#row_id').val();
             $.ajax({
-                url: "{{route('creditcard_pay.update')}}",
+                url: "{{route('credit_repayment.update')}}",
                 method: "POST", 
                 data: formData,
                 contentType: false, 
@@ -281,7 +254,7 @@
                     if (response.success) 
                     {
                         $('#EditModal').modal('hide');
-                        $('#update_creditcard_pay_form')[0].reset();
+                        $('#update_credit_repay_form')[0].reset();
                         swal("Good job!", response.message, {
                             icon: "success",
                             buttons: {
@@ -290,18 +263,15 @@
                                 },
                             },
                         });
-                        var table = $('#creditcard_pay-datatable').DataTable();
+                        var table = $('#credit_repay-datatable').DataTable();
                         var row = table.row($('#row' + response.data.id));
                         row.data([
                                 rowId,
-                                response.data.card_name, 
-                                response.data.credit,
-                                response.data.credited_date, 
-                                response.data.purpose, 
-                                response.data.due_date, 
-                                response.data.created_by, 
-                                response.data.created_date,
-                            '<i class="fa fa-edit edit_creditcard_pay"  data-rowid="'+ rowId  +'"  data-id="' + response.data.id + '" data-bs-toggle="modal" data-bs-target="#EditModal"></i>'
+                                response.data.repay_amount, 
+                                response.data.repay_date,
+                                response.data.added_by, 
+                                response.data.added_date, 
+                            '<i class="fa fa-edit edit_credit_repay"  data-rowid="'+ rowId  +'"  data-id="' + response.data.id + '" data-bs-toggle="modal" data-bs-target="#EditModal"></i>'
                         ]).draw(false);
                     } 
                     else 
@@ -314,11 +284,12 @@
                 }
             });
         });
-        $('#update_creditcard_status_form').submit(function(event) {
+        $('#update_pay_status_form').submit(function(event) {
             event.preventDefault();
             var formData = new FormData($(this)[0]);
+            var rowId = $('#row_id').val();
             $.ajax({
-                url: "{{route('creditcard_pay.statusupdate')}}",
+                url: "{{route('credit_repayment.status_update')}}",
                 method: "POST", 
                 data: formData,
                 contentType: false, 
@@ -326,8 +297,8 @@
                 success: function(response) {
                     if (response.success) 
                     {
-                        $('#StatusModal').modal('hide');
-                        $('#update_creditcard_status_form')[0].reset();
+                        $('#PayStatusModal').modal('hide');
+                        $('#update_pay_status_form')[0].reset();
                         swal("Good job!", response.message, {
                             icon: "success",
                             buttons: {
@@ -336,7 +307,7 @@
                                 },
                             },
                         });
-                        fetch_creditcard_payData();
+                       location.reload();
                     } 
                     else 
                     {
@@ -351,41 +322,31 @@
     });
 </script>
 <script>
-$(document).on("click", ".edit_creditcard_pay", function() {
-   var creditcard_payid = $(this).data('id');
-   $('#creditcard_payid').val(creditcard_payid);
+$(document).on("click", ".edit_credit_repay", function() {
+   var credit_repay_id = $(this).data('id');
+   $('#credit_repay_id').val(credit_repay_id);
    var row_id = $(this).data('rowid');
    $('#row_id').val(row_id);
    $.ajax({ type: "POST",
-        url: "{{route('creditcard_pay.show')}}",
+        url: "{{route('credit_repayment.show')}}",
         data: { "_token": "{{ csrf_token() }}",
-                creditcard_payid:creditcard_payid
+                credit_repay_id:credit_repay_id
               },
-        success: function(res) 
+        success: function(response) 
         {
-          $('#card_id').val(res.card_id);
-          $('#credit').val(res.credit);
-          $('#credited_date').val(res.credited_date);
-          $('#purpose').val(res.purpose);
-          $('#due_date').val(res.due_date);
+            if(response.success)
+            {
+                $('#repay_amount').val(response.data.repay_amount);
+                $('#repay_date').val(response.data.repay_date);
+            }
         },
     });
 });
 </script> 
 <script>
-$(document).on("click", ".change_status", function() {
-   var creditcard_statusid = $(this).data('id');
-   $('#creditcard_statusid').val(creditcard_statusid);
-   $.ajax({ type: "POST",
-        url: "{{route('creditcard_pay.show')}}",
-        data: { "_token": "{{ csrf_token() }}",
-                creditcard_payid:creditcard_statusid
-              },
-        success: function(res) 
-        {
-          $('#status').val(res.status);
-        },
-    });
+$(document).on("click", ".pay_status", function() {
+   var credit_pay_id = $(this).data('id');
+   $('#creditcard_statusid').val(credit_pay_id);
 });
 </script> 
 @endpush

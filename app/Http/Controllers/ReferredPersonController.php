@@ -37,6 +37,14 @@ class ReferredPersonController extends Controller
     }
     public function store(Request $request)
     {
+        if(Tbl_referred_persons::where('phone_number', $request->phone_number)
+        ->exists())
+        {
+            return response()->json([
+                'success' => false,
+                'message' => 'Already Exist This Reference Person or Phone Number',
+            ]);
+        }
         $referred_person=new Tbl_referred_persons;
         $referred_person->name=$request->name;
         $referred_person->phone_number=$request->phone_number;
@@ -51,6 +59,14 @@ class ReferredPersonController extends Controller
     }
     public function update(Request $request)
     {
+        if(Tbl_referred_persons::where('phone_number', $request->phone_number)
+        ->exists())
+        {
+            return response()->json([
+                'success' => false,
+                'message' => 'Already Updated This Reference Person or Phone Number',
+            ]);
+        }
         $referred_id=$request->referred_id;
         $referred_person=Tbl_referred_persons::find($referred_id);
         $referred_person->name=$request->name;

@@ -22,7 +22,7 @@ class InsuranceproviderController extends Controller
         $i = 1;
     
         foreach ($insuranceproviders as $insuranceprovider) {
-            $created_by = $insuranceprovider->created_user->id ?? '';
+            $created_by = $insuranceprovider->created_user->name ?? '';
             $created_date = $insuranceprovider->created_date ? Carbon::parse($insuranceprovider->created_date)->format('d/m/Y') : '';
     
             $html .= '<tr>';
@@ -34,7 +34,7 @@ class InsuranceproviderController extends Controller
             $html .= '<td>' . $created_by . '</td>';
             $html .= '<td>
                 <i class="fa fa-edit edit_insuranceproviders" data-id="' . e($insuranceprovider->id) . '" data-bs-toggle="modal" data-bs-target="#EditModal"></i>
-                <i class="fa fa-trash delete_insuranceproviders" data-id="' . e($insuranceprovider->id) . '"></i>
+                </i>
             </td>';
             $html .= '</tr>';
             $i++;
@@ -46,6 +46,14 @@ class InsuranceproviderController extends Controller
 
     public function store(Request $request)
     {
+        if( Tbl_insurence_providers::where('provider_name',$request->provider_name)
+        ->exists())
+        {
+            return response()->json([
+                'success' => false,
+                'message' => 'Already Exist This Provider',
+            ]);
+        }
         $created_by=Auth::user()->id;
         $created_date=date('Y-m-d');
         $insuranceprovider=new Tbl_insurence_providers();
@@ -69,7 +77,7 @@ class InsuranceproviderController extends Controller
                 'provider_name' => $insuranceprovider->provider_name,
                 'address' => $insuranceprovider->address,
                 'company_name' => $insuranceprovider->company_name,
-                'created_by' => $insuranceprovider->created_user->id ?? '',
+                'created_by' => $insuranceprovider->created_user->name ?? '',
            
             ]);
         } else {
@@ -80,6 +88,14 @@ class InsuranceproviderController extends Controller
 
     public function update(Request $request)
     {
+        if( Tbl_insurence_providers::where('provider_name',$request->provider_name)
+        ->exists())
+        {
+            return response()->json([
+                'success' => false,
+                'message' => 'Already Updated This Provider',
+            ]);
+        }
         $insuranceproviders_id=$request->insuranceproviders_id;
         $insuranceproviders=Tbl_insurence_providers::find($insuranceproviders_id);
         $insuranceproviders->provider_name=$request->provider_name;

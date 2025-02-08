@@ -18,6 +18,14 @@ class DistrictController extends Controller
     }
     public function store(Request $request)
     {
+        if(Tbl_districts::where('district',$request->district)
+        ->exists())
+        {
+            return response()->json([
+                'success' => false,
+                'message' => 'Already Exist This District',
+            ]);
+        }
         $district=new Tbl_districts;
         $district->country_id=$request->country_id;
         $district->state_id=$request->state_id;
@@ -33,6 +41,14 @@ class DistrictController extends Controller
     }
     public function update(Request $request)
     {
+        if(Tbl_districts::where('district',$request->district)
+        ->exists())
+        {
+            return response()->json([
+                'success' => false,
+                'message' => 'Already Updated This District',
+            ]);
+        }
         $district_id=$request->district_id;
         $district=Tbl_districts::find($district_id);
         $district->country_id=$request->country_id;

@@ -14,6 +14,14 @@ class RoleController extends Controller
     }
     public function store(Request $request)
     {
+        if(Tbl_roles::where('role',$request->role)
+        ->exists())
+        {
+            return response()->json([
+                'success' => false,
+                'message' => 'Already Exist This Role',
+            ]);
+        }
        $role=new Tbl_roles;
        $role->role=$request->role;
        $role->save();
@@ -27,6 +35,14 @@ class RoleController extends Controller
     }
     public function update(Request $request)
     {
+        if(Tbl_roles::where('role',$request->role)
+        ->exists())
+        {
+            return response()->json([
+                'success' => false,
+                'message' => 'Already Exist This Role',
+            ]);
+        }
         $role_id=$request->role_id;
         $role=Tbl_roles::find($role_id);
         $role->role=$request->role;

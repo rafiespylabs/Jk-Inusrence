@@ -14,6 +14,14 @@ class BranchController extends Controller
     }
     public function store(Request $request)
     {
+        if(Tbl_branches::where('branch',$request->branch)
+        ->exists())
+        {
+            return response()->json([
+                'success' => false,
+                'message' => 'Already Exist This Branch',
+            ]);
+        }
         $branch=new Tbl_branches;
         $branch->branch=$request->branch;
         $branch->save();
@@ -27,6 +35,14 @@ class BranchController extends Controller
     }
     public function update(Request $request)
     {
+        if(Tbl_branches::where('branch',$request->branch)
+        ->exists())
+        {
+            return response()->json([
+                'success' => false,
+                'message' => 'Already Updated This Branch',
+            ]);
+        }
         $branch_id=$request->branch_id;
         $branch=Tbl_branches::find($branch_id);
         $branch->branch=$request->branch;

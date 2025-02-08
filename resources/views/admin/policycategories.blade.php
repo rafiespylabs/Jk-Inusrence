@@ -35,8 +35,8 @@
                                                 <i class="fa fa-edit edit_policycategories"
                                                     data-id="{{ $policycategory->id }}" data-rowid="{{ $i }}" data-bs-toggle="modal"
                                                     data-bs-target="#EditModal"></i>
-                                                    <i class="fa fa-trash delete_policycategories"
-                                                    data-id="{{ $policycategory->id }}">
+                                                    <!-- <i class="fa fa-trash delete_policycategories"
+                                                    data-id="{{ $policycategory->id }}"> -->
                                                 </i>
                                             </td>
                                         </tr>

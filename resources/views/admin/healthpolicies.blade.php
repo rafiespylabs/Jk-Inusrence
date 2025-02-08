@@ -1,3 +1,6 @@
+@php 
+use App\Models\Tbl_healthpolicy_renews; 
+@endphp
 <x-admin1-layout>
 @push('styles')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta2/dist/css/bootstrap-select.min.css">   
@@ -42,21 +45,28 @@
                                         <th>Nominee Relation</th>
                                         <th>Executive</th>
                                         <th>Status</th>
+                                        <th>Paid Amount</th>
+                                        <th>Due Amount</th>
                                         <th>Reference Perosn</th>
                                         <th>Insurance Provider</th>
-                                        <th>Document</th>
-                                        <th>Renew</th>
                                         <th>Note</th>
+                                        <th>Created By</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @php $i = 1; @endphp
+                                    @php 
+                                        $i = 1; 
+                                    @endphp
                                     @foreach ($healthpolicies as $healthpolicy)
+                                        @php 
+                                            $renew_created_by=Tbl_healthpolicy_renews::with('added_user')->where('healthpolicy_id',$healthpolicy->id)->first();
+                                            $created_by=$renew_created_by->added_user->name ?? "";
+                                        @endphp
                                         <tr id="row{{ $healthpolicy->id }}">
                                             <td>{{ $i }}</td>
                                             <td>{{ $healthpolicy->policy_category->policy_category ?? 'N/A' }}</td>
-                                            <td>                                                
+                                            <td>                                               
                                                 @switch($healthpolicy->type)
                                                     @case(1) Family @break
                                                     @case(2) Individual @break
@@ -79,21 +89,47 @@
                                             <td>{{ $healthpolicy->nominee_name}}</td>
                                             <td>{{ $healthpolicy->nominee_relation}}</td>
                                             <td>{{ $healthpolicy->executive->user->name ?? 'N/A' }}</td>
-                                            <td>{{ $healthpolicy->status == 1 ? 'Paid' : 'Not Paid' }}</td>
-                                            <td>{{ $healthpolicy->referred->name ?? 'N/A' }}</td>                                            
-                                            <td>{{ $healthpolicy->provider->provider_name ?? 'N/A' }}</td>    
-                                            <td><a href="{{route('healthPolicyDocs',$healthpolicy->id)}}" class="btn btn-primary btn-xs">Documents</a></td>   
-                                            <td><a href="{{route('healthPolicyRenew',$healthpolicy->id)}}" class="btn btn-primary btn-xs">Renew</a></td>                                                                                             
-                                            <td>{{ $healthpolicy->note }}</td>                                        
                                             <td>
-                                                <i class="fa fa-edit edit_healthpolicies"
-                                                    data-id="{{ $healthpolicy->id }}" data-rowid="{{ $i }}" data-bs-toggle="modal"
-                                                    data-bs-target="#EditModal"></i>
-                                                    <i class="fa fa-trash delete_healthpolicies"
-                                                    data-id="{{ $healthpolicy->id }}"></i>
-                                                    @if( $healthpolicy->type==1)
-                                                    <a href="{{route('healthPolicyMembers',$healthpolicy->id)}}" class="btn btn-info btn-xs">Add Members</a>
-                                                    @endif 
+                                                @if($healthpolicy->paid_amount==0)
+                                                <span class="badge badge-warning mb-2">Not Paid</span>
+                                                <a href="/policypayments/1/{{$healthpolicy->id}}"><button class="btn btn-danger btn-xs" data-id="{{$healthpolicy->id}}"><i class="fas fa-wallet"></i> Pay Now</button></a>
+                                                @elseif($healthpolicy->paid_amount!=0 &&  $healthpolicy->premium_amount != $healthpolicy->paid_amount)
+                                                <span class="badge badge-danger mb-2">Partial Paid</span>
+                                                <a href="/policypayments/1/{{$healthpolicy->id}}"><button class="btn btn-danger btn-xs" data-id="{{$healthpolicy->id}}"><i class="fas fa-wallet"></i> Pay Now</button></a>
+                                                @elseif($healthpolicy->paid_amount==$healthpolicy->premium_amount)
+                                                <span class="badge badge-success">Full Paid</span>
+                                                @endif
+                                            </td>
+                                            <td>{{ $healthpolicy->paid_amount }}</td>
+                                            <td>{{ $healthpolicy->due_amount }}</td>
+                                            <td>{{ $healthpolicy->referred->name ?? 'N/A' }}</td>                                            
+                                            <td>{{ $healthpolicy->provider->provider_name ?? 'N/A' }}</td>                                                                                           
+                                            <td>{{ $healthpolicy->note }}</td>  
+                                            <td>{{$created_by}}</td>   
+                                            <td>
+                                                <div class="btn-group dropdown">
+                                                    <button class="btn btn-primary btn-xs dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" fdprocessedid="oolj6">Actions</button>
+                                                    <ul class="dropdown-menu" role="menu" style="">
+                                                        <li>
+                                                            <a class="dropdown-item edit_healthpolicies" href="#" data-id="{{ $healthpolicy->id }}" data-rowid="{{ $i }}" data-bs-toggle="modal" data-bs-target="#EditModal">
+                                                                <i class="fa fa-edit"> Edit
+                                                                </i>
+                                                            </a>
+                                                            <a class="dropdown-item view_healthpolicy" href="#" data-id="{{ $healthpolicy->id }}" data-bs-toggle="modal" data-bs-target="#ViewModal">
+                                                                <i class="fa fa-eye"> View
+                                                                </i>
+                                                            </a>
+                                                            @if( $healthpolicy->type==1)
+                                                                <a href="{{route('healthPolicyMembers',$healthpolicy->id)}}" class="dropdown-item"> <i class="fa fa-plus"></i>Add Members</a>
+                                                            @endif 
+                                                            <a href="{{route('healthPolicyDocs',$healthpolicy->id)}}" class="dropdown-item"><i class="fa fa-file"></i> Documents</a>
+                                                            <a href="{{route('healthPolicyRenew',$healthpolicy->id)}}" class="dropdown-item"><i class="fa fa-sync"></i> Renew</a>
+                                                            <a class="dropdown-item delete_healthpolicies" href="#" data-id="{{ $healthpolicy->id }}" data-rowid="{{ $i }}">
+                                                                <i class="fa fa-trash"></i> Delete
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
                                             </td>
                                         </tr>
                                         @php $i++; @endphp
@@ -178,7 +214,7 @@
                                 <input type="number" name="weight" id="weight" class="form-control" required>
                             </div>
                             <div class="col-md-3">
-                                <label for="primary_number">Primary Number <span>*</span></label>
+                                <label for="primary_number">Primary Number </label>
                                 <input type="text" name="primary_number" id="primary_number" pattern="[0-9]{10}" 
                                 title="Phone number must be 10 digits" class="form-control" required>
                             </div>
@@ -273,8 +309,8 @@
                         </div>
                         <div class="row form-group">
                             <div class="col-md-4">
-                                <label for="executive">Prepared User <span>*</span></label>
-                                <select name="prepared_user_id" id="prepared_user_id" class="form-control" required>
+                                <label for="executive">Prepared User</label>
+                                <select name="prepared_user_id" id="prepared_user_id" class="form-control">
                                     <option value="">Select One</option>
                                     @foreach ($executive as $exe)
                                         <option value="{{ $exe->user_id }}">{{ $exe->user->name }}</option>
@@ -364,7 +400,7 @@
                             <div class="col-md-4">
                                 <label for="primary_number">Primary Number</label>
                                 <input type="text" name="primary_number" id="edit_primary_number" pattern="[0-9]{10}" 
-                                title="Phone number must be 10 digits" class="form-control" required>
+                                title="Phone number must be 10 digits" class="form-control">
                             </div>
                             <div class="col-md-4">
                                 <label for="secondary_number">Secondary Number</label>
@@ -454,7 +490,113 @@
                 </div>
             </div>
         </div>
+    </div>  
+    <!-- View Modal -->
+    <div class="modal fade" id="ViewModal" tabindex="-1" role="dialog" aria-labelledby="ViewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">View  Health Policy</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="card card-stats card-round">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-6 col-md-3">
+                                    <h5>Company</h5>
+                                    <p id="hpolicy_company"></p>
+                                </div>
+                                <div class="col-sm-6 col-md-3">
+                                    <h5>Name</h5>
+                                    <p id="hpolicy_name"></p>
+                                </div>
+                                <div class="col-sm-6 col-md-3">
+                                    <h5>Birth Date</h5>
+                                    <p id="hpolicy_birth_date"></p>
+                                </div>
+                                <div class="col-sm-6 col-md-3">
+                                    <h5>Age </h5>
+                                    <p id="hpolicy_age"></p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6 col-md-3">
+                                    <h5>Height</h5>
+                                    <p id="hpolicy_height"></p>
+                                </div>
+                                <div class="col-sm-6 col-md-3">
+                                    <h5>Weight</h5>
+                                    <p id="hpolicy_weight"></p>
+                                </div>
+                                <div class="col-sm-6 col-md-3">
+                                    <h5>Primary Number</h5>
+                                    <p id="hpolicy_primary_number"></p>
+                                </div>
+                                <div class="col-sm-6 col-md-3">
+                                    <h5>Secondary Number </h5>
+                                    <p id="hpolicy_secondary_number"></p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6 col-md-3">
+                                    <h5>Start Date</h5>
+                                    <p id="hpolicy_start_date"></p>
+                                </div>
+                                <div class="col-sm-6 col-md-3">
+                                    <h5>Expiry Date</h5>
+                                    <p id="hpolicy_expiry_date"></p>
+                                </div>
+                                <div class="col-sm-6 col-md-3">
+                                    <h5>Premium Amount</h5>
+                                    <p id="hpolicy_premium_amount"></p>
+                                </div>
+                                <div class="col-sm-6 col-md-3">
+                                    <h5>Sum Insured </h5>
+                                    <p id="hpolicy_sum_insured"></p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6 col-md-3">
+                                    <h5>Nominee Name</h5>
+                                    <p id="hpolicy_nominee_name"></p>
+                                </div>
+                                <div class="col-sm-6 col-md-3">
+                                    <h5>Nominee Relation</h5>
+                                    <p id="hpolicy_relation"></p>
+                                </div>
+                                <div class="col-sm-6 col-md-3">
+                                    <h5>Created By</h5>
+                                    <p id="hpolicy_created_by"></p>
+                                </div>
+                                <div class="col-sm-6 col-md-3">
+                                    <h5>Created Date </h5>
+                                    <p id="hpolicy_created_date"></p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6 col-md-3">
+                                    <h5>Edited By</h5>
+                                    <p id="hpolicy_edited_by"></p>
+                                </div>
+                                <div class="col-sm-6 col-md-3">
+                                    <h5>Edited Date</h5>
+                                    <p id="hpolicy_edited_date"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-actions form-group">
+                        <button type="submit" class="btn btn-primary btn-sm">Submit</button>
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>    
+    <!-- View Modal -->
 <!-- Create Reference Modal -->
 <div class="modal fade" id="CreateReferencemodel" tabindex="-1" role="dialog" aria-labelledby="CreateReferencemodelLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
@@ -532,7 +674,6 @@
                 $('#create_healthpolicies_form').submit(function(event) {
                     event.preventDefault(); 
                     var formData = new FormData($(this)[0]);  
-
                     $.ajax({
                         url: "{{ route('healthpolicies.store') }}",  
                         method: "POST",
@@ -542,9 +683,7 @@
                         success: function(response) {
                             if (response.success) {
                                 $('#CreateModal').modal('hide');  
-
                                 $('#create_healthpolicies_form')[0].reset(); 
-
                                 swal("Success!", response.message, {
                                     icon: "success",
                                     buttons: {
@@ -556,18 +695,24 @@
 
                                 var table = $('#healthpolicies-datatable').DataTable();
                                 var addMembers='';
-                                var status='';
-                                if( response.data.type==1)
+                                var status=''; 
+                                if(response.data.type==1)
                                 {
-                                    addMembers='<a href="" class="btn btn-info btn-xs">Add Members</a>';
-                                }   
-                                if(response.data.status==0)
-                                {
-                                    status='Not Paid';
+                                    addMembers='<a href="/healthPolicyMembers/"'+response.data.id+'" class="dropdown-item"> <i class="fa fa-plus"></i>Add Members</a>';
                                 }
-                                else if(response.data.status==1)
+                                if(response.data.paid_amount==0)
                                 {
-                                    status='Paid';
+                                    status='<span class="badge badge-warning mb-2">Not Paid</span>';
+                                    status+='<a href="/policypayments/1/'+response.data.id+'"><button class="btn btn-danger btn-xs" data-id="'+response.data.id+'"><i class="fas fa-wallet"></i> Pay Now</button></a>';
+                                }
+                                else if(response.data.paid_amount!=0 && response.data.premium_amount != response.data.paid_amount)
+                                {
+                                    status='<span class="badge badge-danger mb-2">Partial Paid</span>';
+                                    status+='<a href="/policypayments/1/'+response.data.id+'"><button class="btn btn-danger btn-xs" data-id="'+response.data.id+'"><i class="fas fa-wallet"></i> Pay Now</button></a>';
+                                }
+                                else if(response.data.paid_amount==response.data.premium_amount)
+                                {
+                                    status='<span class="badge badge-success">Full Paid</span>';
                                 }
                                 var type='';
                                 if(response.data.type==1)
@@ -606,15 +751,36 @@
                                     response.data.nominee_name,                                    
                                     response.data.nominee_relation,                                    
                                     response.data.user_id,                                    
-                                    status,                                    
+                                    status,  
+                                    response.data.paid_amount,
+                                    response.data.due_amount,                                  
                                     response.data.referred,                                    
                                     response.data.provider,  
-                                    '<a href="/healthPolicyDocs/'+response.data.id+'" class="btn btn-primary btn-xs">Documents</a>',                                   
-                                    '<a href="/healthPolicyRenew/'+response.data.id+'" class="btn btn-primary btn-xs">Renew</a>',                                   
                                     response.data.note,                                                                     
-                                    '<i class="fa fa-edit edit_healthpolicies" data-rowid="'+ lastRowNumber +'" data-id="' + response.data.id + '" data-bs-toggle="modal" data-bs-target="#EditModal"></i>' +
-                                    '<i class="fa fa-trash delete_healthpolicies" data-rowid="'+ lastRowNumber +'" data-id="' + response.data.id + '"></i>'+
-                                    addMembers
+                                    response.data.created_user, 
+                                    '<div class="btn-group dropdown">'+
+                                        '<button class="btn btn-primary btn-xs dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" fdprocessedid="oolj6">Actions</button>'+
+                                        '<ul class="dropdown-menu" role="menu">'+
+                                            '<li>'+
+                                                '<a class="dropdown-item" href="#">'+
+                                                    '<i class="fa fa-edit edit_healthpolicies" data-id="'+response.data.id+'"  data-rowid="'+ lastRowNumber +'" data-bs-toggle="modal" data-bs-target="#EditModal">'+
+                                                     'Edit'+
+                                                    '</i>'+
+                                                '</a>'+
+                                                '<a class="dropdown-item view_healthpolicy" href="#" data-id="'+response.data.id+'" data-bs-toggle="modal" data-bs-target="#ViewModal">'+
+                                                    '<i class="fa fa-eye"> View'+
+                                                    '</i>'+
+                                                '</a>'+
+                                                addMembers+
+                                                '<a href="/healthPolicyDocs/'+response.data.id+'" class="dropdown-item"><i class="fa fa-file"></i> Documents</a>'+
+                                                '<a href="/healthPolicyRenew'+response.data.id+'" class="dropdown-item"><i class="fa fa-sync"></i> Renew</a>'+
+                                                '<a class="dropdown-item" href="#">'+
+                                                    '<i class="fa fa-trash delete_healthpolicies"'+
+                                                    'data-id="'+response.data.id+'" data-rowid="'+ lastRowNumber +'"></i> Delete'+
+                                                '</a>'+
+                                            '</li>'+
+                                        '</ul>'+
+                                    '</div>'
                                 ]).draw(false);
 
                                 table.page('last').draw(false);  
@@ -708,6 +874,46 @@
                         }
                     });
                 });
+                $(document).on("click", ".view_healthpolicy", function() {
+                    var healthpolicies_id = $(this).data('id');
+                    var row_id = $(this).data('rowid');     
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ route('healthpolicies.edit') }}",
+                        data: {
+                            "_token": "{{ csrf_token() }}",
+                            "id": healthpolicies_id
+                        },
+                        success: function(response) {
+                            if (response.success) 
+                            {             
+                               $('#hpolicy_company').text(response.data.company);
+                               $('#hpolicy_name').text(response.data.name);
+                               $('#hpolicy_birth_date').text(response.data.birth_date);
+                               $('#hpolicy_age').text(response.data.age);
+                               $('#hpolicy_height').text(response.data.height);
+                               $('#hpolicy_weight').text(response.data.weight);
+                               $('#hpolicy_primary_number').text(response.data.primary_number);
+                               $('#hpolicy_secondary_number').text(response.data.secondary_number);
+                               $('#hpolicy_start_date').text(response.data.start_date);
+                               $('#hpolicy_expiry_date').text(response.data.expiry_date);
+                               $('#hpolicy_premium_amount').text(response.data.premium_amount);
+                               $('#hpolicy_sum_insured').text(response.data.sum_insured);
+                               $('#hpolicy_nominee_name').text(response.data.nominee_name);
+                               $('#hpolicy_relation').text(response.data.nominee_relation);
+                               $('#hpolicy_relation').text(response.data.nominee_relation);
+                            } 
+                            else 
+                            {
+                                alert('Error: ' + response.message);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('AJAX Error:', error);
+                            alert('Failed to fetch data.');
+                        }
+                    });
+                });
                 $('#edit_healthpolicies_form').submit(function(event) {
                     event.preventDefault(); 
                     var formData = new FormData($(this)[0]);
@@ -751,13 +957,19 @@
                                 {
                                     type='Top-Up';
                                 }
-                                if(response.data.status==0)
+                                if(response.data.paid_amount==0)
                                 {
-                                    status='Not Paid';
+                                    status='<span class="badge badge-warning mb-2">Not Paid</span>';
+                                    status+='<a href="/policypayments/1/'+response.data.id+'"><button class="btn btn-danger btn-xs" data-id="'+response.data.id+'"><i class="fas fa-wallet"></i> Pay Now</button></a>';
                                 }
-                                else if(response.data.type==1)
+                                else if(response.data.paid_amount!=0 && response.data.premium_amount != response.data.paid_amount)
                                 {
-                                   status='Paid';
+                                    status='<span class="badge badge-danger mb-2">Partial Paid</span>';
+                                    status+='<a href="/policypayments/1/'+response.data.id+'"><button class="btn btn-danger btn-xs" data-id="'+response.data.id+'"><i class="fas fa-wallet"></i> Pay Now</button></a>';
+                                }
+                                else if(response.data.paid_amount == response.data.premium_amount)
+                                {
+                                    status='<span class="badge badge-success">Full Paid</span>';
                                 }
                                 var addMembers='';
                                 if( response.data.type==1)
@@ -776,24 +988,40 @@
                                     response.data.height, 
                                     response.data.weight, 
                                     response.data.primary_number,                                    
-                                    response.data.secondary_number,                                    
+                                    response.data.secondary_number,
+                                    response.data.start_date,                                       
                                     response.data.expiry_date,                                    
                                     response.data.premium_amount,                                    
                                     response.data.sum_insured,                                    
-                                    response.data.term,                                    
                                     response.data.nominee_name,                                    
                                     response.data.nominee_relation,                                    
                                     response.data.user_id,                                    
-                                    status,                                    
+                                    status,   
+                                    response.data.paid_amount,
+                                    response.data.due_amount,                                
                                     response.data.referred,   
-                                    response.data.provider,                                  
-                                    '<a href="/healthPolicyDocs/'+response.data.id+'" class="btn btn-primary btn-xs">Documents</a>',                                   
-                                    '<a href="/healthPolicyRenew/'+response.data.id+'" class="btn btn-primary btn-xs">Renew</a>', 
+                                    response.data.provider,                                 
                                     response.data.note, 
-                                    '<i class="fa fa-edit edit_healthpolicies" data-rowid="'+ rowId +'" data-id="' + response.data.id + '" data-bs-toggle="modal" data-bs-target="#EditModal"></i>' +
-                                    '<i class="fa fa-trash delete_healthpolicies" data-rowid="'+ rowId +'" data-id="' + response.data.id + '"></i>'+
-                                   
-                                    addMembers
+                                    response.data.created_user,
+                                   '<div class="btn-group dropdown">'+
+                                        '<button class="btn btn-primary btn-xs dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" fdprocessedid="oolj6">Actions</button>'+
+                                        '<ul class="dropdown-menu" role="menu">'+
+                                            '<li>'+
+                                                '<a class="dropdown-item" href="#">'+
+                                                    '<i class="fa fa-edit edit_healthpolicies" data-id="'+response.data.id+'"  data-rowid="'+ rowId +'" data-bs-toggle="modal" data-bs-target="#EditModal">'+
+                                                     'Edit'+
+                                                    '</i>'+
+                                                '</a>'+
+                                                addMembers+
+                                                '<a href="/healthPolicyDocs/'+response.data.id+'" class="dropdown-item"><i class="fa fa-file"></i> Documents</a>'+
+                                                '<a href="/healthPolicyRenew'+response.data.id+'" class="dropdown-item"><i class="fa fa-sync"></i> Renew</a>'+
+                                                '<a class="dropdown-item" href="#">'+
+                                                    '<i class="fa fa-trash delete_healthpolicies"'+
+                                                    'data-id="'+response.data.id+'" data-rowid="'+ rowId +'"></i> Delete'+
+                                                '</a>'+
+                                            '</li>'+
+                                        '</ul>'+
+                                    '</div>'
                                 ]).draw(false); 
                                 } else {
                                     alert('Error updating data: ' + response.message);

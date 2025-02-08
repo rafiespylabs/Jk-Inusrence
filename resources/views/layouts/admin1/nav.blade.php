@@ -268,6 +268,68 @@ $role_id=auth()->user()->role_id;
                         <p>Attendances</p>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a data-bs-toggle="collapse" href="#tire" class="" aria-expanded="true">
+                    <i class="fa fa-cog"></i>
+                        <p>Tyres</p>
+                        <span class="caret"></span>
+                    </a>
+                    <div class="collapse {{ request()->is('categories')
+                                ||request()->is('subcategories')
+                                ||request()->is('units')
+                                ||request()->is('suppliers')
+                                ||request()->is('items') 
+                                ||request()->is('clients')? 'show' : '' }}" id="tire" style="">
+                        <ul class="nav nav-collapse">
+                            <li class="submenu">
+                                <a data-bs-toggle="collapse" href="#policy" class="collapsed" aria-expanded="false">
+                                    <i class="fas fa-tire"></i> Settings Tyre
+                                    <span class="caret"></span>
+                                </a>
+                                <div class="collapse  {{ request()->is('categories')
+                                ||request()->is('subcategories')
+                                ||request()->is('units')
+                                ||request()->is('suppliers')
+                                ||request()->is('items')
+                                ||request()->is('clients')
+                                ? 'show' : '' }}" id="policy" style="">
+                                    <ul class="nav nav-collapse subnav">
+                                        <li class="{{request()->is('categories')? 'active':''}}">
+                                            <a href="{{route('categories')}}">
+                                                <span class="sub-item">Categories</span>
+                                            </a>
+                                        </li>
+                                        <li class="{{request()->is('subcategories')? 'active':''}}">
+                                            <a href="{{route('subcategories')}}">
+                                                <span class="sub-item">Sub Categories</span>
+                                            </a>
+                                        </li>
+                                        <li class="{{request()->is('units')? 'active':''}}">
+                                            <a href="{{route('units')}}">
+                                                <span class="sub-item">Units</span>
+                                            </a>
+                                        </li>
+                                        <li class="{{request()->is('suppliers')? 'active':''}}">
+                                            <a href="{{route('suppliers')}}">
+                                                <i class="menu-icon fa fa-industry"></i> Suppliers
+                                            </a>
+                                        </li>
+                                        <li class="{{request()->is('items')? 'active':''}}">
+                                            <a href="{{route('items')}}">
+                                                <i class="menu-icon fa fa-shopping-basket"></i> Items
+                                            </a>
+                                        </li>
+                                        <li class="{{request()->is('clients')? 'active':''}}">
+                                            <a href="{{route('clients')}}">
+                                                <i class="menu-icon fa fa-user"></i> Clients
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
             </ul>
         </div>
     </div>

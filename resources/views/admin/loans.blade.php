@@ -89,15 +89,15 @@
                     <form id="create_loans_form" class="form">
                         @csrf      
                         <div class="form-group">
-                            <label for="customer_name">Customer Name</label>
-                            <input type="text" name="customer_name" id="customer_name" class="form-control">
+                            <label for="customer_name">Customer Name <span>*</span></label>
+                            <input type="text" name="customer_name" id="customer_name" class="form-control" required>
                         </div>     
                         <div class="form-group">
-                            <label for="phone_number">Phone Number</label>
-                            <input type="number" name="phone_number" id="phone_number" class="form-control">
+                            <label for="phone_number">Phone Number  <span>*</span></label>
+                            <input type="number" name="phone_number" id="phone_number" class="form-control" required>
                         </div>             
                         <div class="form-group">
-                            <label for="loan_type">Loan Type</label>
+                            <label for="loan_type">Loan Type  <span>*</span></label>
                             <select name="loan_type_id" id="loan_type_id" class="form-control" required>
                                 @foreach ($loan_type as $loan)
                                     <option value="{{ $loan->id }}">{{ $loan->loan_type }}</option>
@@ -105,24 +105,26 @@
                             </select>
                         </div>    
                         <div class="form-group">
-                            <label for="bank">Bank</label>
-                            <input type="text" name="bank" id="bank" class="form-control">
+                            <label for="bank">Bank <span>*</span></label>
+                            <input type="text" name="bank" id="bank" class="form-control" required>
                         </div>
                         <div class="form-group">
-                            <label for="loan_amount">Loan Amount</label>
-                            <input type="number" name="loan_amount" id="loan_amount" class="form-control">
+                            <label for="loan_amount">Loan Amount <span>*</span></label>
+                            <input type="number" name="loan_amount" id="loan_amount" class="form-control" required>
                         </div>
                         <div class="form-group">
-                            <label for="vehicle_category">Vehicle Category</label>
+                            <label for="vehicle_category">Vehicle Category <span>*</span></label>
                             <select name="vehicle_cat_id" id="vehicle_cat_id" class="form-control" required>
+                                    <option value="">Select One</option>
                                 @foreach ($vehicle_category as $vehicle)
                                     <option value="{{ $vehicle->id }}">{{ $vehicle->vechile_category }}</option>
                                 @endforeach
                             </select>
                         </div>   
                         <div class="form-group">
-                            <label for="status" class="form-label">Status</label>
+                            <label for="status" class="form-label">Status <span>*</span></label>
                             <select name="status" id="status" class="form-control" required>
+                                <option value="">Select One</option>
                                 <option value="0" {{ isset($loan) && $loan->status == 0 ? 'selected' : '' }}>pending</option>
                                 <option value="1" {{ isset($loan) && $loan->status == 1 ? 'selected' : '' }}>approved</option>
                             </select>
@@ -166,40 +168,43 @@
                             <input type="hidden" name="id" id="loans_id">                    
                         
                             <div class="form-group">
-                            <label for="customer_name">Customer Name</label>
+                            <label for="customer_name">Customer Name <span>*</span></label>
                             <input type="text" name="customer_name" id="edit_customer_name" class="form-control">
                         </div>     
                         <div class="form-group">
-                            <label for="phone_number">Phone Number</label>
+                            <label for="phone_number">Phone Number <span>*</span></label>
                             <input type="number" name="phone_number" id="edit_phone_number" class="form-control">
                         </div>             
                         <div class="form-group">
-                            <label for="loan_type">Loan Type</label>
+                            <label for="loan_type">Loan Type <span>*</span></label>
                             <select name="loan_type_id" id="edit_loan_type_id" class="form-control" required>
+                                <option value="">Select One</option>
                                 @foreach ($loan_type as $loan)
                                     <option value="{{ $loan->id }}">{{ $loan->loan_type }}</option>
                                 @endforeach
                             </select>
                         </div>    
                         <div class="form-group">
-                            <label for="bank">Bank</label>
-                            <input type="text" name="bank" id="edit_bank" class="form-control">
+                            <label for="bank">Bank <span>*</span></label>
+                            <input type="text" name="bank" id="edit_bank" class="form-control" required>
                         </div>
                         <div class="form-group">
-                            <label for="loan_amount">Loan Amount</label>
-                            <input type="number" name="loan_amount" id="edit_loan_amount" class="form-control">
+                            <label for="loan_amount">Loan Amount <span>*</span></label>
+                            <input type="number" name="loan_amount" id="edit_loan_amount" class="form-control" required>
                         </div>
                         <div class="form-group">
-                            <label for="vehicle_category">Vehicle Category</label>
+                            <label for="vehicle_category">Vehicle Category <span>*</span></label>
                             <select name="vehicle_cat_id" id="edit_vehicle_cat_id" class="form-control" required>
+                                <option value="">Select One</option>
                                 @foreach ($vehicle_category as $vehicle)
                                     <option value="{{ $vehicle->id }}">{{ $vehicle->vechile_category }}</option>
                                 @endforeach
                             </select>
                         </div>   
                         <div class="form-group">
-                            <label for="status" class="form-label">Status</label>
+                            <label for="status" class="form-label">Status <span>*</span></label>
                             <select name="status" id="edit_status" class="form-control" required>
+                                <option value="">Select One</option>
                                 <option value="0" {{ isset($loan) && $loan->status == 0 ? 'selected' : '' }}>pending</option>
                                 <option value="1" {{ isset($loan) && $loan->status == 1 ? 'selected' : '' }}>approved</option>
                             </select>

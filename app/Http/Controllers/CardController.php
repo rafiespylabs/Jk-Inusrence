@@ -25,6 +25,7 @@ class CardController extends Controller
             $html.='<td>'.$card->holder_name.'</td>';
             $html.='<td>'.$card->expiry_date.'</td>';
             $html.='<td>'.$card->bank.'</td>';
+            $html.='<td>'.$card->current_amount.'</td>';
             $html.='<td>'.$added_by.'</td>';
             $html.='<td>'.$card->created_date.'</td>';
              $html.='<td>';
@@ -43,6 +44,7 @@ class CardController extends Controller
        $card->holder_name=$request->holder_name;
        $card->expiry_date=$request->expiry_date;
        $card->bank=$request->bank;
+       $card->current_amount=0;
        $card->created_by=$created_by;
        $card->created_date=date('Y-m-d');
        $card->save();

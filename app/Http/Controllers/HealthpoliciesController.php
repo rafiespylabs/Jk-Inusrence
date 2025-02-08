@@ -5,6 +5,7 @@ use App\Models\Tbl_healthpolicy;
 use App\Models\Tbl_insurence_providers;
 use App\Models\Tbl_policy_categories;
 use App\Models\Tbl_staffs;
+use App\Models\User;
 use App\Models\Tbl_referred_persons;
 use App\Models\Tbl_healthpolicy_renews;
 use App\Models\Tbl_payment_modes;
@@ -41,7 +42,7 @@ class HealthpoliciesController extends Controller
             'birth_date' => 'required|date',
             'height' => 'required|integer|min:0',
             'weight' => 'required|integer|min:0',
-            'primary_number' => 'required|string|max:15',
+            'primary_number' => 'nullable|string|max:15',
             'secondary_number' => 'nullable|string|max:15',
             'start_date' => 'required|date',
             'expiry_date' => 'required|date',
@@ -93,7 +94,9 @@ class HealthpoliciesController extends Controller
             $healthpolicies->provider_id = $validatedData['provider_id'];           
             $healthpolicies->note = $validatedData['note'];  
             $healthpolicies->prepared_user_id= $validatedData['prepared_user_id'];     
-            $healthpolicies->prepared_date= date('Y-m-d');       
+            $healthpolicies->prepared_date= date('Y-m-d');
+            $healthpolicies->created_by= $created_by;       
+            $healthpolicies->created_date= date('Y-m-d H:i:s'); 
             if($healthpolicies->save())
             {
                 $healthpolicy_renew = new Tbl_healthpolicy_renews();
@@ -106,6 +109,9 @@ class HealthpoliciesController extends Controller
                 $healthpolicy_renew->added_by= $created_by ;     
                 $healthpolicy_renew->added_date=date('Y-m-d') ;       
                 $healthpolicy_renew->save();
+
+                $healthpolicies->created_user=User::find($created_by)->name ??"";
+
             }
             $policy_category = Tbl_policy_categories::find($validatedData['policy_category_id']);
             $healthpolicies->policy_category = $policy_category->policy_category;
@@ -128,6 +134,10 @@ class HealthpoliciesController extends Controller
             $healthpolicies->referred = $referred->name;
             $provider = Tbl_insurence_providers::find($validatedData['provider_id']);
             $healthpolicies->provider = $provider->provider_name;
+
+            $healthpolicynew=Tbl_healthpolicy::find($healthpolicies->id);
+            $healthpolicies->paid_amount=$healthpolicynew->paid_amount;
+            $healthpolicies->due_amount=$healthpolicynew->due_amount;
             return response()->json([
                 'success' => true,
                 'message' => 'Health policy created successfully',
@@ -146,7 +156,7 @@ class HealthpoliciesController extends Controller
         $request->validate([
             'id' => 'required|exists:tbl_healthpolicies,id',
         ]);
-        $healthpolicies = Tbl_healthpolicy::with('policy_category','executive', 'referred', 'provider', 'company')->find($request->id);
+        $healthpolicies = Tbl_healthpolicy::with('policy_category','executive', 'referred', 'provider', 'company','created_user')->find($request->id);
         if (!$healthpolicies) {
             return response()->json(['success' => false, 'message' => 'Health policy not found'], 404);
         }
@@ -156,6 +166,7 @@ class HealthpoliciesController extends Controller
                 'policy_category_id' => $healthpolicies->policy_category_id ,
                 'type' => $healthpolicies->type ,
                 'company_id' => $healthpolicies->company_id ,
+                'company' => $healthpolicies->company->company ?? 'N/A' ,
                 'name' => $healthpolicies->name,
                 'birth_date' => $healthpolicies->birth_date,
                 'height' => $healthpolicies->height,
@@ -172,7 +183,8 @@ class HealthpoliciesController extends Controller
                 'status' => $healthpolicies->status,          
                 'referred_id' => $healthpolicies->referred_id,          
                 'provider_id' => $healthpolicies->provider_id,       
-                'note' => $healthpolicies->note,       
+                'note' => $healthpolicies->note,  
+                'created_user'=>$healthpolicies->created_user->name ?? "N/A"
             ]
         ]);
     }
@@ -186,7 +198,7 @@ class HealthpoliciesController extends Controller
             'birth_date' => 'required|date',
             'height' => 'required|integer|min:0',
             'weight' => 'required|integer|min:0',
-            'primary_number' => 'required|string|max:15',
+            'primary_number' => 'nullable|string|max:15',
             'secondary_number' => 'nullable|string|max:15',
             'expiry_date' => 'required|date',
             'premium_amount' => 'required|numeric|min:0',
@@ -200,7 +212,14 @@ class HealthpoliciesController extends Controller
             'provider_id' => 'required|integer|exists:tbl_insurence_providers,id',
             'note' => 'nullable|string',     
         ]);
-
+            if(Tbl_healthpolicy::where('name',$validatedData['name'])->where('id','!=',$validatedData['id'])->exists())
+            {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Already Updated This Policy Name',
+                ]);
+            }
+            $edited_by=Auth::user()->id;
             $healthpolicies = Tbl_healthpolicy::find($validatedData['id']);
             if ($healthpolicies->birth_date !== $request->birth_date) {
                 $birthDate = Carbon::parse($request->birth_date);
@@ -226,15 +245,19 @@ class HealthpoliciesController extends Controller
             $healthpolicies->status = $validatedData['status'];           
             $healthpolicies->referred_id = $validatedData['referred_id'];           
             $healthpolicies->provider_id = $validatedData['provider_id'];           
-            $healthpolicies->note = $validatedData['note'];           
+            $healthpolicies->note = $validatedData['note']; 
+            $healthpolicies->edited_by= $edited_by;       
+            $healthpolicies->edited_date= date('Y-m-d H:i:s');           
             $healthpolicies->save();
+
+            $healthpolicies->created_user=User::find($healthpolicies->created_by)->name ??"";
 
             $policy_category = Tbl_policy_categories::find($validatedData['policy_category_id']);
             $healthpolicies->policy_category = $policy_category->policy_category;
 
             if($request->input('company_id'))
             {
-                $company = Tbl_companies::find($validatedData['company_id']);
+                $company = Tbl_companies::find($request->input('company_id'));
                 $healthpolicies->company = $company->company;
             }
             else

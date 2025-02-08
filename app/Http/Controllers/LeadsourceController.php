@@ -32,6 +32,14 @@ class LeadsourceController extends Controller
     }
     public function store(Request $request)
     {
+        if(Tbl_leadsources::where('leadsource',$request->leadsource)
+        ->exists())
+        {
+            return response()->json([
+                'success' => false,
+                'message' => 'Already Exist This LeadSource',
+            ]);
+        }
         $leadsource=new Tbl_leadsources;
         $leadsource->leadsource=$request->leadsource;
         $leadsource->save();
@@ -45,6 +53,14 @@ class LeadsourceController extends Controller
     }
     public function update(Request $request)
     {
+        if(Tbl_leadsources::where('leadsource',$request->leadsource)
+        ->exists())
+        {
+            return response()->json([
+                'success' => false,
+                'message' => 'Already Updated This LeadSource',
+            ]);
+        }
         $source_id=$request->leadsource_id;
         $leadsource=Tbl_leadsources::find($source_id);
         $leadsource->leadsource=$request->leadsource;
