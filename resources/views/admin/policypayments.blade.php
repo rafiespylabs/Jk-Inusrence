@@ -20,7 +20,9 @@
                             <i class="fa fa-archive"></i> Purchase Cards  <i class="fa fa-arrow-right"></i>
                         </button>
                     </a>
-                    <p class="mt-3"><b>Premium Amount :</b> <span id="total_premium"></span></p>
+                    <p>Policy Name: <span id="policy_name"></span> &nbsp;&nbsp; Policy Phone Number: <span id="policy_primary_number"></span></p>
+                    <p>Insurence Provider: <span id="provider_name"></span>&nbsp;&nbsp; <b>Customer Premium Amount :</b> <span id="total_cust_premium"></span></p>
+                    <p class="mt-3"><b> Premium Amount :</b> <span id="total_premium"></span></p>
                     <div id="preloader" style="display:none;">
                         <img src="{{asset('web/preloader.gif')}}">
                     </div>
@@ -29,8 +31,8 @@
                         <thead>
                             <tr>
                                 <th>Sl No</th>
-                                <th>Paid Amount</th>
                                 <th>Payment Mode</th>
+                                <th>Paid Amount</th>
                                 <th>Added Date</th>
                                 <th>Added By</th>
                                 <th>Action</th>
@@ -74,26 +76,9 @@
                 </button>
             </div>
             <div class="modal-body">
-                <div>
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Card</th>
-                                <th>Taken Amount</th>
-                                <th>Balance</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($purchase_cards as $pcard)
-                            <tr>
-                                <td>{{$pcard->card->holder_name ?? ""}}</td>
-                                <td>{{$pcard->taken_amount}}</td>
-                                <td>{{$pcard->balance_amount}}</td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
+               <p>Policy Name : <span id="policy_name_1"></span> &nbsp;&nbsp; Policy Phone Number : <span id="policy_primary_number_1"></span></p>
+               <p>Customer Paid Premium : <span id="customer_premium"></span> &nbsp; &nbsp; Premium Amount : <span id="premium_amt"></span></p>
+               <p>Inusrence Provider : <span id="provider_name_1"></span></p>
               <form id="create_policy_payment_form" class="form" enctype="multipart/form-data">
               @csrf
                 <div class="row form-group">
@@ -125,6 +110,28 @@
                   <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
                 </div>
               </form>
+              <div>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Card</th>
+                                <th>Taken Amount</th>
+                                <th>Card Balance</th>
+                                <th>Provider Card Balance</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($purchase_cards as $pcard)
+                            <tr>
+                                <td>{{$pcard->card->holder_name ?? ""}}</td>
+                                <td>{{$pcard->taken_amount}}</td>
+                                <td>{{$pcard->card_balance_amount}}</td>
+                                <td>{{$pcard->provider_balance_amount}}</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <div class="modal-footer">
             </div>
@@ -200,7 +207,16 @@
                         $('#policypayment_tbody').html(res.data);
                         $('#total_paid_amount').text(res.total_paid_amount);
                         $('#balance_amount').text(res.balance_amount);
+                        $('#total_cust_premium').text(res.total_cust_premium);
+                        $('#customer_premium').text(res.total_cust_premium);
                         $('#total_premium').text(res.total_premium);
+                        $('#premium_amt').text(res.total_premium);
+                        $('#policy_primary_number').text(res.policy_phone_number);
+                        $('#policy_primary_number_1').text(res.policy_phone_number);
+                        $('#policy_name').text(res.policy_name);
+                        $('#policy_name_1').text(res.policy_name);
+                        $('#provider_name').text(res.provider_name);
+                        $('#provider_name_1').text(res.provider_name);
                         $('#policypayment-datatable').DataTable({
                             "bStateSave": true,
                             "fnStateSave": function (oSettings, oData) {
@@ -241,7 +257,14 @@
                     } 
                     else 
                     {
-                        alert( response.message);
+                        swal("Warning!", response.message, {
+                            icon: "warning",
+                            buttons: {
+                                confirm: {
+                                className: "btn btn-warning",
+                                },
+                            },
+                        });
                     }
                 },
                 error: function(xhr, status, error) {

@@ -24,6 +24,7 @@ class HealthpolicyRenewController extends Controller
             'policy_cat_id' => 'required|exists:tbl_policy_categories,id',
             'healthpolicy_id' => 'required|exists:tbl_healthpolicies,id',
             'premium_amount' => 'required|numeric',
+            'customer_premium'=>'required|numeric',
             'renew_date' => 'required|date',
             'expiry_date' => 'required|date',
             'payment_mode_id' => 'required|exists:tbl_payment_modes,id'
@@ -34,6 +35,7 @@ class HealthpolicyRenewController extends Controller
            $healthpolicy_renew->healthpolicy_id = $validatedData['healthpolicy_id'];
            $healthpolicy_renew->policy_cat_id = $validatedData['policy_cat_id'];
            $healthpolicy_renew->premium_amount= $validatedData['premium_amount'];
+           $healthpolicy_renew->customer_premium= $validatedData['customer_premium'];
            $healthpolicy_renew->renew_date = $validatedData['renew_date'];
            $healthpolicy_renew->expiry_date = $validatedData['expiry_date']; 
            $healthpolicy_renew->payment_mode_id= $validatedData['payment_mode_id']; 
@@ -43,6 +45,7 @@ class HealthpolicyRenewController extends Controller
 
            $healthpolicy = Tbl_healthpolicy::find($validatedData['healthpolicy_id']);
            $healthpolicy->premium_amount = $validatedData['premium_amount'];
+           $healthpolicy->customer_premium_amount = $validatedData['customer_premium'];
            $healthpolicy->start_date = $validatedData['renew_date'];
            $healthpolicy->expiry_date = $validatedData['expiry_date'];
            $healthpolicy->save();

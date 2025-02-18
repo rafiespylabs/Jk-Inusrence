@@ -31,27 +31,28 @@ use App\Models\Tbl_healthpolicy_renews;
                                         <th>Policy Type</th>
                                         <th>Company</th>
                                         <th>Name</th>
+                                        <th>Primary Number</th>
+                                        <th>Premium Amount</th>
+                                        <th>Customer Paid Premium Amount</th>
+                                        <th>Paid Amount</th>
+                                        <th>Due Amount</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
                                         <th>Birth Date</th>
                                         <th>Age</th>
                                         <th>Height</th>
                                         <th>Weight</th>
-                                        <th>Primary Number</th>
                                         <th>Secondary Number</th>
                                         <th>Start Date</th>
                                         <th>Expiry Date</th>
-                                        <th>Premium Amount</th>
                                         <th>Sum Insured</th>
                                         <th>Nominee Name</th>
                                         <th>Nominee Relation</th>
                                         <th>Executive</th>
-                                        <th>Status</th>
-                                        <th>Paid Amount</th>
-                                        <th>Due Amount</th>
                                         <th>Reference Perosn</th>
                                         <th>Insurance Provider</th>
                                         <th>Note</th>
                                         <th>Created By</th>
-                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -76,19 +77,11 @@ use App\Models\Tbl_healthpolicy_renews;
                                             </td>
                                             <td>{{ $healthpolicy->company->company ?? 'N/A' }}</td>
                                             <td>{{ $healthpolicy->name}}</td>
-                                            <td>{{ $healthpolicy->birth_date}}</td>
-                                            <td>{{ $healthpolicy->age}}</td>
-                                            <td>{{ $healthpolicy->height}}</td>
-                                            <td>{{ $healthpolicy->weight}}</td>
                                             <td>{{ $healthpolicy->primary_number}}</td>
-                                            <td>{{ $healthpolicy->secondary_number}}</td>
-                                            <td>{{ $healthpolicy->start_date}}</td>
-                                            <td>{{ $healthpolicy->expiry_date}}</td>
                                             <td>{{ $healthpolicy->premium_amount}}</td>
-                                            <td>{{ $healthpolicy->sum_insured}}</td>
-                                            <td>{{ $healthpolicy->nominee_name}}</td>
-                                            <td>{{ $healthpolicy->nominee_relation}}</td>
-                                            <td>{{ $healthpolicy->executive->user->name ?? 'N/A' }}</td>
+                                            <td>{{ $healthpolicy->customer_premium_amount}}</td>
+                                            <td>{{ $healthpolicy->paid_amount }}</td>
+                                            <td>{{ $healthpolicy->due_amount }}</td>
                                             <td>
                                                 @if($healthpolicy->paid_amount==0)
                                                 <span class="badge badge-warning mb-2">Not Paid</span>
@@ -100,12 +93,6 @@ use App\Models\Tbl_healthpolicy_renews;
                                                 <span class="badge badge-success">Full Paid</span>
                                                 @endif
                                             </td>
-                                            <td>{{ $healthpolicy->paid_amount }}</td>
-                                            <td>{{ $healthpolicy->due_amount }}</td>
-                                            <td>{{ $healthpolicy->referred->name ?? 'N/A' }}</td>                                            
-                                            <td>{{ $healthpolicy->provider->provider_name ?? 'N/A' }}</td>                                                                                           
-                                            <td>{{ $healthpolicy->note }}</td>  
-                                            <td>{{$created_by}}</td>   
                                             <td>
                                                 <div class="btn-group dropdown">
                                                     <button class="btn btn-primary btn-xs dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" fdprocessedid="oolj6">Actions</button>
@@ -131,16 +118,31 @@ use App\Models\Tbl_healthpolicy_renews;
                                                     </ul>
                                                 </div>
                                             </td>
+                                            <td>{{ $healthpolicy->birth_date}}</td>
+                                            <td>{{ $healthpolicy->age}}</td>
+                                            <td>{{ $healthpolicy->height}}</td>
+                                            <td>{{ $healthpolicy->weight}}</td>
+                                            <td>{{ $healthpolicy->secondary_number}}</td>
+                                            <td>{{ $healthpolicy->start_date}}</td>
+                                            <td>{{ $healthpolicy->expiry_date}}</td>
+                                            <td>{{ $healthpolicy->sum_insured}}</td>
+                                            <td>{{ $healthpolicy->nominee_name}}</td>
+                                            <td>{{ $healthpolicy->nominee_relation}}</td>
+                                            <td>{{ $healthpolicy->executive->user->name ?? 'N/A' }}</td>
+                                            <td>{{ $healthpolicy->referred->name ?? 'N/A' }}</td>                                            
+                                            <td>{{ $healthpolicy->provider->provider_name ?? 'N/A' }}</td>                                                                                           
+                                            <td>{{ $healthpolicy->note }}</td>  
+                                            <td>{{$created_by}}</td>   
                                         </tr>
                                         @php $i++; @endphp
                                     @endforeach
                                 </tbody>
                             </table>
                         </div>
-                        <a href="{{route('payments')}}" class="btn btn-danger" style="margin-top:30px;">
+                        <!-- <a href="{{route('payments')}}" class="btn btn-danger" style="margin-top:30px;">
                             <i class="fa fa-money-bill"></i>
                             Go To Payments
-                        </a>
+                        </a> -->
                     </div>
                 </div>
             </div>
@@ -216,7 +218,7 @@ use App\Models\Tbl_healthpolicy_renews;
                             <div class="col-md-3">
                                 <label for="primary_number">Primary Number </label>
                                 <input type="text" name="primary_number" id="primary_number" pattern="[0-9]{10}" 
-                                title="Phone number must be 10 digits" class="form-control" required>
+                                title="Phone number must be 10 digits" class="form-control">
                             </div>
                             <div class="col-md-3">
                                 <label for="secondary_number">Secondary Number</label>
@@ -247,15 +249,19 @@ use App\Models\Tbl_healthpolicy_renews;
                                 <input type="number" name="premium_amount" id="premium_amount" class="form-control" required>
                             </div>
                             <div class="col-md-4">
+                                <label for="premium_amount">Customer Paid Premium Amount </label>
+                                <input type="number" step="any" name="customer_premium_amount" id="customer_premium_amount" class="form-control">
+                            </div>
+                            <div class="col-md-4">
                                 <label for="sum_insured">Sum Insured <span>*</span></label>
                                 <input type="number" name="sum_insured" id="sum_insured" class="form-control" required>
                             </div>
+                        </div>
+                        <div class="row form-group">
                             <div class="col-md-4">
                                 <label for="nominee_name">Nominee Name</label>
                                 <input type="text" name="nominee_name" id="nominee_name" class="form-control" >
                             </div>
-                        </div>
-                        <div class="row form-group">
                             <div class="col-md-4">
                                 <label for="nominee_relation">Nominee Relation</label>
                                 <input type="text" name="nominee_relation" id="nominee_relation" class="form-control">
@@ -269,16 +275,16 @@ use App\Models\Tbl_healthpolicy_renews;
                                     @endforeach
                                 </select>
                             </div>  
+                        </div>
+                        <div class="row form-group">
                             <div class="col-md-4">
-                                <label for="status" class="form-label">Status <span>*</span></label>
-                                <select name="status" id="status" class="form-control" required>
+                                <label for="status" class="form-label">Status </label>
+                                <select name="status" id="status" class="form-control">
                                     <option value="">Select One</option>
                                     <option value="0" {{ isset($policy) && $policy->status == 0 ? 'selected' : '' }}>Not Paid</option>
                                     <option value="1" {{ isset($policy) && $policy->status == 1 ? 'selected' : '' }}>Paid</option>
                                 </select>
                             </div>   
-                        </div>
-                        <div class="row form-group">
                             <div class="col-md-4">
                                 <label>C/O Person <span>*</span></label>
                                 <div class="input-group">
@@ -302,12 +308,12 @@ use App\Models\Tbl_healthpolicy_renews;
                                     @endforeach
                                 </select>
                             </div>
+                        </div>
+                        <div class="row form-group">
                             <div class="col-md-4">
                                 <label for="note">Note</label>
                                 <textarea name="note" id="note" class="form-control"></textarea>
                             </div>
-                        </div>
-                        <div class="row form-group">
                             <div class="col-md-4">
                                 <label for="executive">Prepared User</label>
                                 <select name="prepared_user_id" id="prepared_user_id" class="form-control">
@@ -318,8 +324,8 @@ use App\Models\Tbl_healthpolicy_renews;
                                 </select>
                             </div>
                             <div class="col-4">
-                                <label>Payment Mode<span>*</span></label>
-                                <select  name="payment_mode_id" class="form-control" required>
+                                <label>Payment Mode </label>
+                                <select  name="payment_mode_id" class="form-control">
                                     <option value="">Select One</option>
                                     @foreach($payment_modes as $mode)
                                     <option value="{{$mode->id}}">{{$mode->payment_mode}}</option>
@@ -418,6 +424,10 @@ use App\Models\Tbl_healthpolicy_renews;
                                 <input type="number" name="premium_amount" id="edit_premium_amount" class="form-control" required>
                             </div>
                             <div class="col-md-4">
+                                <label for="premium_amount">Customer Paid Premium Amount</label>
+                                <input type="number" step="any" name="customer_premium_amount" id="edit_customer_premium_amount" class="form-control">
+                            </div>
+                            <div class="col-md-4">
                                 <label for="sum_insured">Sum Insured</label>
                                 <input type="number" name="sum_insured" id="edit_sum_insured" class="form-control" required>
                             </div>
@@ -451,7 +461,7 @@ use App\Models\Tbl_healthpolicy_renews;
                             </div>  
                             <div class="col-md-4">
                                 <label for="status" class="form-label">Status</label>
-                                <select name="status" id="edit_status" class="form-control" required>
+                                <select name="status" id="edit_status" class="form-control">
                                     <option value="">Select One</option>
                                     <option value="0" {{ isset($policy) && $policy->status == 0 ? 'selected' : '' }}>Not Paid</option>
                                     <option value="1" {{ isset($policy) && $policy->status == 1 ? 'selected' : '' }}>Paid</option>
@@ -616,8 +626,8 @@ use App\Models\Tbl_healthpolicy_renews;
                         <input type="text"  name="name" class="form-control" required>
                     </div>
                     <div class="col-6">
-                        <label>Phone Number<span>*</span></label>
-                        <input type="text"  name="phone_number" class="form-control" required>
+                        <label>Phone Number </label>
+                        <input type="text"  name="phone_number" class="form-control">
                     </div>
                 </div>
                 <div class="form-actions form-group">
@@ -684,6 +694,7 @@ use App\Models\Tbl_healthpolicy_renews;
                             if (response.success) {
                                 $('#CreateModal').modal('hide');  
                                 $('#create_healthpolicies_form')[0].reset(); 
+                                $('.selectpicker').selectpicker('refresh');
                                 swal("Success!", response.message, {
                                     icon: "success",
                                     buttons: {
@@ -738,26 +749,12 @@ use App\Models\Tbl_healthpolicy_renews;
                                     type, 
                                     response.data.company, 
                                     response.data.name, 
-                                    response.data.birth_date, 
-                                    response.data.age, 
-                                    response.data.height, 
-                                    response.data.weight, 
                                     response.data.primary_number,                                    
-                                    response.data.secondary_number,                                    
-                                    response.data.start_date, 
-                                    response.data.expiry_date,                                    
-                                    response.data.premium_amount,                                    
-                                    response.data.sum_insured,                                    
-                                    response.data.nominee_name,                                    
-                                    response.data.nominee_relation,                                    
-                                    response.data.user_id,                                    
-                                    status,  
+                                    response.data.premium_amount,
+                                    response.data.customer_premium_amount,
                                     response.data.paid_amount,
-                                    response.data.due_amount,                                  
-                                    response.data.referred,                                    
-                                    response.data.provider,  
-                                    response.data.note,                                                                     
-                                    response.data.created_user, 
+                                    response.data.due_amount,
+                                    status,  
                                     '<div class="btn-group dropdown">'+
                                         '<button class="btn btn-primary btn-xs dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" fdprocessedid="oolj6">Actions</button>'+
                                         '<ul class="dropdown-menu" role="menu">'+
@@ -780,7 +777,22 @@ use App\Models\Tbl_healthpolicy_renews;
                                                 '</a>'+
                                             '</li>'+
                                         '</ul>'+
-                                    '</div>'
+                                    '</div>',                                                                      
+                                    response.data.birth_date, 
+                                    response.data.age, 
+                                    response.data.height, 
+                                    response.data.weight, 
+                                    response.data.secondary_number,                                    
+                                    response.data.start_date, 
+                                    response.data.expiry_date,                                    
+                                    response.data.sum_insured,                                    
+                                    response.data.nominee_name,                                    
+                                    response.data.nominee_relation,                                    
+                                    response.data.user_id,                                    
+                                    response.data.referred,                                    
+                                    response.data.provider,  
+                                    response.data.note,                                                                     
+                                    response.data.created_user
                                 ]).draw(false);
 
                                 table.page('last').draw(false);  
@@ -853,13 +865,14 @@ use App\Models\Tbl_healthpolicy_renews;
                                 $('#edit_secondary_number').val(response.data.secondary_number);
                                 $('#edit_expiry_date').val(response.data.expiry_date);
                                 $('#edit_premium_amount').val(response.data.premium_amount);
+                                $('#edit_customer_premium_amount').val(response.data.customer_premium_amount);
                                 $('#edit_sum_insured').val(response.data.sum_insured);
                                 $('#edit_term').val(response.data.term);
                                 $('#edit_nominee_name').val(response.data.nominee_name);
                                 $('#edit_nominee_relation').val(response.data.nominee_relation);
                                 $('#edit_executive_id').val(response.data.executive_id);
                                 $('#edit_status').val(response.data.status);
-                                $('#edit_referred_id').val(response.data.referred_id);
+                                $('#edit_referred_id').val(response.data.referred_id).selectpicker('refresh');
                                 $('#edit_provider_id').val(response.data.provider_id);
                                 $('#edit_note').val(response.data.note);               
                             
@@ -929,6 +942,7 @@ use App\Models\Tbl_healthpolicy_renews;
                             if (response.success) {
                                 $('#EditModal').modal('hide');
                                 $('#edit_healthpolicies_form')[0].reset();
+                                $('.selectpicker').selectpicker('refresh');
                                 swal("Success!", "Health Policy Updated successfully", {
                                     icon: "success",
                                     buttons: {
@@ -983,27 +997,13 @@ use App\Models\Tbl_healthpolicy_renews;
                                     type, 
                                     response.data.company, 
                                     response.data.name, 
-                                    response.data.birth_date, 
-                                    response.data.age, 
-                                    response.data.height, 
-                                    response.data.weight, 
                                     response.data.primary_number,                                    
-                                    response.data.secondary_number,
-                                    response.data.start_date,                                       
-                                    response.data.expiry_date,                                    
-                                    response.data.premium_amount,                                    
-                                    response.data.sum_insured,                                    
-                                    response.data.nominee_name,                                    
-                                    response.data.nominee_relation,                                    
-                                    response.data.user_id,                                    
-                                    status,   
+                                    response.data.premium_amount,  
+                                    response.data.customer_premium_amount,  
                                     response.data.paid_amount,
-                                    response.data.due_amount,                                
-                                    response.data.referred,   
-                                    response.data.provider,                                 
-                                    response.data.note, 
-                                    response.data.created_user,
-                                   '<div class="btn-group dropdown">'+
+                                    response.data.due_amount, 
+                                    status,
+                                    '<div class="btn-group dropdown">'+
                                         '<button class="btn btn-primary btn-xs dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" fdprocessedid="oolj6">Actions</button>'+
                                         '<ul class="dropdown-menu" role="menu">'+
                                             '<li>'+
@@ -1021,7 +1021,22 @@ use App\Models\Tbl_healthpolicy_renews;
                                                 '</a>'+
                                             '</li>'+
                                         '</ul>'+
-                                    '</div>'
+                                    '</div>',                                                                    
+                                    response.data.birth_date, 
+                                    response.data.age, 
+                                    response.data.height, 
+                                    response.data.weight, 
+                                    response.data.secondary_number,
+                                    response.data.start_date,                                       
+                                    response.data.expiry_date,                                    
+                                    response.data.sum_insured,                                    
+                                    response.data.nominee_name,                                    
+                                    response.data.nominee_relation,                                    
+                                    response.data.user_id,                                    
+                                    response.data.referred,   
+                                    response.data.provider,                                 
+                                    response.data.note, 
+                                    response.data.created_user
                                 ]).draw(false); 
                                 } else {
                                     alert('Error updating data: ' + response.message);

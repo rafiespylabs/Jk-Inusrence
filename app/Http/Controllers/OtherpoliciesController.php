@@ -39,18 +39,21 @@ class OtherpoliciesController extends Controller
             'start_date' => 'required|date',
             'expiry_date' => 'required|date',
             'premium_amount' => 'required|numeric|min:0',
+            'customer_premium_amount' => 'nullable|numeric|min:0',
             'sum_insured' => 'required|numeric|min:0',
             'term' => 'required|string|in:1year',
             'executive_id' => 'required|exists:tbl_staffs,user_id',
-            'status' => 'required|boolean',
+            'status' => 'nullable|boolean',
             'referred_id' => 'nullable|integer|exists:tbl_referred_persons,id',
             'provider_id' => 'required|integer|exists:tbl_insurence_providers,id',
             'note' => 'nullable|string',
+            'prepared_user_id' => 'nullable|integer|exists:users,id',
             'payment_mode_id'=>'nullable|integer|exists:tbl_payment_modes,id'
         ]);
         try {
             if(Tbl_other_policies::where('name',$validatedData['name'])
             ->orWhere('primary_number', $validatedData['primary_number'])
+            ->whereNotNull('primary_number')
             ->exists())
             {
                 return response()->json([
@@ -66,7 +69,8 @@ class OtherpoliciesController extends Controller
             $otherpolicies->secondary_number = $validatedData['secondary_number'];           
             $otherpolicies->start_date = $validatedData['start_date']; 
             $otherpolicies->expiry_date = $validatedData['expiry_date'];           
-            $otherpolicies->premium_amount = $validatedData['premium_amount'];           
+            $otherpolicies->premium_amount = $validatedData['premium_amount'];         
+            $otherpolicies->customer_premium_amount = $validatedData['customer_premium_amount'];
             $otherpolicies->sum_insured = $validatedData['sum_insured'];           
             $otherpolicies->term = $validatedData['term'];           
             $otherpolicies->executive_id = $validatedData['executive_id'];           
@@ -74,6 +78,7 @@ class OtherpoliciesController extends Controller
             $otherpolicies->referred_id = $validatedData['referred_id'];           
             $otherpolicies->provider_id = $validatedData['provider_id'];           
             $otherpolicies->note = $validatedData['note'];  
+            $otherpolicies->prepared_user_id = $validatedData['prepared_user_id'];  
             $otherpolicies->created_by= $current_user_id ;     
             $otherpolicies->created_date=date('Y-m-d H:i:s') ;            
             if($otherpolicies->save())
@@ -82,6 +87,7 @@ class OtherpoliciesController extends Controller
                 $otherpolicy_renew->policy_cat_id = $validatedData['policy_category_id'];
                 $otherpolicy_renew->other_policy_id = $otherpolicies->id;
                 $otherpolicy_renew->premium_amount= $validatedData['premium_amount'];
+                $otherpolicy_renew->customer_premium= $validatedData['customer_premium_amount'];
                 $otherpolicy_renew->renew_date = $validatedData['start_date'];
                 $otherpolicy_renew->expiry_date = $validatedData['expiry_date']; 
                 $otherpolicy_renew->payment_mode_id= $validatedData['payment_mode_id']; 
@@ -135,6 +141,7 @@ class OtherpoliciesController extends Controller
                 'start_date' => $otherpolicies->start_date,    
                 'expiry_date' => $otherpolicies->expiry_date,         
                 'premium_amount' => $otherpolicies->premium_amount,       
+                'customer_premium_amount' => $otherpolicies->customer_premium_amount,  
                 'sum_insured' => $otherpolicies->sum_insured,       
                 'term' => $otherpolicies->term,       
                 'executive_id' => $otherpolicies->executive->user_id,    
@@ -156,23 +163,34 @@ class OtherpoliciesController extends Controller
             'start_date' => 'required|date',
             'expiry_date' => 'required|date',
             'premium_amount' => 'required|numeric|min:0',
+            'customer_premium_amount' => 'nullable|numeric|min:0',
             'sum_insured' => 'required|numeric|min:0',
             'term' => 'required|string|in:1year',
             'executive_id' => 'required|exists:tbl_staffs,user_id',
-            'status' => 'required|boolean',
+            'status' => 'nullable|boolean',
             'referred_id' => 'nullable|integer|exists:tbl_referred_persons,id',
             'provider_id' => 'required|integer|exists:tbl_insurence_providers,id',
             'note' => 'nullable|string',     
         ]);
-            // if(Tbl_other_policies::where('name',$validatedData['name'])
-            // ->orWhere('primary_number', $validatedData['primary_number'])
-            // ->exists())
-            // {
-            //     return response()->json([
-            //         'success' => false,
-            //         'message' => 'Already Updated  Policy Name Or Phone Number',
-            //     ]);
-            // }
+            if(Tbl_other_policies::where('name',$validatedData['name'])
+            ->where('id','!=',$validatedData['id'])
+            ->exists())
+            {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Already Updated  Policy Name',
+                ]);
+            }
+            if(Tbl_other_policies::where('primary_number', $validatedData['primary_number'])
+            ->whereNotNull('primary_number')
+            ->where('id','!=',$validatedData['id'])
+            ->exists())
+            {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Already Updated  Phone Number',
+                ]);
+            }
             $current_user_id=Auth::user()->id;
             $otherpolicies = Tbl_other_policies::find($validatedData['id']);
             $otherpolicies->policy_category_id = $validatedData['policy_category_id'];
@@ -182,6 +200,7 @@ class OtherpoliciesController extends Controller
             $otherpolicies->start_date = $validatedData['start_date'];
             $otherpolicies->expiry_date = $validatedData['expiry_date'];           
             $otherpolicies->premium_amount = $validatedData['premium_amount'];           
+            $otherpolicies->customer_premium_amount = $validatedData['customer_premium_amount']; 
             $otherpolicies->sum_insured = $validatedData['sum_insured'];           
             $otherpolicies->term = $validatedData['term'];           
             $otherpolicies->executive_id = $validatedData['executive_id'];           

@@ -8,6 +8,9 @@ use App\Models\Tbl_payment_modes;
 use App\Models\Tbl_insurence_providers;
 use App\Models\Tbl_purchase_cards;
 use App\Models\Tbl_cards;
+use App\Models\Tbl_healthpolicy;
+use App\Models\Tbl_other_policies;
+use App\Models\Tbl_policyholders;
 use Response;
 use Redirect;
 use Carbon\Carbon;
@@ -18,9 +21,32 @@ class PurchaseCardController extends Controller
         $payment_modes=Tbl_payment_modes::all();
         $insurence_providers=Tbl_insurence_providers::all();
         $cards=Tbl_cards::all();
+        if($policy_cat_id==1)
+        {
+            $policy=Tbl_healthpolicy::find($policy_id);
+        }
+        elseif($policy_cat_id==9)
+        {
+            $policy=Tbl_policyholders::with('insurence_provider')->find($policy_id);
+        }
+        else
+        {
+            $policy=Tbl_other_policies::find($policy_id);
+        }
+        $total_taken_amount=0;
+        $purchase_cards=Tbl_purchase_cards::where('policy_cat_id', $policy_cat_id)->where('policy_id', $policy_id)->get();
+        foreach($purchase_cards as $pur_card)
+        {
+            $total_taken_amount+=$pur_card->taken_amount;
+        }
+        $due_premium=$policy->premium_amount-$total_taken_amount;
+        $policy_name=$policy->name;
+        $policy_phone_number=$policy->primary_number;
+        $provider_name=$policy->insurence_provider->provider_name ?? '';
         return view('admin.purchase_cards',['payment_modes'=>$payment_modes,'cards'=>$cards,
         'insurence_providers'=>$insurence_providers,'policy_cat_id'=>$policy_cat_id,
-        'policy_id'=>$policy_id]);
+        'policy_id'=>$policy_id,'policy'=>$policy,'due_premium'=>$due_premium,'policy_name'=>$policy_name,
+        'policy_phone_number'=>$policy_phone_number,'provider_name'=>$provider_name]);
     }
     public function list(Request $request)
     {
@@ -55,7 +81,8 @@ class PurchaseCardController extends Controller
                 'card' =>$pur_card->card->holder_name ?? "N/A",
                 'provider' =>$pur_card->insurence_provider->provider_name ?? "N/A",
                 'taken_amount' => $pur_card->taken_amount,
-                'balance_amount' => $pur_card->balance_amount,
+                'card_balance_amount' => $pur_card->card_balance_amount,
+                'provider_balance_amount' => $pur_card->provider_balance_amount,
                 'added_by' =>  $added_user,
                 'added_date' => $added_date,
                 'action'=>'',
@@ -74,11 +101,12 @@ class PurchaseCardController extends Controller
     {
         $currentUserId = Auth::id();
         $validatedData = $request->validate([
-            'purchase_type' => 'required|array',
-            'provider_id' => 'required|array',
-            'card_id' => 'required|array',
-            'taken_amount' => 'required|array',            
-            'balance_amount' => 'required|array', 
+            'purchase_type' => 'required|integer|in:1,2',
+            'provider_id' => 'nullable|integer|exists:tbl_insurence_providers,id',
+            'card_id' => 'nullable|integer|exists:tbl_cards,id',
+            'taken_amount' => 'required|numeric|min:0',            
+            'card_balance_amount' => 'required|numeric|min:0', 
+            'provider_balance_amount' => 'required|numeric|min:0', 
         ]);
         $policy_cat_id=$request->policy_cat_id;
         $policy_id=$request->policy_id;
@@ -86,44 +114,75 @@ class PurchaseCardController extends Controller
         $provider_id=$validatedData['provider_id'];
         $card_id=$validatedData['card_id'];
         $taken_amount=$validatedData['taken_amount'];
-        $balance_amount=$validatedData['balance_amount'];
+        $card_balance_amount=$validatedData['card_balance_amount'];
+        $provider_balance_amount=$validatedData['provider_balance_amount'];
         $added_by=Auth::user()->id;
         $added_user=Auth::user()->name;
-        foreach($purchase_type as $key=>$type)
+        $due_premium_amount=$request->due_premium_amount;       
+        if($taken_amount >  $due_premium_amount)
         {
-            $purchase_card=new Tbl_purchase_cards;
-            $purchase_card->policy_cat_id=$policy_cat_id;
-            $purchase_card->policy_id=$policy_id;
-            $purchase_card->purchase_type=$type;
-            $purchase_card->provider_id=$provider_id[$key];
-            $purchase_card->card_id=$card_id[$key];
-            $purchase_card->taken_amount=$taken_amount[$key];
-            $purchase_card->balance_amount=$balance_amount[$key];
-            $purchase_card->added_by=$added_by;
-            $purchase_card->added_date=date('Y-m-d H:i:s');
-            $purchase_card->save();  
-            
-
-            $purchase_card->added_user=$added_user;
-            if($provider_id[$key])
+            return Response::json([ 'success' => false,'message'=>'Taken Amount More Than Due Premium Amount']);
+        }
+        if($provider_id && $card_id)
+        {
+            $provider=Tbl_insurence_providers::find($provider_id);
+            $card=Tbl_cards::find($card_id);
+            if($provider->current_amount==0)
             {
-                $provider=Tbl_insurence_providers::find($provider_id[$key]);
-                $purchase_card->provider=$provider->provider_name;
+                return Response::json([ 'success' => false,'message'=>'Your Insurence Card Balance is 0 Do Not Take This Amount']);
             }
-            if($card_id[$key])
+            else if($card->current_amount==0)
             {
-                $card=Tbl_cards::find($card_id[$key]);
-                if($card->current_amount==0)
+                return Response::json([ 'success' => false,'message'=>'Your Card Balance is 0 Do Not Take This Amount']);
+            }
+            else
+            {
+                if($card)
                 {
-                    return Response::json([ 'success' => false,'message'=>'Your Card Balance is 0 Do Not Take This Amount']);
+                    $provider->current_amount=($provider->current_amount-$taken_amount);
+                    $provider->save();
                 }
-                $card->current_amount=($card->current_amount-$taken_amount[$key]);
-                $card->save();
-            
-                $purchase_card->card=$card->holder_name;
+                if($provider)
+                {
+                    $card->current_amount=($card->current_amount-$taken_amount);
+                    $card->save();        
+                }
+                $purchase_card=new Tbl_purchase_cards;
+                $purchase_card->policy_cat_id=$policy_cat_id;
+                $purchase_card->policy_id=$policy_id;
+                $purchase_card->purchase_type=$purchase_type;
+                $purchase_card->provider_id=$provider_id;
+                $purchase_card->card_id=$card_id;
+                $purchase_card->taken_amount=$taken_amount;
+                $purchase_card->card_balance_amount=$card_balance_amount;
+                $purchase_card->provider_balance_amount=$provider_balance_amount;
+                $purchase_card->added_by=$added_by;
+                $purchase_card->added_date=date('Y-m-d H:i:s');
+                $purchase_card->save();  
+    
+                $purchase_card->added_user=$added_user;
+                $purchase_card->provider=$provider->provider_name;
             }
             $purchase_card->sl_no=Tbl_purchase_cards::count();
         }
         return Response::json([ 'success' => true,'data'=>$purchase_card]);
+    }
+    public function getCardBalance(Request $request)
+    {
+        $taken_amount=$request->taken_amount;
+        $providercardBalance=Tbl_insurence_providers::find($request->provider_id)->current_amount;
+        $cardBalance=Tbl_cards::find($request->card_id)->current_amount;
+        if($cardBalance < $taken_amount)
+        {
+            return Response::json([ 'success' => false,'message'=>'Taken Amount  is Greater Than Card Balance']);
+        }
+        if($providercardBalance < $taken_amount )
+        {
+            return Response::json([ 'success' => false,'message'=>'Taken Amount is Greater Than Insurence Card Balance']);
+        }
+        $totalcardbalance=$cardBalance-$taken_amount;
+        $totalprovidercardbalance=$providercardBalance-$taken_amount;
+        return Response::json([ 'success' =>true,'data'=>['totalcardbalance'=>$totalcardbalance,
+        'totalprovidercardbalance'=>$totalprovidercardbalance]]);
     }
 }

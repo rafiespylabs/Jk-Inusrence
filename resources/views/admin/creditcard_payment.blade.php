@@ -24,6 +24,7 @@
                             <th>Card</th>
                             <th>Credit</th>
                             <th>Credited Date</th>
+                            <th>Provider Card</th>
                             <th>Purpose</th>
                             <th>Due Date</th>
                             <th>Created By</th>
@@ -74,12 +75,23 @@
                         <input type="date"  name="credited_date" class="form-control" required>
                     </div>
                     <div class="col-6">
+                        <label>Insurence Provider Card<span>*</span></label>
+                        <select  name="provider_id" class="form-control" required>
+                            <option value="">Select One</option>
+                            @foreach($provider_cards as $pro_card)
+                            <option value="{{$pro_card->id}}">{{$pro_card->provider_name}}-{{$pro_card->card_name}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-6">
                         <label>Purpose</label>
                         <textarea  name="purpose" class="form-control"></textarea>
                     </div>
                     <div class="col-6">
-                        <label>Due Date <span>*</span></label>
-                        <input type="date"  name="due_date" class="form-control" required>
+                        <label>Due Date </label>
+                        <input type="date"  name="due_date" class="form-control">
                     </div>
                 </div>
                 <div class="form-actions form-group">
@@ -134,8 +146,8 @@
                             <textarea  name="purpose" id="purpose" class="form-control"></textarea>
                         </div>
                         <div class="col-6">
-                            <label>Due Date <span>*</span></label>
-                            <input type="date"  name="due_date" id="due_date"  class="form-control" required>
+                            <label>Due Date </label>
+                            <input type="date"  name="due_date" id="due_date"  class="form-control">
                         </div>
                     </div>
                     <div class="form-actions form-group">
@@ -204,6 +216,7 @@
                 {data:"card_name",name: "card_name" },
                 {data: "credit" ,name: "credit"},
                 {data: "credited_date" ,name: "credited_date"},
+                {data: "provider_card" ,name: "provider_card"},
                 {data: "purpose" ,name: "purpose"},
                 {data: "due_date" ,name: "due_date"},
                 {data: "created_by",name: "created_by" },

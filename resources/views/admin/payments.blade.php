@@ -43,9 +43,6 @@
                                 <th>Sl No</th>
                                 <th>Policy Category</th>
                                 <th>Policy</th>
-                                <th>Card/Company Direct</th>
-                                <th>Card</th>
-                                <th>Insurence Company</th>
                                 <th>Paid Amount</th>
                                 <th>Payment Mode</th>
                                 <th>Added Date</th>
@@ -59,19 +56,13 @@
                             <tr>
                                 <td></td>
                                 <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <th>Total Premium</th>
-                                <td id="total_premium"></td>
+                                <th> Premium Amount</th>
+                                <td id="premium_amount"></td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
                             </tr>
                             <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
                                 <td></td>
                                 <td></td>
                                 <th>Total Paid Amount</th>
@@ -81,9 +72,6 @@
                                 <td></td>
                             </tr>
                             <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
                                 <td></td>
                                 <td></td>
                                 <th>Due Amount</th>
@@ -127,32 +115,6 @@
                         <label>Policy<span>*</span></label>
                         <select  name="policy_id" id="add_policy_id" class="form-control" required>
                             <option value="">Select One</option>
-                        </select>
-                    </div>
-                    <div class="col-4">
-                        <label>Card/Company <span>*</span></label>
-                        <select  name="payment_type" id="add_payment_type" class="form-control">
-                            <option value="">Select One</option>
-                            <option value="1">Card</option>
-                            <option value="2">Company Direct</option>
-                        </select>
-                    </div>
-                    <div class="col-4" id="card_div" style="display:none;">
-                        <label>Card </label>
-                        <select  name="card_id" class="form-control">
-                            <option value="">Select One</option>
-                            @foreach($cards as $card)
-                            <option value="{{$card->id}}">{{$card->holder_name}}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-4" id="provider_div" style="display:none;">
-                        <label>Inusrence Provider</label>
-                        <select  name="provide_id" class="form-control">
-                            <option value="">Select One</option>
-                            @foreach($insurence_providers as $provider)
-                            <option value="{{$provider->id}}">{{$provider->provider_name}}</option>
-                            @endforeach
                         </select>
                     </div>
                 </div>
@@ -203,32 +165,6 @@
                     @csrf
                     <input type="hidden" name="payment_id" id="payment_id" value="">
                     <div class="row form-group">
-                        <div class="col-4">
-                            <label>Card/Company <span>*</span></label>
-                            <select  name="payment_type" id="edit_payment_type" class="form-control">
-                                <option value="">Select One</option>
-                                <option value="1">Card</option>
-                                <option value="2">Company Direct</option>
-                            </select>
-                        </div>
-                        <div class="col-4" id="edit_card_div" style="display:none;">
-                            <label>Card </label>
-                            <select  name="card_id" id="card_id" class="form-control">
-                                <option value="">Select One</option>
-                                @foreach($cards as $card)
-                                <option value="{{$card->id}}">{{$card->holder_name}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-4" id="edit_provider_div" style="display:none;">
-                            <label>Inusrence Provider</label>
-                            <select  name="provide_id" id="provide_id" class="form-control">
-                                <option value="">Select One</option>
-                                @foreach($insurence_providers as $provider)
-                                <option value="{{$provider->id}}">{{$provider->provider_name}}</option>
-                                @endforeach
-                            </select>
-                        </div>
                         <div class="col-4">
                             <label>Payment Mode <span>*</span></label>
                             <select  name="payment_mode_id" id="payment_mode_id" class="form-control" required>
@@ -284,7 +220,7 @@
                         $('#payment_tbody').html(res.data);
                         $('#total_paid_amount').text(res.total_paid_amount);
                         $('#balance_amount').text(res.balance_amount);
-                        $('#total_premium').text(res.total_premium);
+                        $('#premium_amount').text(res.premium_amount);
                         $('#payment-datatable').DataTable({
                             "bStateSave": true,
                             "fnStateSave": function (oSettings, oData) {

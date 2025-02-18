@@ -61,9 +61,9 @@ class PolicyPaymentController extends Controller
             $premium_amount=$policy->premium_amount ?? 0;
             $html.='<tr>';
             $html.='<td>'.$i.'</td>';
+            $html.='<td>'.$payment->payment_mode->payment_mode.'</td>';
             $html.='<td>'.$payment->paid_amount.'</td>';
             $total_paid_amount+=$payment->paid_amount;
-            $html.='<td>'.$payment->payment_mode->payment_mode.'</td>';
             $html.='<td>'.$payment->added_date.'</td>';
             $html.='<td>'.$added_user.'</td>';
             $html.='<td>';
@@ -73,13 +73,50 @@ class PolicyPaymentController extends Controller
             $i++;
         }
         $balance_amount=$policy->premium_amount-$total_paid_amount;
-        return Response::json(['data'=>$html,'total_paid_amount'=> $total_paid_amount,'balance_amount'=>$balance_amount,'total_premium'=>$policy->premium_amount]);
+        $policy_name=$policy->name;
+        $policy_phone_number=$policy->primary_number;
+        $provider_name=$policy->insurence_provider->provider_name ?? '';
+        return Response::json(['data'=>$html,'total_paid_amount'=> $total_paid_amount,'balance_amount'=>$balance_amount,
+        'total_cust_premium'=>$policy->customer_premium_amount,'total_premium'=>$policy->premium_amount,
+        'policy_name'=>$policy_name,'policy_phone_number'=>$policy_phone_number,'provider_name'=>$provider_name]);
     }
     public function store(Request $request)
     {
         $added_by=Auth::user()->id;
         $policy_cat_id=$request->policy_cat_id;
         $policy_id=$request->policy_id;
+        $total_paid=0;
+        if($policy_cat_id==1)
+        {
+            $policy=Tbl_healthpolicy::find($policy_id);
+        }
+        elseif($policy_cat_id==9)
+        {
+            $policy=Tbl_policyholders::find($policy_id);
+        }
+        else
+        {
+            $policy=Tbl_other_policies::find($policy_id);
+        }
+        $total_paid_amount=0;
+        $balance_amount=0;
+        $premium_amount=$policy->premium_amount ?? 0;
+        $payments=Tbl_payments::where('policy_id',$policy_id)->where('policy_cat_id',$policy_cat_id)
+        ->get();
+        foreach($payments as $pay)
+        {
+            $total_paid_amount+=$pay->paid_amount;
+        }
+        $total_paid=$total_paid_amount+floatval($request->paid_amount);
+        $balance_amount=$premium_amount-$total_paid;
+        $policy->paid_amount=$total_paid;
+        $policy->due_amount=$balance_amount;
+        if($total_paid > $premium_amount  )
+        {
+            return Response::json([ 'success' => false,'message'=>'Total Paid Is Exceeds The Premium']);
+        }
+        $policy->save();
+
         $payment=new Tbl_payments;
         $payment->policy_cat_id=$policy_cat_id;
         $payment->policy_id=$request->policy_id;
@@ -88,34 +125,7 @@ class PolicyPaymentController extends Controller
         $payment->added_date=date('Y-m-d');
         $payment->added_by=$added_by;
         $payment->remarks=$request->remarks;
-        if($payment->save())
-        {
-            if($policy_cat_id==1)
-            {
-                $policy=Tbl_healthpolicy::find($policy_id);
-            }
-            elseif($policy_cat_id==9)
-            {
-                $policy=Tbl_policyholders::find($policy_id);
-            }
-            else
-            {
-                $policy=Tbl_other_policies::find($policy_id);
-            }
-            $total_paid_amount=0;
-            $balance_amount=0;
-            $premium_amount=$policy->premium_amount ?? 0;
-            $payments=Tbl_payments::where('policy_id',$policy_id)->where('policy_cat_id',$policy_cat_id)
-            ->get();
-            foreach($payments as $pay)
-            {
-                $total_paid_amount+=$pay->paid_amount;
-            }
-            $balance_amount=$policy->premium_amount-$total_paid_amount;
-            $policy->paid_amount=$total_paid_amount;
-            $policy->due_amount=$balance_amount;
-            $policy->save();
-        }
+        $payment->save();
         return Response::json([ 'success' => true]);
     }
     public function show(Request $request)
@@ -154,7 +164,7 @@ class PolicyPaymentController extends Controller
             {
                 $total_paid_amount+=$pay->paid_amount;
             }
-            $balance_amount=$policy->premium_amount-$total_paid_amount;
+            $balance_amount=$premium_amount-$total_paid_amount;
             $policy->paid_amount=$total_paid_amount;
             $policy->due_amount=$balance_amount;
             $policy->save();

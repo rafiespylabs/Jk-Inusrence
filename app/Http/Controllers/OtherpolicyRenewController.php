@@ -24,6 +24,7 @@ class OtherpolicyRenewController extends Controller
             'other_policy_id' => 'required|exists:tbl_other_policies,id',
             'policy_cat_id' => 'required|exists:tbl_policy_categories,id',
             'premium_amount' => 'required|numeric',
+            'customer_premium' => 'required|numeric',
             'renew_date' => 'required|date',
             'expiry_date' => 'required|date',
             'payment_mode_id' => 'required|exists:tbl_payment_modes,id'
@@ -34,6 +35,7 @@ class OtherpolicyRenewController extends Controller
             $otherpolicy_renew->other_policy_id = $validatedData['other_policy_id'];
             $otherpolicy_renew->policy_cat_id = $validatedData['policy_cat_id'];
             $otherpolicy_renew->premium_amount= $validatedData['premium_amount'];
+            $otherpolicy_renew->customer_premium= $validatedData['customer_premium'];
             $otherpolicy_renew->renew_date = $validatedData['renew_date'];
             $otherpolicy_renew->expiry_date = $validatedData['expiry_date']; 
             $otherpolicy_renew->payment_mode_id= $validatedData['payment_mode_id']; 
@@ -43,6 +45,7 @@ class OtherpolicyRenewController extends Controller
  
             $otherpolicy = Tbl_other_policies::find($validatedData['other_policy_id']);
             $otherpolicy->premium_amount = $validatedData['premium_amount'];
+            $otherpolicy->customer_premium_amount= $validatedData['customer_premium'];
             $otherpolicy->start_date = $validatedData['renew_date'];
             $otherpolicy->expiry_date = $validatedData['expiry_date'];
             $otherpolicy->save();

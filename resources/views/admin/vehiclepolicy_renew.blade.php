@@ -34,6 +34,7 @@
                                 <th>Policy</th>
                                 <th>Vehicle Number</th>
                                 <th>Premium Amount</th>
+                                <th>Customer Premium</th>
                                 <th>Valuation Amount</th>
                                 <th>Total Cost</th>
                                 <th>Start Date</th>
@@ -94,11 +95,15 @@
                     </div>
                     <div class="col-4">
                         <label>Premium Amount <span>*</span></label>
-                        <input type="text"  name="premium_amount" id="renew_premium_amount" class="form-control" value="{{$vehiclepolicy_holder->premium_amount}}" required>
+                        <input type="number" step="any" name="premium_amount" id="renew_premium_amount" class="form-control" value="{{$vehiclepolicy_holder->premium_amount}}" required>
+                    </div>
+                    <div class="col-4">
+                        <label>Customer Premium Amount <span>*</span></label>
+                        <input type="number" step="any" name="customer_premium" id="renew_customer_premium" class="form-control" value="{{$vehiclepolicy_holder->customer_premium}}" required>
                     </div>
                     <div class="col-4">
                         <label>Valuation Amount</label>
-                        <input type="text" name="valuation_amount" id="renew_valuation_amount" value="{{$vehiclepolicy_holder->valuation_amount}}"  class="form-control">
+                        <input type="number" step="any" name="valuation_amount" id="renew_valuation_amount" value="{{$vehiclepolicy_holder->valuation_amount}}"  class="form-control">
                     </div>
                 </div>
                 <div class="row form-group">

@@ -16,4 +16,8 @@ class Tbl_creditcard_payments extends Model
     {
         return $this->belongsTo(Tbl_cards::class, 'card_id','id');
     }
+    public function provider()
+    {
+        return $this->belongsTo(Tbl_insurence_providers::class, 'provider_id','id');
+    }
 }

@@ -27,21 +27,22 @@
                                         <th>Policy Category</th>                                    
                                         <th>Name</th>
                                         <th>Primary Number</th>
+                                        <th>Premium Amount</th>
+                                        <th>Customer Paid Premium Amount</th>
+                                        <th>Paid Amount</th>
+                                        <th>Due Amount</th>
+                                        <th>Status</th>
+                                        <th>Document</th>
+                                        <th>Renew</th>
+                                        <th>Action</th>
                                         <th>Secondary Number</th>
                                         <th>Start Date</th>
                                         <th>Expiry Date</th>
-                                        <th>Premium Amount</th>
                                         <th>Sum Insured</th>
                                         <th>Executive</th>
-                                        <th>Status</th>
-                                        <th>Paid Amount</th>
-                                        <th>Due Amount</th>
                                         <th>Referesnce Perosn</th>
                                         <th>Insurance Provider</th>
-                                        <th>Document</th>
-                                        <th>Renew</th>
                                         <th>Note</th>
-                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -52,12 +53,10 @@
                                             <td>{{ $otherpolicy->policy_category->policy_category ?? 'N/A' }}</td>
                                             <td>{{ $otherpolicy->name}}</td>
                                             <td>{{ $otherpolicy->primary_number}}</td>
-                                            <td>{{ $otherpolicy->secondary_number}}</td>
-                                            <td>{{ $otherpolicy->start_date}}</td>
-                                            <td>{{ $otherpolicy->expiry_date}}</td>
                                             <td>{{ $otherpolicy->premium_amount}}</td>
-                                            <td>{{ $otherpolicy->sum_insured}}</td>
-                                            <td>{{ $otherpolicy->executive->user->name ?? 'N/A' }}</td>
+                                            <td>{{ $otherpolicy->customer_premium_amount}}</td>
+                                            <td>{{ $otherpolicy->paid_amount}}</td>
+                                            <td>{{ $otherpolicy->due_amount}}</td>
                                             <td>
                                                 @if($otherpolicy->paid_amount==0)
                                                 <span class="badge badge-warning mb-2">Not Paid</span>
@@ -69,13 +68,8 @@
                                                 <span class="badge badge-success">Full Paid</span>
                                                 @endif
                                             </td>
-                                            <td>{{ $otherpolicy->paid_amount}}</td>
-                                            <td>{{ $otherpolicy->due_amount}}</td>
-                                            <td>{{ $otherpolicy->referred->name ?? 'N/A' }}</td>                                            
-                                            <td>{{ $otherpolicy->provider->provider_name ?? 'N/A' }}</td>   
                                             <td><a href="{{route('otherPolicyDocs',$otherpolicy->id)}}" class="btn btn-primary btn-xs">Documents</a></td>     
                                             <td><a href="{{route('otherPolicyRenew',$otherpolicy->id)}}" class="btn btn-secondary btn-xs">Renew</a></td>                                  
-                                            <td>{{ $otherpolicy->note }}</td>                                        
                                             <td>
                                                 <i class="fa fa-edit edit_otherpolicies"
                                                     data-id="{{ $otherpolicy->id }}" data-rowid="{{ $i }}" data-bs-toggle="modal"
@@ -84,16 +78,24 @@
                                                     <i class="fa fa-trash delete_otherpolicies"
                                                     data-id="{{ $otherpolicy->id }}"></i>    
                                             </td>
+                                            <td>{{ $otherpolicy->secondary_number}}</td>
+                                            <td>{{ $otherpolicy->start_date}}</td>
+                                            <td>{{ $otherpolicy->expiry_date}}</td>
+                                            <td>{{ $otherpolicy->sum_insured}}</td>
+                                            <td>{{ $otherpolicy->executive->user->name ?? 'N/A' }}</td>
+                                            <td>{{ $otherpolicy->referred->name ?? 'N/A' }}</td>                                            
+                                            <td>{{ $otherpolicy->provider->provider_name ?? 'N/A' }}</td>   
+                                            <td>{{ $otherpolicy->note }}</td>                                        
                                         </tr>
                                         @php $i++; @endphp
                                     @endforeach
                                 </tbody>
                             </table>
                         </div>
-                        <a href="{{route('payments')}}" class="btn btn-danger" style="margin-top:30px;">
+                        <!-- <a href="{{route('payments')}}" class="btn btn-danger" style="margin-top:30px;">
                             <i class="fa fa-money-bill"></i>
                             Go To Payments
-                        </a>
+                        </a> -->
                     </div>
                 </div>
             </div>
@@ -152,9 +154,15 @@
                                 <input type="number" name="premium_amount" id="premium_amount" class="form-control" required>
                             </div>
                             <div class="col-4">
+                                <label for="premium_amount">Customer Paid Premium Amount</label>
+                                <input type="number" name="customer_premium_amount" id="customer_premium_amount" class="form-control">
+                            </div>
+                            <div class="col-4">
                                 <label for="sum_insured">Sum Insured <span>*</span></label>
                                 <input type="number" name="sum_insured" id="sum_insured" class="form-control" required>
                             </div>
+                        </div>
+                        <div class="row form-group">
                             <div class="col-4">
                                 <label for="term">Term</label><br>
                                 <div class="form-check">
@@ -162,8 +170,6 @@
                                     <label for="term_1year" class="form-check-label">1 Year</label>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row form-group">
                             <div class="col-4">
                                 <label for="executive">Executive <span>*</span></label>
                                 <select name="executive_id" id="executive_id" class="form-control" required>
@@ -174,13 +180,15 @@
                                 </select>
                             </div>  
                             <div class="col-4">
-                                <label for="status" class="form-label">Status <span>*</span></label>
-                                <select name="status" id="status" class="form-control" required>
+                                <label for="status" class="form-label">Status </label>
+                                <select name="status" id="status" class="form-control">
                                     <option value="">Select One</option>
                                     <option value="0" {{ isset($policy) && $policy->status == 0 ? 'selected' : '' }}>Not Paid</option>
                                     <option value="1" {{ isset($policy) && $policy->status == 1 ? 'selected' : '' }}>Paid</option>
                                 </select>
-                            </div> 
+                            </div>    
+                        </div>
+                        <div class="row form-group">
                             <div class="col-4">
                                 <label for="referred">C/O Perosn <span>*</span></label>
                                 <div class="input-group">
@@ -194,9 +202,7 @@
                                         <button type="button" class="btn btn-info" id="openReferrenceModal"><i class="fa fa-plus" aria-hidden="true"></i></button>
                                     </div>
                                 </div>
-                            </div>     
-                        </div>
-                        <div class="row form-group">
+                            </div>  
                             <div class="col-4">
                                 <label for="provider">Insurance Provider <span>*</span></label>
                                 <select name="provider_id" id="provider_id" class="form-control" required>
@@ -210,8 +216,19 @@
                                 <label for="note">Note</label>
                                 <input type="text" name="note" id="note" class="form-control">
                             </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-4">
+                                <label for="executive">Prepared User</label>
+                                <select name="prepared_user_id"  class="form-control">
+                                    <option value="">Select One</option>
+                                    @foreach ($executive as $exe)
+                                        <option value="{{ $exe->user_id }}">{{ $exe->user->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                             <div class="col-4">
-                                <label>Payment Mode</label>
+                                <label>Payment Mode </label>
                                 <select  name="payment_mode_id" class="form-control">
                                     <option value="">Select One</option>
                                     @foreach($payment_modes as $mode)
@@ -284,9 +301,15 @@
                                 <input type="number" name="premium_amount" id="edit_premium_amount" class="form-control" required>
                             </div>
                             <div class="col-4">
+                                <label for="premium_amount">Customer Paid Premium Amount </label>
+                                <input type="number" name="customer_premium_amount" id="edit_customer_premium_amount" class="form-control">
+                            </div>
+                            <div class="col-4">
                                 <label for="sum_insured">Sum Insured <span>*</span></label>
                                 <input type="number" name="sum_insured" id="edit_sum_insured" class="form-control" required>
                             </div>
+                        </div>
+                        <div class="row form-group">
                             <div class="col-4">
                                 <label for="term">Term</label><br>
                                 <div class="form-check">
@@ -294,8 +317,6 @@
                                     <label for="term_1year" class="form-check-label">1 Year</label>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row form-group">
                             <div class="col-4">
                                 <label for="executive">Executive <span>*</span></label>
                                 <select name="executive_id" id="edit_executive_id" class="form-control" required>
@@ -304,15 +325,17 @@
                                         <option value="{{ $exe->user_id }}">{{ $exe->user->name }}</option>
                                     @endforeach
                                 </select>
-                            </div>  
+                            </div> 
                             <div class="col-4">
-                                <label for="status" class="form-label">Status <span>*</span></label>
-                                <select name="status" id="edit_status" class="form-control" required>
+                                <label for="status" class="form-label">Status </label>
+                                <select name="status" id="edit_status" class="form-control">
                                     <option value="">Select One</option>
                                     <option value="0" {{ isset($policy) && $policy->status == 0 ? 'selected' : '' }}>Not Paid</option>
                                     <option value="1" {{ isset($policy) && $policy->status == 1 ? 'selected' : '' }}>Paid</option>
                                 </select>
-                            </div> 
+                            </div>   
+                        </div>
+                        <div class="row form-group">
                             <div class="col-4">
                                 <label for="referred">C/O Perosn <span>*</span></label>
                                 <select name="referred_id" id="edit_referred_id" class="form-control" required>
@@ -321,9 +344,7 @@
                                         <option value="{{ $ref->id }}">{{ $ref->name }}</option>
                                     @endforeach
                                 </select>
-                            </div>     
-                        </div>
-                        <div class="row form-group">
+                            </div>   
                             <div class="col-4">
                                 <label for="provider">Insurance Provider <span>*</span></label>
                                 <select name="provider_id" id="edit_provider_id" class="form-control" required>
@@ -366,8 +387,8 @@
                             <input type="text"  name="name" class="form-control" required>
                         </div>
                         <div class="col-6">
-                            <label>Phone Number<span>*</span></label>
-                            <input type="text"  name="phone_number" class="form-control" required>
+                            <label>Phone Number </label>
+                            <input type="text"  name="phone_number" class="form-control">
                         </div>
                     </div>
                     <div class="form-actions form-group">
@@ -400,6 +421,7 @@
                             if (response.success) {
                                 $('#CreateModal').modal('hide');  
                                 $('#create_otherpolicies_form')[0].reset(); 
+                                $('.selectpicker').selectpicker('refresh');
                                 swal("Success!", "other policy added successfully!", {
                                     icon: "success",
                                     buttons: {
@@ -429,23 +451,24 @@
                                     lastRowNumber,                         
                                     response.data.policy_category, 
                                     response.data.name, 
-                                    response.data.primary_number,                                    
+                                    response.data.primary_number, 
+                                    response.data.premium_amount, 
+                                    response.data.customer_premium_amount,
+                                    response.data.paid_amount,
+                                    response.data.due_amount,   
+                                    status,   
+                                    '<a href="/otherPolicyDoc/'+response.data.id+'" class="btn btn-primary btn-xs">Documents</a>',                                   
+                                    '<a href="/otherPolicyRenew/'+response.data.id+'" class="btn btn-secondary btn-xs">Renew</a>', 
+                                    '<i class="fa fa-edit edit_otherpolicies" data-rowid="'+ lastRowNumber +'" data-id="' + response.data.id + '" data-bs-toggle="modal" data-bs-target="#EditModal"></i>' +
+                                    '<i class="fa fa-trash delete_otherpolicies" data-rowid="'+ lastRowNumber +'" data-id="' + response.data.id + '"></i>',                                                                                                           
                                     response.data.secondary_number,                                    
                                     response.data.start_date,
                                     response.data.expiry_date,                                    
-                                    response.data.premium_amount,                                    
                                     response.data.sum_insured,                                    
                                     response.data.user_id,                                    
-                                    status,     
-                                    response.data.paid_amount,
-                                    response.data.due_amount,                                       
                                     response.data.referred,                                    
-                                    response.data.provider,     
-                                    '<a href="/otherPolicyDoc/'+response.data.id+'" class="btn btn-primary btn-xs">Documents</a>',                                   
-                                    '<a href="/otherPolicyRenew/'+response.data.id+'" class="btn btn-secondary btn-xs">Renew</a>',                                
-                                    response.data.note,                                                                     
-                                    '<i class="fa fa-edit edit_otherpolicies" data-rowid="'+ lastRowNumber +'" data-id="' + response.data.id + '" data-bs-toggle="modal" data-bs-target="#EditModal"></i>' +
-                                    '<i class="fa fa-trash delete_otherpolicies" data-rowid="'+ lastRowNumber +'" data-id="' + response.data.id + '"></i>'
+                                    response.data.provider,                                     
+                                    response.data.note
                                 ]).draw(false);
 
                                 table.page('last').draw(false);  
@@ -503,11 +526,12 @@
                                 $('#edit_start_date').val(response.data.start_date);
                                 $('#edit_expiry_date').val(response.data.expiry_date);
                                 $('#edit_premium_amount').val(response.data.premium_amount);
+                                $('#edit_customer_premium_amount').val(response.data.customer_premium_amount);
                                 $('#edit_sum_insured').val(response.data.sum_insured);
                                 $('#edit_term').val(response.data.term);
                                 $('#edit_executive_id').val(response.data.executive_id);
                                 $('#edit_status').val(response.data.status);
-                                $('#edit_referred_id').val(response.data.referred_id);
+                                $('#edit_referred_id').val(response.data.referred_id).selectpicker('refresh');
                                 $('#edit_provider_id').val(response.data.provider_id);
                                 $('#edit_note').val(response.data.note);               
                             
@@ -536,6 +560,7 @@
                             if (response.success) {
                                 $('#EditModal').modal('hide');
                                 $('#edit_otherpolicies_form')[0].reset();
+                                $('.selectpicker').selectpicker('refresh');
                                 swal("Success!", "Other Policy Updated successfully", {
                                     icon: "success",
                                     buttons: {
@@ -566,23 +591,24 @@
                                     rowId,                        
                                     response.data.policy_category, 
                                     response.data.name, 
-                                    response.data.primary_number,                                    
+                                    response.data.primary_number,   
+                                    response.data.premium_amount,  
+                                    response.data.customer_premium_amount,
+                                    response.data.paid_amount,
+                                    response.data.due_amount,
+                                    status,    
+                                    '<a href="/otherPolicyDoc/'+response.data.id+'" class="btn btn-primary btn-xs">Documents</a>',                                   
+                                    '<a href="/otherPolicyRenew/'+response.data.id+'" class="btn btn-secondary btn-xs">Renew</a>',  
+                                    '<i class="fa fa-edit edit_otherpolicies" data-rowid="'+ rowId +'" data-id="' + response.data.id + '" data-bs-toggle="modal" data-bs-target="#EditModal"></i>' +
+                                    '<i class="fa fa-trash delete_otherpolicies" data-rowid="'+ rowId +'" data-id="' + response.data.id + '"></i>',                                                                                                  
                                     response.data.secondary_number,  
                                     response.data.start_date,                                  
                                     response.data.expiry_date,                                    
-                                    response.data.premium_amount,                                    
                                     response.data.sum_insured,                                    
                                     response.data.user_id,                                    
-                                    status,     
-                                    response.data.paid_amount,
-                                    response.data.due_amount,                                
                                     response.data.referred,   
                                     response.data.provider,    
-                                    '<a href="/otherPolicyDoc/'+response.data.id+'" class="btn btn-primary btn-xs">Documents</a>',                                   
-                                    '<a href="/otherPolicyRenew/'+response.data.id+'" class="btn btn-secondary btn-xs">Renew</a>',                              
-                                    response.data.note,                                    
-                                    '<i class="fa fa-edit edit_otherpolicies" data-rowid="'+ rowId +'" data-id="' + response.data.id + '" data-bs-toggle="modal" data-bs-target="#EditModal"></i>' +
-                                    '<i class="fa fa-trash delete_otherpolicies" data-rowid="'+ rowId +'" data-id="' + response.data.id + '"></i>' 
+                                    response.data.note
                                 ]).draw(false); 
                                 } else {
                                     alert('Error updating data: ' + response.message);

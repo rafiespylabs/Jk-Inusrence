@@ -42,6 +42,7 @@ class VehiclepolicyRenewController extends Controller
             $html.='<td>'.$renew->policy->name.'</td>';
             $html.='<td>'.$renew->policy->vehicle_number.'</td>';
             $html.='<td>'.$renew->premium_amount.'</td>';
+            $html.='<td>'.$renew->customer_premium.'</td>';
             $html.='<td>'.$renew->valuation_amount.'</td>';
             $html.='<td>'.$renew->total_cost.'</td>';
             $html.='<td>'.$renew->renew_date.'</td>';
@@ -67,6 +68,7 @@ class VehiclepolicyRenewController extends Controller
         $policyholder->primary_number=$request->primary_number;
         $policyholder->vehicle_model_id=$request->vehicle_model_id;
         $policyholder->premium_amount=$request->premium_amount;
+        $policyholder->customer_premium_amount	=$request->customer_premium;
         $policyholder->valuation_amount=$request->valuation_amount;
         $policyholder->total_cost=$request->total_cost;
         $policyholder->start_date=$request->renew_date;
@@ -77,6 +79,7 @@ class VehiclepolicyRenewController extends Controller
         $renew->policy_category_id=$request->policy_category_id;
         $renew->policy_id=$request->policy_id;
         $renew->premium_amount=$request->premium_amount;
+        $renew->customer_premium=$request->customer_premium;
         $renew->valuation_amount=$request->valuation_amount;
         $renew->total_cost=$request->total_cost;
         $renew->renew_date=$request->renew_date;

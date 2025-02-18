@@ -28,4 +28,8 @@ class Tbl_other_policies extends Model
     {
         return $this->belongsTo(Tbl_policy_categories::class, 'policy_category_id','id');
     }
+    public function insurence_provider()
+    {
+        return $this->belongsTo(Tbl_insurence_providers::class,'provider_id','id');
+    }
 }

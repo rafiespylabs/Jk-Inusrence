@@ -354,6 +354,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/purchase_cards/{pcatid}/{pid}', [PurchaseCardController::class, 'index'])->name('purchase_cards');
     Route::any('/purchase_card/list', [PurchaseCardController::class, 'list'])->name('purchase_card.list');
     Route::post('/purchase_card/store', [PurchaseCardController::class, 'store'])->name('purchase_card.store');
+    Route::post('/purchase_card/getCardBalance', [PurchaseCardController::class, 'getCardBalance'])->name('purchase_card.getCardBalance');
 
 });
 require __DIR__.'/auth.php';

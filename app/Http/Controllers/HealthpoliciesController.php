@@ -47,12 +47,13 @@ class HealthpoliciesController extends Controller
             'start_date' => 'required|date',
             'expiry_date' => 'required|date',
             'premium_amount' => 'required|numeric|min:0',
+            'customer_premium_amount' => 'nullable|numeric|min:0',
             'sum_insured' => 'required|numeric|min:0',
             'term' => 'required|string|in:1year',
             'nominee_name' => 'nullable|string|max:255',
             'nominee_relation' => 'nullable|string|max:255',
             'executive_id' => 'required|exists:tbl_staffs,user_id',
-            'status' => 'required|boolean',
+            'status' => 'nullable|required|boolean',
             'referred_id' => 'nullable|integer|exists:tbl_referred_persons,id',
             'provider_id' => 'required|integer|exists:tbl_insurence_providers,id',
             'note' => 'nullable|string',
@@ -83,7 +84,8 @@ class HealthpoliciesController extends Controller
             $healthpolicies->secondary_number = $validatedData['secondary_number'];    
             $healthpolicies->start_date = $validatedData['start_date'];            
             $healthpolicies->expiry_date = $validatedData['expiry_date'];           
-            $healthpolicies->premium_amount = $validatedData['premium_amount'];           
+            $healthpolicies->premium_amount = $validatedData['premium_amount']; 
+            $healthpolicies->customer_premium_amount = $validatedData['customer_premium_amount'];       
             $healthpolicies->sum_insured = $validatedData['sum_insured'];           
             $healthpolicies->term = $validatedData['term'];           
             $healthpolicies->nominee_name = $validatedData['nominee_name'];           
@@ -103,6 +105,7 @@ class HealthpoliciesController extends Controller
                 $healthpolicy_renew->healthpolicy_id = $healthpolicies->id;
                 $healthpolicy_renew->policy_cat_id =  $validatedData['policy_category_id'];
                 $healthpolicy_renew->premium_amount=$validatedData['premium_amount'];
+                $healthpolicy_renew->customer_premium=$validatedData['customer_premium_amount'];
                 $healthpolicy_renew->renew_date = $validatedData['start_date'];
                 $healthpolicy_renew->expiry_date = $validatedData['expiry_date']; 
                 $healthpolicy_renew->payment_mode_id= $validatedData['payment_mode_id']; 
@@ -175,6 +178,7 @@ class HealthpoliciesController extends Controller
                 'secondary_number' => $healthpolicies->secondary_number,          
                 'expiry_date' => $healthpolicies->expiry_date,         
                 'premium_amount' => $healthpolicies->premium_amount,       
+                'customer_premium_amount' => $healthpolicies->customer_premium_amount, 
                 'sum_insured' => $healthpolicies->sum_insured,       
                 'term' => $healthpolicies->term,       
                 'nominee_name' => $healthpolicies->nominee_name,       
@@ -202,12 +206,13 @@ class HealthpoliciesController extends Controller
             'secondary_number' => 'nullable|string|max:15',
             'expiry_date' => 'required|date',
             'premium_amount' => 'required|numeric|min:0',
+            'customer_premium_amount' => 'nullable|numeric|min:0',
             'sum_insured' => 'required|numeric|min:0',
             'term' => 'required|string|in:1year',
             'nominee_name' => 'nullable|string|max:255',
             'nominee_relation' => 'nullable|string|max:255',
             'executive_id' => 'required|exists:tbl_staffs,user_id',
-            'status' => 'required|boolean',
+            'status' => 'nullable|boolean',
             'referred_id' => 'nullable|integer|exists:tbl_referred_persons,id',
             'provider_id' => 'required|integer|exists:tbl_insurence_providers,id',
             'note' => 'nullable|string',     
@@ -236,7 +241,8 @@ class HealthpoliciesController extends Controller
             $healthpolicies->primary_number = $validatedData['primary_number'];           
             $healthpolicies->secondary_number = $validatedData['secondary_number'];           
             $healthpolicies->expiry_date = $validatedData['expiry_date'];           
-            $healthpolicies->premium_amount = $validatedData['premium_amount'];           
+            $healthpolicies->premium_amount = $validatedData['premium_amount']; 
+            $healthpolicies->customer_premium_amount = $validatedData['customer_premium_amount'];           
             $healthpolicies->sum_insured = $validatedData['sum_insured'];           
             $healthpolicies->term = $validatedData['term'];           
             $healthpolicies->nominee_name = $validatedData['nominee_name'];           

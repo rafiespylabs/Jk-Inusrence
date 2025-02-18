@@ -28,8 +28,10 @@ class InsuranceproviderController extends Controller
             $html .= '<tr>';
             $html .= '<td>' . $i . '</td>';
             $html .= '<td>' . e($insuranceprovider->provider_name) . '</td>';
+            $html .= '<td>' . e($insuranceprovider->card_name) . '</td>';
             $html .= '<td>' . e($insuranceprovider->address) . '</td>';
             $html .= '<td>' . e($insuranceprovider->company_name) . '</td>';
+            $html .= '<td>' . $insuranceprovider->current_amount. '</td>';
             $html .= '<td>' . $created_date . '</td>';
             $html .= '<td>' . $created_by . '</td>';
             $html .= '<td>
@@ -58,6 +60,7 @@ class InsuranceproviderController extends Controller
         $created_date=date('Y-m-d');
         $insuranceprovider=new Tbl_insurence_providers();
         $insuranceprovider->provider_name=$request->provider_name;
+        $insuranceprovider->card_name=$request->card_name;
         $insuranceprovider->address=$request->address;
         $insuranceprovider->company_name=$request->company_name;      
         $insuranceprovider->created_by=$created_by;
@@ -89,6 +92,7 @@ class InsuranceproviderController extends Controller
     public function update(Request $request)
     {
         if( Tbl_insurence_providers::where('provider_name',$request->provider_name)
+        ->where('id','!=',$request->insuranceproviders_id)
         ->exists())
         {
             return response()->json([
@@ -99,6 +103,7 @@ class InsuranceproviderController extends Controller
         $insuranceproviders_id=$request->insuranceproviders_id;
         $insuranceproviders=Tbl_insurence_providers::find($insuranceproviders_id);
         $insuranceproviders->provider_name=$request->provider_name;
+        $insuranceproviders->card_name=$request->card_name;
         $insuranceproviders->address=$request->address;
         $insuranceproviders->company_name=$request->company_name;       
         $insuranceproviders->save();

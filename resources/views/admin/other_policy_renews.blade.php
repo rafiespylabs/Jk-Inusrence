@@ -34,6 +34,7 @@
                                 <th>Start Date</th>
                                 <th>End Date</th>
                                 <th>Premium Amount</th>
+                                <th>Custom Premium</th>
                                 <th>Payment Mode</th>
                                 <th>Added Date</th>
                                 <th>Added By</th>
@@ -48,6 +49,7 @@
                                     <td>{{ $renew->renew_date }}</td>                                        
                                     <td>{{ $renew->expiry_date }}</td>
                                     <td>{{ $renew->premium_amount	 }}</td>
+                                    <td>{{ $renew->customer_premium	 }}</td>
                                     <td>{{ $renew->payment_mode->payment_mode ??"" }}</td>
                                     <td>{{ $renew->added_date }}</td>
                                     <td>{{ $renew->added_user->name ?? "" }}</td>
@@ -83,6 +85,10 @@
                     <div class="col-4">
                         <label>Premium Amount <span>*</span></label>
                         <input type="text"  name="premium_amount"  class="form-control" value="{{$other_policy->premium_amount}}" required>
+                    </div>
+                    <div class="col-4">
+                        <label>Customer Premium Amount <span>*</span></label>
+                        <input type="text"  name="customer_premium"  class="form-control" value="{{$other_policy->customer_premium_amount}}" required>
                     </div>
                     <div class="col-4">
                         <label>Renew Date <span>*</span></label>
@@ -153,7 +159,8 @@
                             lastRowNumber,  
                             response.data.renew_date,                        
                             response.data.expiry_date, 
-                            response.data.premium_amount, 
+                            response.data.premium_amount,	
+                            response.data.customer_premium,	 
                             response.data.payment_mode, 
                             response.data.added_date, 
                             response.data.added_by,                                                                      

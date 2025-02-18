@@ -29,14 +29,21 @@
                             <th>Name</th>
                             <th>Vehicle Number</th>
                             <th>Primary Number</th>
+                            <th>Premium</th>
+                            <th>Customer Paid Premium</th>
+                            <th>Paid Amount</th>
+                            <th>Due Amount</th>
+                            <th>Payment Status</th>
+                            <th>Documents</th>
+                            <th>Renew</th>
+                            <th>Insurence Provider</th>
+                            <th>Assign</th>
+                            <th>Action</th>
                             <th>Secondary Number</th>
                             <th>Start Date</th>
                             <th>Expiry Date</th>
                             <th>Vehicle Model</th>
                             <th>Company</th>
-                            <th>Premium</th>
-                            <th>Paid Amount</th>
-                            <th>Due Amount</th>
                             <th>Valuation Amount</th>
                             <th>Total Cost</th>
                             <th>Payment Mode</th>
@@ -45,22 +52,17 @@
                             <th>Reference</th>
                             <th>Created By</th>
                             <th>Created Date</th>
-                            <th>Documents</th>
-                            <th>Renew</th>
-                            <th>Assign</th>
                             <th>Assigned Date</th>
-                            <th>Payment</th>
-                            <th>Action</th>
                             </tr>
                         </thead>
                         <tbody id="policyholder_tbody">
                         </tbody>
                     </table>
                     </div>
-                    <a href="{{route('payments')}}" class="btn btn-danger" style="margin-top:30px;">
+                    <!-- <a href="{{route('payments')}}" class="btn btn-danger" style="margin-top:30px;">
                         <i class="fa fa-money-bill"></i>
                           Go To Payments
-                    </a>
+                    </a> -->
                 </div>
             </div>
         </div>
@@ -147,7 +149,7 @@
                         <input type="text"  name="vehicle_number" class="form-control" required>
                     </div>
                     <div class="col-4">
-                        <label>Primary Contact<span>*</span></label>
+                        <label>Primary Contact</label>
                         <input type="text"  name="primary_number" class="form-control" pattern="[0-9]{10}" 
                         title="Phone number must be 10 digits" >
                     </div>
@@ -187,11 +189,15 @@
                         <input type="text"  name="premium_amount" id="add_premium_amount"   class="form-control" required>
                     </div>
                     <div class="col-4">
-                        <label>Valuation Amount</label>
-                        <input type="text"  name="valuation_amount" id="add_valuation_amount"   class="form-control" value="0">
+                        <label>Customer Paid Premium Amount </label>
+                        <input type="text"  name="customer_premium_amount"    class="form-control">
                     </div>
                 </div>
                 <div class="row form-group">
+                    <div class="col-4">
+                        <label>Valuation Amount</label>
+                        <input type="text"  name="valuation_amount" id="add_valuation_amount"   class="form-control" value="0">
+                    </div>
                     <div class="col-4">
                         <label>Total Cost</label>
                         <input type="text"  name="total_cost" id="add_total_cost" value="0" readonly class="form-control">
@@ -200,6 +206,8 @@
                         <label>Sum Inusred</label>
                         <input type="number" step="any" name="sum_insured" id="add_sum_insured" required class="form-control">
                     </div>
+                </div>
+                <div class="row form-group">
                     <div class="col-4">
                         <label>C/O Person <span>*</span></label>
                         <div class="input-group">
@@ -214,8 +222,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="row form-group">
                     <div class="col-4">
                         <label>Buying Type <span>*</span></label>
                         <select  name="buying_type" class="form-control" id="add_buying_type" required>
@@ -228,6 +234,8 @@
                         <label>Broker Name </label>
                         <input type="text"  name="broker_name" class="form-control">
                     </div>
+                </div>
+                <div class="row form-group">
                     <div class="col-4">
                         <label>Insurence Provider<span>*</span></label>
                         <select  name="provider_id" class="form-control" required>
@@ -237,10 +245,8 @@
                             @endforeach
                         </select>
                     </div>
-                </div>
-                <div class="row form-group">
                     <div class="col-4">
-                        <label>Payment Mode</label>
+                        <label>Payment Mode </label>
                         <select  name="payment_mode_id" class="form-control">
                             <option value="">Select One</option>
                             @foreach($payment_modes as $mode)
@@ -257,12 +263,12 @@
                             @endforeach
                         </select>
                     </div>
+                </div>
+                <div class="row form-group">
                     <div class="col-4">
                         <label>Note</label>
                         <textarea name="note" class="form-control"></textarea>
                     </div>
-                </div>
-                <div class="row form-group">
                     <div class="col-4">
                         <label>Prepared User</label>
                         <select  name="prepared_user_id" class="form-control">
@@ -272,6 +278,25 @@
                             @endforeach
                         </select>
                     </div>
+                    <div class="col-4">
+                        <label>Coverage </label>
+                        <select  name="coverage_type_id" class="form-control">
+                            <option value="">Select One</option>
+                            @foreach($coverage_types as $cover)
+                                <option value="{{$cover->id}}">{{$cover->coverage_type}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-4">
+                        <label for="status" class="form-label">Status </label>
+                        <select name="status"  class="form-control">
+                            <option value="">Select One</option>
+                            <option value="0">Not Paid</option>
+                            <option value="1">Paid</option>
+                        </select>
+                    </div>   
                 </div>
                 <div class="form-actions form-group">
                   <button type="submit" class="btn btn-primary btn-sm">Submit</button>
@@ -355,11 +380,15 @@
                             <input type="text"  name="premium_amount" id="premium_amount" class="form-control" required>
                         </div>
                         <div class="col-4">
-                            <label>Valuation Amount</label>
-                            <input type="text"  name="valuation_amount" id="valuation_amount" class="form-control">
+                            <label>Customer Paid Premium Amount</label>
+                            <input type="text"  name="customer_premium_amount" id="customer_premium_amount"   class="form-control">
                         </div>
                     </div>
                     <div class="row form-group">
+                        <div class="col-4">
+                            <label>Valuation Amount</label>
+                            <input type="text"  name="valuation_amount" id="valuation_amount" class="form-control">
+                        </div>
                         <div class="col-4">
                             <label>Total Cost</label>
                             <input type="text"  name="total_cost" id="edit_total_cost" value="0" readonly class="form-control">
@@ -368,6 +397,8 @@
                             <label>Sum Inusred</label>
                             <input type="number" step="any" name="sum_insured" id="edit_sum_insured" required class="form-control">
                         </div>
+                    </div>
+                    <div class="row form-group">
                         <div class="col-4">
                             <label>C/O Person <span>*</span></label>
                             <select  name="referred_id" id="referred_id" class="form-control selectpicker with-ajax" data-live-search="true" required>
@@ -377,8 +408,6 @@
                                 @endforeach
                             </select>
                         </div>
-                    </div>
-                    <div class="row form-group">
                         <div class="col-4">
                             <label>Buying Type <span>*</span></label>
                             <select  name="buying_type" class="form-control" id="edit_buying_type" required>
@@ -391,6 +420,8 @@
                             <label>Broker Name </label>
                             <input type="text"  name="broker_name" id="broker_name" class="form-control">
                         </div>
+                    </div>
+                    <div class="row form-group">
                         <div class="col-4">
                             <label>Insurence Provider<span>*</span></label>
                             <select  name="provider_id" id="provider_id" class="form-control" required>
@@ -400,14 +431,21 @@
                                 @endforeach
                             </select>
                         </div>
-                    </div>
-                    <div class="row form-group">
                         <div class="col-4">
-                            <label>Payment Mode</label>
+                            <label>Payment Mode </label>
                             <select  name="payment_mode_id" id="payment_mode_id" class="form-control">
                                 <option value="">Select One</option>
                                 @foreach($payment_modes as $mode)
                                 <option value="{{$mode->id}}">{{$mode->payment_mode}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-4">
+                            <label>Coverage </label>
+                            <select  name="coverage_type_id" id="coverage_type_id"  class="form-control">
+                                <option value="">Select One</option>
+                                @foreach($coverage_types as $cover)
+                                    <option value="{{$cover->id}}">{{$cover->coverage_type}}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -476,7 +514,7 @@
                     <div class="col-6">
                         <label>Phone Number<span>*</span></label>
                         <input type="text"  name="phone_number" pattern="[0-9]{10}" 
-                        title="Phone number must be 10 digits" class="form-control" required>
+                        title="Phone number must be 10 digits" class="form-control">
                     </div>
                 </div>
                 <div class="form-actions form-group">
@@ -700,6 +738,7 @@
                     {
                         $('#CreateModal').modal('hide');
                         $('#create_policyholder_form')[0].reset();
+                        $('.selectpicker').selectpicker('refresh');
                         swal("Good job!", response.message, {
                             icon: "success",
                             buttons: {
@@ -734,6 +773,7 @@
                     {
                         $('#EditModal').modal('hide');
                         $('#update_policyholder_form')[0].reset();
+                        $('.selectpicker').selectpicker('refresh');
                         swal("Good job!", "Policyholder Updated successfully", {
                             icon: "success",
                             buttons: {
@@ -1088,12 +1128,14 @@
             $('#company_id').val(response.company_id);
             $('#premium_amount').val(response.premium_amount);
             $('#valuation_amount').val(response.valuation_amount);
+            $('#customer_premium_amount').val(response.customer_premium_amount);
             $('#edit_sum_insured').val(response.sum_insured);
             $('#payment_mode_id').val(response.payment_mode_id);
             $('#referred_id').val(response.referred_id).selectpicker('refresh');
             $('#edit_buying_type').val(response.buying_type);
             $('#edit_total_cost').val(response.total_cost);
             $('#provider_id').val(response.provider_id);
+            $('#coverage_type_id').val(response.coverage_type_id);
             if(response.buying_type==1)
             {
                 $('#edit_broker_div').hide();

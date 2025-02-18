@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\Tbl_cards;
 use App\Models\Tbl_creditcard_payments;
+use App\Models\Tbl_insurence_providers;
 use App\Models\User;
 use Carbon\Carbon;
 use Response;
@@ -14,7 +15,8 @@ class CreditCardPayController extends Controller
     public function index()
     {
         $cards=Tbl_cards::all();
-        return view('admin.creditcard_payment',['cards'=>$cards]);
+        $provider_cards=Tbl_insurence_providers::all();
+        return view('admin.creditcard_payment',['cards'=>$cards,'provider_cards'=>$provider_cards]);
     }
     public function list(Request $request)
     {
@@ -51,6 +53,7 @@ class CreditCardPayController extends Controller
                 'card_name' =>  $credit->card->holder_name??"N/A",
                 'credit' =>$credit->credit,
                 'credited_date' =>$credited_date ,
+                'provider_card'=>$credit->provider->card_name ??"N/A",
                 'purpose' =>$credit->purpose ,
                 'due_date' =>$due_date ,
                 'created_by' =>  $created_user,
@@ -75,6 +78,7 @@ class CreditCardPayController extends Controller
         $creditcard_pay->card_id=$card_id;
         $creditcard_pay->credit=$request->credit;
         $creditcard_pay->credited_date=$request->credited_date;
+        $creditcard_pay->provider_id=$request->provider_id;
         $creditcard_pay->purpose=$request->purpose;
         $creditcard_pay->due_date=$request->due_date;
         $creditcard_pay->created_by=$created_by;
@@ -84,6 +88,10 @@ class CreditCardPayController extends Controller
             $card=Tbl_cards::find($card_id);
             $card->current_amount=($card->current_amount+$request->credit);
             $card->save();
+
+            $provider_card=Tbl_insurence_providers::find($request->provider_id);
+            $provider_card->current_amount=($provider_card->current_amount+$request->credit);
+            $provider_card->save();
         }
         $creditcard_pay->card_name=$card->holder_name;
         $created_user=User::find($created_by);

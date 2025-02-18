@@ -24,8 +24,10 @@
                         <tr>
                         <th>Sl No</th>
                         <th>Provider Name</th>
+                        <th>Card Name</th>
                         <th>Address</th>
                         <th>Company Name</th>
+                        <th>Current Amount</th>
                         <th>Created Date</th>
                         <th>Created By</th>
                         <th>Action</th>
@@ -58,19 +60,21 @@
                         <label>Provider Name</label>
                         <input type="text"  name="provider_name" class="form-control" required>
                     </div>                    
-                </div>
-                <div class="row form-group">
                     <div class="col-6">
-                        <label>Address</label>
-                        <input type="text"  name="address" class="form-control" required>
-                    </div>
+                        <label>Card Name</label>
+                        <input type="text"  name="card_name" class="form-control" required>
+                    </div>    
                 </div>
                 <div class="row form-group">
                     <div class="col-6">
                         <label>Company Name</label>
                         <input type="text"  name="company_name" class="form-control" required>
-                    </div>                    
-                </div>          
+                    </div>     
+                    <div class="col-6">
+                        <label>Address</label>
+                        <input type="text"  name="address" class="form-control" required>
+                    </div>
+                </div>     
                 <div class="form-actions form-group">
                   <button type="submit" class="btn btn-primary btn-sm">Submit</button>
                   <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
@@ -102,19 +106,21 @@
                             <label>Provider Name</label>
                             <input type="text"  name="provider_name"  id="provider_name" class="form-control" required>
                         </div>                        
+                        <div class="col-6">
+                            <label>Card Name</label>
+                            <input type="text"  name="card_name" id="card_name" class="form-control" required>
+                        </div>    
                     </div>
                     <div class="row form-group">
                         <div class="col-6">
                             <label>Address</label>
                             <input type="text"  name="address" id="address" class="form-control" required>
                         </div>  
-                    </div>
-                    <div class="row form-group">
                         <div class="col-6">
                             <label>Company Name</label>
                             <input type="text"  name="company_name" id="company_name" class="form-control" required>
-                        </div>                       
-                    </div>               
+                        </div>    
+                    </div>           
                     <div class="form-actions form-group">
                         <button type="submit" class="btn btn-primary btn-sm">Save Changes</button>
                         <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
@@ -280,7 +286,8 @@ $(document).on("click", ".edit_insuranceproviders", function() {
             "insuranceproviders_id": insuranceproviders_id  
         },
         success: function(res) {            
-            $('#provider_name').val(res.provider_name);  
+            $('#provider_name').val(res.provider_name); 
+             $('#card_name').val(res.card_name);
             $('#address').val(res.address);
             $('#company_name').val(res.company_name);            
         },

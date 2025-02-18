@@ -40,12 +40,10 @@ class PaymentController extends Controller
         $i=1;
         $total_paid_amount=0;
         $balance_amount=0;
-        $total_premium=0;
+        $premium_amount=0;
         foreach($payments as $payment)
         {
             $added_user=$payment->added_user->name??'';
-            $holder_name=$payment->card->holder_name ?? '';
-            $insurence_provider=$payment->insurence_provider->provider_name ??'';
             $policy_category=$payment->policy_category->policy_category ??"";
             $policy='';
             if($payment->policy_cat_id==1)
@@ -62,24 +60,11 @@ class PaymentController extends Controller
             }
             $policy_name=$policy->name??"";
             $premium_amount=$policy->premium_amount ?? 0;
-            $pay_type='';
-            if($payment->payment_type==1)
-            {
-                $pay_type='Card';
-            }
-            elseif($payment->payment_type==2)
-            {
-                $pay_type='Company Direct';
-            }
             $html.='<tr>';
             $html.='<td>'.$i.'</td>';
             $html.='<td>'.$policy_category.'</td>';
             $html.='<td>'.$policy_name.'</td>';
-            $html.='<td>'.$pay_type.'</td>';
-            $html.='<td>'.$holder_name.'</td>';
-            $html.='<td>'.$insurence_provider.'</td>';
             $html.='<td>'.$payment->paid_amount.'</td>';
-            $total_premium+=$premium_amount;
             $total_paid_amount+=$payment->paid_amount;
             $html.='<td>'.$payment->payment_mode->payment_mode.'</td>';
             $html.='<td>'.$payment->added_date.'</td>';
@@ -90,8 +75,12 @@ class PaymentController extends Controller
             $html.='</tr>';
             $i++;
         }
-        $balance_amount=$total_premium-$total_paid_amount;
-        return Response::json(['data'=>$html,'total_paid_amount'=> $total_paid_amount,'balance_amount'=>$balance_amount,'total_premium'=>$total_premium]);
+        if($premium_amount !=0)
+        {
+            $balance_amount=$premium_amount-$total_paid_amount;
+        }
+        return Response::json(['data'=>$html,'total_paid_amount'=> $total_paid_amount,'balance_amount'=>$balance_amount,
+        'premium_amount'=>$premium_amount]);
     }
     public function store(Request $request)
     {
@@ -99,15 +88,39 @@ class PaymentController extends Controller
         $payment=new Tbl_payments;
         $payment->policy_cat_id=$request->policy_category_id;
         $payment->policy_id=$request->policy_id;
-        $payment->payment_type=$request->payment_type;
-        $payment->card_id=$request->card_id;
-        $payment->provide_id=$request->provide_id;
         $payment->payment_mode_id=$request->payment_mode_id;
         $payment->paid_amount=$request->paid_amount;
         $payment->added_date=date('Y-m-d');
         $payment->added_by=$added_by;
         $payment->remarks=$request->remarks;
-        $payment->save();
+        if($payment->save())
+        {
+            if($request->policy_category_id==1)
+            {
+                $policy=Tbl_healthpolicy::find($request->policy_id);
+            }
+            elseif($request->policy_category_id==9)
+            {
+                $policy=Tbl_policyholders::find($request->policy_id);
+            }
+            else
+            {
+                $policy=Tbl_other_policies::find($request->policy_id);
+            }
+            $total_paid_amount=0;
+            $balance_amount=0;
+            $premium_amount=$policy->premium_amount ?? 0;
+            $payments=Tbl_payments::where('policy_id',$policy_id)->where('policy_cat_id',$policy_cat_id)
+            ->get();
+            foreach($payments as $pay)
+            {
+                $total_paid_amount+=$pay->paid_amount;
+            }
+            $balance_amount=$premium_amount-$total_paid_amount;
+            $policy->paid_amount=$total_paid_amount;
+            $policy->due_amount=$balance_amount;
+            $policy->save();
+        }
         return Response::json([ 'success' => true]);
     }
     public function show(Request $request)
@@ -120,13 +133,37 @@ class PaymentController extends Controller
     {
         $payment_id=$request->payment_id;
         $payment=Tbl_payments::find($payment_id);
-        $payment->payment_type=$request->payment_type;
-        $payment->provide_id=$request->provide_id;
-        $payment->card_id=$request->card_id;
         $payment->payment_mode_id=$request->payment_mode_id;
         $payment->paid_amount=$request->paid_amount;
         $payment->remarks=$request->remarks;
-        $payment->save();
+        if($payment->save())
+        {
+            if($payment->policy_cat_id==1)
+            {
+                $policy=Tbl_healthpolicy::find($payment->policy_id);
+            }
+            elseif($payment->policy_cat_id==9)
+            {
+                $policy=Tbl_policyholders::find($payment->policy_id);
+            }
+            else
+            {
+                $policy=Tbl_other_policies::find($payment->policy_id);
+            }
+            $total_paid_amount=0;
+            $balance_amount=0;
+            $premium_amount=$policy->premium_amount ?? 0;
+            $payments=Tbl_payments::where('policy_id',$payment->policy_id)->where('policy_cat_id',$payment->policy_cat_id)
+            ->get();
+            foreach($payments as $pay)
+            {
+                $total_paid_amount+=$pay->paid_amount;
+            }
+            $balance_amount=$premium_amount-$total_paid_amount;
+            $policy->paid_amount=$total_paid_amount;
+            $policy->due_amount=$balance_amount;
+            $policy->save();
+        }
         return Response::json([ 'success' => true]);
     }
     public function getPolicyByCategory(Request $request)

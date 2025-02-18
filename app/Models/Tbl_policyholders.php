@@ -46,4 +46,8 @@ class Tbl_policyholders extends Model
     {
         return $this->hasMany(Tbl_payments::class,'policy_id','id');
     }
+    public function insurence_provider()
+    {
+        return $this->belongsTo(Tbl_insurence_providers::class,'provider_id','id');
+    }
 }

@@ -38,6 +38,7 @@ class ReferredPersonController extends Controller
     public function store(Request $request)
     {
         if(Tbl_referred_persons::where('phone_number', $request->phone_number)
+        ->whereNotNull('phone_number')
         ->exists())
         {
             return response()->json([

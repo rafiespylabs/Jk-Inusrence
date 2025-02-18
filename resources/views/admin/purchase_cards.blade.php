@@ -15,6 +15,9 @@
                     </div>
                 </div>
                 <div class="card-body">
+                    <p>Policy Name : {{$policy_name}}&nbsp; &nbsp; Policy Phone Number : {{$policy_phone_number}}</p>
+                    <p>Insurence Provider: <span>{{$provider_name}}</span> &nbsp; &nbsp; Premium : {{$policy->premium_amount}}</p>
+                    <p>Due Premium : <span>{{$due_premium}}</span></p>
                     <div id="preloader" style="display:none;">
                         <img src="{{asset('web/preloader.gif')}}">
                     </div>
@@ -26,7 +29,8 @@
                             <th>Card</th>
                             <th>Provider</th>
                             <th>Taken Amount</th>
-                            <th>Balance</th>
+                            <th>Card Balance</th>
+                            <th>Provider Card Balance</th>
                             <th>Added By</th>
                             <th>Added Date</th>
                             <th>Action</th>
@@ -52,15 +56,18 @@
                 </button>
             </div>
             <div class="modal-body">
+                <p>Policy Name : {{$policy_name}}&nbsp; &nbsp; Policy Phone Number : {{$policy_phone_number}}</p>
+                <p>Insurence Provider: <span>{{$provider_name}}</span> &nbsp; &nbsp; Premium : {{$policy->premium_amount}}</p>
               <form id="add_purchase_card_form" class="form" enctype="multipart/form-data">
               @csrf
                 <input type="hidden" name="policy_id" value="{{$policy_id}}">
                 <input type="hidden" name="policy_cat_id" value="{{$policy_cat_id}}">
+                <input type="hidden" name="due_premium_amount" value="{{$due_premium ?? '' }}">
                 <div id="form-fields">
                     <div class="row form-group" id="field-1">
                         <div class="col-3">
                             <label>Card/Company <span>*</span></label>
-                            <select  name="purchase_type[]" class="add_payment_type form-control" data-count="1">
+                            <select  name="purchase_type" class="add_payment_type form-control" data-count="1">
                                 <option value="">Select One</option>
                                 <option value="1">Card</option>
                                 <option value="2">Company Direct</option>
@@ -68,16 +75,16 @@
                         </div>
                         <div class="col-3" id="provider_div1" style="display:none;">
                             <label>Inusrence Provider</label>
-                            <select  name="provider_id[]" class="form-control">
+                            <select  name="provider_id" id="provider_id" class="form-control">
                                 <option value="">Select One</option>
                                 @foreach($insurence_providers as $provider)
-                                <option value="{{$provider->id}}">{{$provider->provider_name}}</option>
+                                <option value="{{$provider->id}}">{{$provider->provider_name}}-[{{$provider->card_name}}-{{$provider->current_amount}}]</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="col-3" id="card_div1" style="display:none;">
                             <label>Card </label>
-                            <select  name="card_id[]" class="form-control">
+                            <select  name="card_id" id="card_id" class="form-control">
                                 <option value="">Select One</option>
                                 @foreach($cards as $card)
                                 <option value="{{$card->id}}">{{$card->holder_name}}-[{{$card->current_amount}}]</option>
@@ -86,11 +93,15 @@
                         </div>
                         <div class="col-3">
                             <label>Amount Taken <span>*</span></label>
-                            <input type="number" step="any"  name="taken_amount[]" class="form-control" required>
+                            <input type="number" step="any"  name="taken_amount" id="taken_amount" class="form-control" required>
                         </div>
                         <div class="col-3">
-                            <label>Balance <span>*</span></label>
-                            <input type="number" step="any"  name="balance_amount[]" class="form-control" required>
+                            <label>Card Balance <span>*</span></label>
+                            <input type="number" step="any"  name="card_balance_amount" id="card_balance_amount" class="form-control" required>
+                        </div>
+                        <div class="col-3">
+                            <label>Provider Card Balance <span>*</span></label>
+                            <input type="number" step="any"  name="provider_balance_amount" id="provider_balance_amount" class="form-control" required>
                         </div>
                     </div>
                 </div>
@@ -133,7 +144,8 @@
                 {data:"card",name: "card" },
                 {data: "provider" ,name: "provider"},
                 {data: "taken_amount" ,name: "taken_amount"},
-                {data: "balance_amount" ,name: "balance_amount"},
+                {data: "card_balance_amount" ,name: "card_balance_amount"},
+                {data: "provider_balance_amount" ,name: "provider_balance_amount"},
                 {data: "added_by" ,name: "added_by"},
                 {data: "added_date" ,name: "added_date"},
                 { 
@@ -183,8 +195,12 @@
                         <input type="number" step="any" name="taken_amount[]" class="form-control" required>
                     </div>
                     <div class="col-3">
-                        <label>Balance <span>*</span></label>
-                        <input type="number"  step="any" name="balance_amount[]" class="form-control" required>
+                        <label>Card Balance <span>*</span></label>
+                        <input type="number"  step="any" name="card_balance_amount[]" class="form-control" required>
+                    </div>
+                    <div class="col-3">
+                        <label>Provider Card Balance <span>*</span></label>
+                        <input type="number"  step="any" name="provider_balance_amount[]" class="form-control" required>
                     </div>
                     <div class="col-3 mt-4">
                         <button type="button" class="btn btn-danger btn-sm remove-field" data-field="${fieldCount}"> <i class="fa fa-minus"></i> Remove</button>
@@ -211,26 +227,6 @@
                     if (response.success) 
                     {
                         $('#PurchaseCardModal').modal('hide');
-                        // $('#add_purchase_card_form')[0].reset();
-                        // swal("Good job!",response.message, {
-                        //     icon: "success",
-                        //     buttons: {
-                        //         confirm: {
-                        //         className: "btn btn-success",
-                        //         },
-                        //     },
-                        // });
-                        // var table = $('#purchase_card-datatable').DataTable();
-                        //     var newRow = table.row.add([
-                        //     String(response.data.sl_no), 
-                        //     response.data.card, 
-                        //     response.data.provider,
-                        //     response.data.added_user, 
-                        //     response.data.added_date, 
-                        //     '<i class="fa fa-edit edit_purchase_card" data-rowid="'+ response.data.id +'" data-id="' + response.data.id + '" data-bs-toggle="modal" data-bs-target="#EditModal"></i>'
-                        // ]).draw(false);
-                        // table.page('first').draw(false);  
-                        // $(newRow.node()).attr('id', 'row' + response.data.id);
                         Swal.fire({
                                 icon: 'success',
                                 title: 'Success!',
@@ -366,19 +362,13 @@ $(document).on("click", ".edit_credit_repay", function() {
 });
 </script> 
 <script>
-$(document).on("click", ".pay_status", function() {
-   var credit_pay_id = $(this).data('id');
-   $('#creditcard_statusid').val(credit_pay_id);
-});
-</script> 
-<script>
 $(document).on("change", ".add_payment_type", function() {
    var payment_type = $(this).val();
    var count=$(this).data('count');
    if (payment_type==1) 
    {
         $('#card_div'+count).show();
-        $('#provider_div'+count).hide();
+        $('#provider_div'+count).show();
    }
    else if(payment_type==2) 
    {
@@ -391,13 +381,39 @@ $(document).on("change", "#edit_payment_type", function() {
    if (payment_type==1) 
    {
         $('#edit_card_div').show();
-        $('#edit_provider_div').hide();
+        $('#edit_provider_div').show();
    }
    else if(payment_type==2) 
    {
-        $('#edit_card_div').hide();
+        $('#edit_card_div').show();
         $('#edit_provider_div').show();
    }
+});
+$(document).on("keyup", "#taken_amount", function() {
+   var taken_amount = $(this).val();
+   var provider_id=$('#provider_id').find("option:selected").val();
+   var card_id=$('#card_id').find("option:selected").val();
+   $.ajax({ type: "POST",
+        url: "{{route('purchase_card.getCardBalance')}}",
+        data: { "_token": "{{ csrf_token() }}",
+                 provider_id:provider_id,
+                 card_id: card_id,
+                 taken_amount:taken_amount
+              },
+        success: function(response) 
+        {
+            if(response.success)
+            {
+                $('#card_balance_amount').val(response.data.totalcardbalance);
+                $('#provider_balance_amount').val(response.data.totalprovidercardbalance);
+            }
+            else
+            {
+                alert( response.message);
+            }
+        },
+    });
+    
 });
 </script>
 @endpush
