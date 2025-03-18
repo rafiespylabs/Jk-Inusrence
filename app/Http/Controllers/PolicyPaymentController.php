@@ -20,7 +20,8 @@ class PolicyPaymentController extends Controller
         $payment_modes=Tbl_payment_modes::all();
         $insurence_providers=Tbl_insurence_providers::all();
         $cards=Tbl_cards::all();
-        $purchase_cards=Tbl_purchase_cards::with(['added_user','card','insurence_provider'])->where('policy_cat_id',$policy_cat_id)->where('policy_id',$policy_id)->get();
+        $purchase_cards=Tbl_purchase_cards::with(['added_user','card','insurence_provider'])
+        ->where('policy_cat_id',$policy_cat_id)->where('policy_id',$policy_id)->get();
         $policy_payments=Tbl_payments::where('policy_cat_id',$policy_cat_id)->where('policy_id',$policy_id)->get();
         return view('admin.policypayments',['payment_modes'=>$payment_modes,'cards'=>$cards,
         'insurence_providers'=>$insurence_providers,'policy_payments'=>$policy_payments,
@@ -72,13 +73,17 @@ class PolicyPaymentController extends Controller
             $html.='</tr>';
             $i++;
         }
-        $balance_amount=$policy->premium_amount-$total_paid_amount;
+        $balance_amount=$policy->due_amount;
         $policy_name=$policy->name;
         $policy_phone_number=$policy->primary_number;
         $provider_name=$policy->insurence_provider->provider_name ?? '';
+        $valuation_amount=$policy->valuation_amount ?? '';
+        $total_cost=$policy->total_cost ?? '';
         return Response::json(['data'=>$html,'total_paid_amount'=> $total_paid_amount,'balance_amount'=>$balance_amount,
         'total_cust_premium'=>$policy->customer_premium_amount,'total_premium'=>$policy->premium_amount,
-        'policy_name'=>$policy_name,'policy_phone_number'=>$policy_phone_number,'provider_name'=>$provider_name]);
+        'policy_name'=>$policy_name,'policy_phone_number'=>$policy_phone_number,
+        'provider_name'=>$provider_name,'valuation_amount'=>$valuation_amount,'total_cost'=>$total_cost,
+        'policy_cat_id'=>$policy_cat_id]);
     }
     public function store(Request $request)
     {
@@ -101,6 +106,7 @@ class PolicyPaymentController extends Controller
         $total_paid_amount=0;
         $balance_amount=0;
         $premium_amount=$policy->premium_amount ?? 0;
+
         $payments=Tbl_payments::where('policy_id',$policy_id)->where('policy_cat_id',$policy_cat_id)
         ->get();
         foreach($payments as $pay)
@@ -108,15 +114,28 @@ class PolicyPaymentController extends Controller
             $total_paid_amount+=$pay->paid_amount;
         }
         $total_paid=$total_paid_amount+floatval($request->paid_amount);
-        $balance_amount=$premium_amount-$total_paid;
-        $policy->paid_amount=$total_paid;
-        $policy->due_amount=$balance_amount;
-        if($total_paid > $premium_amount  )
+        if($policy_cat_id==9)
         {
-            return Response::json([ 'success' => false,'message'=>'Total Paid Is Exceeds The Premium']);
+            $total_cost=$policy->total_cost ?? 0;
+            $balance_amount= $total_cost-$total_paid;
+            $policy->paid_amount=$total_paid;
+            $policy->due_amount=$balance_amount;
+            if($total_paid > $total_cost  )
+            {
+                return Response::json([ 'success' => false,'message'=>'Total Paid Is Exceeds The Total Cost']);
+            }
+        }
+        else
+        {
+            $balance_amount=$premium_amount-$total_paid;
+            $policy->paid_amount=$total_paid;
+            $policy->due_amount=$balance_amount;
+            if($total_paid > $premium_amount  )
+            {
+                return Response::json([ 'success' => false,'message'=>'Total Paid Is Exceeds The Premium']);
+            }
         }
         $policy->save();
-
         $payment=new Tbl_payments;
         $payment->policy_cat_id=$policy_cat_id;
         $payment->policy_id=$request->policy_id;

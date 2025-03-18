@@ -15,7 +15,8 @@ use Illuminate\Http\Request;
 class HealthpoliciesController extends Controller
 {
     public function index(){
-        $healthpolicies = Tbl_healthpolicy::with(['executive', 'referred', 'provider', 'company','policy_category'])->get();
+        $healthpolicies = Tbl_healthpolicy::with(['executive', 'referred', 'provider', 'company',
+        'policy_category'])->get();
         $executive = Tbl_staffs::all();
         $referred = Tbl_referred_persons::all();
         $provider = Tbl_insurence_providers::all();
@@ -59,18 +60,19 @@ class HealthpoliciesController extends Controller
             'note' => 'nullable|string',
             'prepared_user_id' => 'nullable|integer|exists:users,id',
             'payment_mode_id'=>'nullable|integer|exists:tbl_payment_modes,id',
+            'policy_mode' => 'nullable|integer|in:1,2',
         ]);
         $created_by=Auth::user()->id;
         $birthDate = Carbon::parse($request->birth_date);
         $age = $birthDate->age;
         try {
-             if(Tbl_healthpolicy::where('name',$validatedData['name'])->exists())
-             {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Already Exist This Policy',
-                ]);
-             }
+            //  if(Tbl_healthpolicy::where('name',$validatedData['name'])->exists())
+            //  {
+            //     return response()->json([
+            //         'success' => false,
+            //         'message' => 'Already Exist This Policy',
+            //     ]);
+            //  }
             $healthpolicies = new Tbl_healthpolicy();
             $healthpolicies->policy_category_id = $validatedData['policy_category_id'];
             $healthpolicies->type = $validatedData['type'];
@@ -95,6 +97,7 @@ class HealthpoliciesController extends Controller
             $healthpolicies->referred_id = $validatedData['referred_id'];           
             $healthpolicies->provider_id = $validatedData['provider_id'];           
             $healthpolicies->note = $validatedData['note'];  
+            $healthpolicies->policy_mode = $validatedData['policy_mode'];  
             $healthpolicies->prepared_user_id= $validatedData['prepared_user_id'];     
             $healthpolicies->prepared_date= date('Y-m-d');
             $healthpolicies->created_by= $created_by;       
@@ -188,6 +191,7 @@ class HealthpoliciesController extends Controller
                 'referred_id' => $healthpolicies->referred_id,          
                 'provider_id' => $healthpolicies->provider_id,       
                 'note' => $healthpolicies->note,  
+                'policy_mode' => $healthpolicies->policy_mode,  
                 'created_user'=>$healthpolicies->created_user->name ?? "N/A"
             ]
         ]);
@@ -216,14 +220,15 @@ class HealthpoliciesController extends Controller
             'referred_id' => 'nullable|integer|exists:tbl_referred_persons,id',
             'provider_id' => 'required|integer|exists:tbl_insurence_providers,id',
             'note' => 'nullable|string',     
+            'policy_mode' => 'nullable|integer|in:1,2',
         ]);
-            if(Tbl_healthpolicy::where('name',$validatedData['name'])->where('id','!=',$validatedData['id'])->exists())
-            {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Already Updated This Policy Name',
-                ]);
-            }
+            // if(Tbl_healthpolicy::where('name',$validatedData['name'])->where('id','!=',$validatedData['id'])->exists())
+            // {
+            //     return response()->json([
+            //         'success' => false,
+            //         'message' => 'Already Updated This Policy Name',
+            //     ]);
+            // }
             $edited_by=Auth::user()->id;
             $healthpolicies = Tbl_healthpolicy::find($validatedData['id']);
             if ($healthpolicies->birth_date !== $request->birth_date) {
@@ -252,6 +257,7 @@ class HealthpoliciesController extends Controller
             $healthpolicies->referred_id = $validatedData['referred_id'];           
             $healthpolicies->provider_id = $validatedData['provider_id'];           
             $healthpolicies->note = $validatedData['note']; 
+            $healthpolicies->policy_mode = $validatedData['policy_mode']; 
             $healthpolicies->edited_by= $edited_by;       
             $healthpolicies->edited_date= date('Y-m-d H:i:s');           
             $healthpolicies->save();

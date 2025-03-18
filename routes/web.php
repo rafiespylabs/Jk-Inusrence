@@ -54,6 +54,17 @@ use App\Http\Controllers\ItemController;
 use App\Http\Controllers\PolicyPaymentController;
 use App\Http\Controllers\RePaymentController;
 use App\Http\Controllers\PurchaseCardController;
+use App\Http\Controllers\PurchasetypeController;
+use App\Http\Controllers\SaletypeController;
+use App\Http\Controllers\ServicecodeController;
+use App\Http\Controllers\StocktypeController;
+use App\Http\Controllers\HsncodeController;
+use App\Http\Controllers\PurchaseController;
+use App\Http\Controllers\PurchaseItemsController;
+use App\Http\Controllers\OpeningstockController;
+use App\Http\Controllers\SaleController;
+use App\Http\Controllers\MultiexpenseController;
+use App\Http\Controllers\ManufacturerController;
 use Illuminate\Support\Facades\Route;
 // Route::get('/', [ComingsoonController::class, 'index'])->name('comingsoon');
 Route::get('/', function () {return redirect(route('login'));});
@@ -336,7 +347,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/items/edit', [ItemController::class, 'edit'])->name('items.edit');
     Route::post('/items/update', [ItemController::class, 'update'])->name('items.update');
     Route::post('/items/destroy', [ItemController::class, 'destroy'])->name('items.destroy');
+    Route::get('/items/{id}', [ItemController::class, 'getHsnValue'])->name('hsncodes.get');
     Route::post('/get-subcategories', [ItemController::class, 'getSubcategories'])->name('get.subcategories');
+    Route::post('/item/getbatches', [ItemController::class, 'getbatches'])->name('item.getbatches');
 
     Route::get('/policypayments/{pcatid}/{pid}', [PolicyPaymentController::class, 'index'])->name('policypayments');
     Route::post('/policypayment/list', [PolicyPaymentController::class, 'list'])->name('policypayment.list');
@@ -356,5 +369,71 @@ Route::middleware('auth')->group(function () {
     Route::post('/purchase_card/store', [PurchaseCardController::class, 'store'])->name('purchase_card.store');
     Route::post('/purchase_card/getCardBalance', [PurchaseCardController::class, 'getCardBalance'])->name('purchase_card.getCardBalance');
 
+//  Billing Typre
+
+    Route::get('/saletypes', [SaletypeController::class, 'index'])->name('saletypes');
+    Route::post('/saletypes/store', [SaletypeController::class, 'store'])->name('saletypes.store');
+    Route::post('/saletypes/edit', [SaletypeController::class, 'edit'])->name('saletypes.edit');
+    Route::post('/saletypes/update', [SaletypeController::class, 'update'])->name('saletypes.update');
+    Route::post('/saletypes/destroy', [SaletypeController::class, 'destroy'])->name('saletypes.destroy');
+
+    Route::get('/purchasetypes', [PurchasetypeController::class, 'index'])->name('purchasetypes');
+    Route::post('/purchasetypes/store', [PurchasetypeController::class, 'store'])->name('purchasetypes.store');
+    Route::post('/purchasetypes/edit', [PurchasetypeController::class, 'edit'])->name('purchasetypes.edit');
+    Route::post('/purchasetypes/update', [PurchasetypeController::class, 'update'])->name('purchasetypes.update');
+    Route::post('/purchasetypes/destroy', [PurchasetypeController::class, 'destroy'])->name('purchasetypes.destroy');
+
+    Route::get('/servicecodes', [ServicecodeController::class, 'index'])->name('servicecodes');
+    Route::post('/servicecodes/store', [ServicecodeController::class, 'store'])->name('servicecodes.store');
+    Route::post('/servicecodes/edit', [ServicecodeController::class, 'edit'])->name('servicecodes.edit');
+    Route::post('/servicecodes/update', [ServicecodeController::class, 'update'])->name('servicecodes.update');
+    Route::post('/servicecodes/destroy', [ServicecodeController::class, 'destroy'])->name('servicecodes.destroy');
+
+    Route::get('/hsncodes', [HsncodeController::class, 'index'])->name('hsncodes');
+    Route::post('/hsncodes/store', [HsncodeController::class, 'store'])->name('hsncodes.store');
+    Route::post('/hsncodes/edit', [HsncodeController::class, 'edit'])->name('hsncodes.edit');
+    Route::post('/hsncodes/update', [HsncodeController::class, 'update'])->name('hsncodes.update');
+    Route::post('/hsncodes/destroy', [HsncodeController::class, 'destroy'])->name('hsncodes.destroy');
+
+    Route::get('/stocktypes', [StocktypeController::class, 'index'])->name('stocktypes');
+    Route::post('/stocktypes/store', [StocktypeController::class, 'store'])->name('stocktypes.store');
+    Route::post('/stocktypes/edit', [StocktypeController::class, 'edit'])->name('stocktypes.edit');
+    Route::post('/stocktypes/update', [StocktypeController::class, 'update'])->name('stocktypes.update');
+    Route::post('/stocktypes/destroy', [StocktypeController::class, 'destroy'])->name('stocktypes.destroy');
+
+    Route::get('/openstocks', [OpeningstockController::class, 'index'])->name('openstocks');
+    Route::post('/openstocks/list', [OpeningstockController::class, 'list'])->name('openstocks.list');    
+    Route::post('/openstocks/fetch', [OpeningstockController::class, 'fetch'])->name('openstocks.fetch');
+    Route::post('/openstocks/store', [OpeningstockController::class, 'store'])->name('openstocks.store');
+    Route::get('/openstocks/{id}/edit', [OpeningstockController::class, 'edit'])->name('openstocks.edit');   
+    Route::post('/openstocks/update', [OpeningstockController::class, 'update'])->name('openstocks.update');
+    Route::post('/openstocks/destroy', [OpeningstockController::class, 'destroy'])->name('openstocks.destroy');
+
+    Route::get('/purchases', [PurchaseController::class, 'index'])->name('purchases');
+    Route::any('/purchase/list', [PurchaseController::class, 'list'])->name('purchase.list');
+    Route::get('/purchase/create', [PurchaseController::class, 'create'])->name('purchase.create');
+    Route::post('/purchase/store', [PurchaseController::class, 'store'])->name('purchase.store');
+
+    Route::get('/purchaseitems/{id}', [PurchaseItemsController::class, 'index'])->name('purchaseitems');
+    Route::any('/purchaseitem/list', [PurchaseItemsController::class, 'list'])->name('purchaseitem.list');
+
+    Route::get('/sales', [SaleController::class, 'index'])->name('sales');
+    Route::any('/sale/list', [SaleController::class, 'list'])->name('sale.list');
+    Route::get('/sale/create', [SaleController::class, 'create'])->name('sale.create');
+    Route::post('/sale/getsale_rate', [SaleController::class, 'getsale_rate'])->name('sale.getsale_rate');
+    Route::post('/sale/getHsn', [SaleController::class, 'getHsn'])->name('sale.getHsn');
+    Route::post('/sale/store', [SaleController::class, 'store'])->name('sale.store');
+
+    Route::get('/multiexpenses', [MultiexpenseController::class, 'index'])->name('multiexpenses');
+    Route::post('/multiexpenses/store', [MultiexpenseController::class, 'store'])->name('multiexpenses.store');
+    Route::post('/multiexpenses/edit', [MultiexpenseController::class, 'edit'])->name('multiexpenses.edit');
+    Route::post('/multiexpenses/update', [MultiexpenseController::class, 'update'])->name('multiexpenses.update');
+    Route::post('/multiexpenses/destroy', [MultiexpenseController::class, 'destroy'])->name('multiexpenses.destroy');
+
+    Route::get('/manufacturers', [ManufacturerController::class, 'index'])->name('manufacturers');
+    Route::post('/manufacturers/store', [ManufacturerController::class, 'store'])->name('manufacturers.store');
+    Route::post('/manufacturers/edit', [ManufacturerController::class, 'edit'])->name('manufacturers.edit');
+    Route::post('/manufacturers/update', [ManufacturerController::class, 'update'])->name('manufacturers.update');
+    Route::post('/manufacturers/destroy', [ManufacturerController::class, 'destroy'])->name('manufacturers.destroy');
 });
 require __DIR__.'/auth.php';

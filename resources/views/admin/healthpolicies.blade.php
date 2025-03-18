@@ -36,8 +36,11 @@ use App\Models\Tbl_healthpolicy_renews;
                                         <th>Customer Paid Premium Amount</th>
                                         <th>Paid Amount</th>
                                         <th>Due Amount</th>
-                                        <th>Status</th>
+                                        <th>Payment Status</th>
+                                        <th>Pay Now</th>
+                                        <th>Purchase Card</th>
                                         <th>Action</th>
+                                        <th>Policy Mode</th>
                                         <th>Birth Date</th>
                                         <th>Age</th>
                                         <th>Height</th>
@@ -53,6 +56,7 @@ use App\Models\Tbl_healthpolicy_renews;
                                         <th>Insurance Provider</th>
                                         <th>Note</th>
                                         <th>Created By</th>
+                                        <th>Created Date</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -85,14 +89,14 @@ use App\Models\Tbl_healthpolicy_renews;
                                             <td>
                                                 @if($healthpolicy->paid_amount==0)
                                                 <span class="badge badge-warning mb-2">Not Paid</span>
-                                                <a href="/policypayments/1/{{$healthpolicy->id}}"><button class="btn btn-danger btn-xs" data-id="{{$healthpolicy->id}}"><i class="fas fa-wallet"></i> Pay Now</button></a>
                                                 @elseif($healthpolicy->paid_amount!=0 &&  $healthpolicy->premium_amount != $healthpolicy->paid_amount)
                                                 <span class="badge badge-danger mb-2">Partial Paid</span>
-                                                <a href="/policypayments/1/{{$healthpolicy->id}}"><button class="btn btn-danger btn-xs" data-id="{{$healthpolicy->id}}"><i class="fas fa-wallet"></i> Pay Now</button></a>
                                                 @elseif($healthpolicy->paid_amount==$healthpolicy->premium_amount)
                                                 <span class="badge badge-success">Full Paid</span>
                                                 @endif
                                             </td>
+                                            <td><a href="/policypayments/1/{{$healthpolicy->id}}"><button class="btn btn-danger btn-xs"><i class="fas fa-wallet"></i> Pay Now</button></a></td>
+                                            <td><a href="/purchase_cards/1/{{$healthpolicy->id}}"><button class="btn btn-black btn-xs"><i class="fa fa-archive"></i> Purchase Card</button></a></td>
                                             <td>
                                                 <div class="btn-group dropdown">
                                                     <button class="btn btn-primary btn-xs dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" fdprocessedid="oolj6">Actions</button>
@@ -118,6 +122,13 @@ use App\Models\Tbl_healthpolicy_renews;
                                                     </ul>
                                                 </div>
                                             </td>
+                                            <td>
+                                                @if($healthpolicy->policy_mode==1)
+                                                <span class="badge badge-primary">New</span>
+                                                @elseif($healthpolicy->policy_mode==2)
+                                                <span class="badge badge-success">Renewal</span>
+                                                @endif
+                                            </td>
                                             <td>{{ $healthpolicy->birth_date}}</td>
                                             <td>{{ $healthpolicy->age}}</td>
                                             <td>{{ $healthpolicy->height}}</td>
@@ -133,6 +144,7 @@ use App\Models\Tbl_healthpolicy_renews;
                                             <td>{{ $healthpolicy->provider->provider_name ?? 'N/A' }}</td>                                                                                           
                                             <td>{{ $healthpolicy->note }}</td>  
                                             <td>{{$created_by}}</td>   
+                                            <td>{{$healthpolicy->created_date}}</td>   
                                         </tr>
                                         @php $i++; @endphp
                                     @endforeach
@@ -333,6 +345,16 @@ use App\Models\Tbl_healthpolicy_renews;
                                 </select>
                             </div>
                         </div>
+                        <div class="row form-group">
+                            <div class="col-4">
+                                <label for="policy_mode" class="form-label">Policy Mode </label>
+                                <select name="policy_mode"  class="form-control">
+                                    <option value="">Select One</option>
+                                    <option value="1">New </option>
+                                    <option value="2">Renewal</option>
+                                </select>
+                            </div>  
+                        </div>
                         <div class="form-actions form-group">
                             <button type="submit" class="btn btn-primary btn-sm">Submit</button>
                             <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
@@ -359,21 +381,6 @@ use App\Models\Tbl_healthpolicy_renews;
                         <input type="hidden" name="policy_category_id" id="edit_policy_category_id">  
                         <input type="hidden" name="type" id="edit_type">  
                         <div class="row form-group">
-                            <!-- <div class="col-md-4">
-                                <label for="policy_category">Policy Category</label>
-                                <select name="policy_category_id" id="edit_policy_category_id" class="form-control" required>
-                                        <option value="1">Health Policy</option>
-                                </select>
-                            </div>                            
-                            <div class="col-md-4">
-                                <label for="type" class="form-label">Policy Type</label>
-                                <select name="type" id="edit_type" class="form-control" required>
-                                    <option value="1" {{ isset($policy) && $policy->type == 1 ? 'selected' : '' }}>Family</option>
-                                    <option value="2" {{ isset($policy) && $policy->type == 2 ? 'selected' : '' }}>Individual</option>
-                                    <option value="3" {{ isset($policy) && $policy->type == 3 ? 'selected' : '' }}>Group (Company)</option>
-                                    <option value="4" {{ isset($policy) && $policy->type == 4 ? 'selected' : '' }}>Top-Up</option>
-                                </select>
-                            </div> -->
                             <div class="col-md-4" id="edit_company_div">
                                 <label for="company">Company</label>
                                 <select name="company_id" id="edit_company_id" class="form-control">
@@ -491,6 +498,14 @@ use App\Models\Tbl_healthpolicy_renews;
                                 <label for="note">Note</label>
                                 <textarea name="note" id="edit_note" class="form-control"></textarea>
                             </div>
+                            <div class="col-4">
+                                <label for="policy_mode"  class="form-label">Policy Mode </label>
+                                <select name="policy_mode"  id="edit_policy_mode" class="form-control">
+                                    <option value="">Select One</option>
+                                    <option value="1">New </option>
+                                    <option value="2">Renewal</option>
+                                </select>
+                            </div>  
                         </div>
                         <div class="form-actions form-group">
                             <button type="submit" class="btn btn-primary btn-sm">Submit</button>
@@ -707,6 +722,17 @@ use App\Models\Tbl_healthpolicy_renews;
                                 var table = $('#healthpolicies-datatable').DataTable();
                                 var addMembers='';
                                 var status=''; 
+                                var policy_mode='';
+                                var pay_now='';
+                                var purchase_card='';
+                                if(response.data.policy_mode==1)
+                                {
+                                    policy_mode='<span class="badge badge-success">New</span>';
+                                }
+                                else if(response.data.policy_mode==2)
+                                {
+                                    policy_mode='<span class="badge badge-secondary">Renewal</span>';
+                                }
                                 if(response.data.type==1)
                                 {
                                     addMembers='<a href="/healthPolicyMembers/"'+response.data.id+'" class="dropdown-item"> <i class="fa fa-plus"></i>Add Members</a>';
@@ -714,17 +740,17 @@ use App\Models\Tbl_healthpolicy_renews;
                                 if(response.data.paid_amount==0)
                                 {
                                     status='<span class="badge badge-warning mb-2">Not Paid</span>';
-                                    status+='<a href="/policypayments/1/'+response.data.id+'"><button class="btn btn-danger btn-xs" data-id="'+response.data.id+'"><i class="fas fa-wallet"></i> Pay Now</button></a>';
                                 }
                                 else if(response.data.paid_amount!=0 && response.data.premium_amount != response.data.paid_amount)
                                 {
                                     status='<span class="badge badge-danger mb-2">Partial Paid</span>';
-                                    status+='<a href="/policypayments/1/'+response.data.id+'"><button class="btn btn-danger btn-xs" data-id="'+response.data.id+'"><i class="fas fa-wallet"></i> Pay Now</button></a>';
                                 }
                                 else if(response.data.paid_amount==response.data.premium_amount)
                                 {
                                     status='<span class="badge badge-success">Full Paid</span>';
                                 }
+                                pay_now='<a href="/policypayments/1/'+response.data.id+'"><button class="btn btn-danger btn-xs" data-id="'+response.data.id+'"><i class="fas fa-wallet"></i> Pay Now</button></a>';
+                                purchase_card='<a href="/purchase_cards/1/'+response.data.id+'"><button class="btn btn-dark btn-xs" data-id="'+response.data.id+'"><i class="fa fa-archive"></i> Purchase Card</button></a>';
                                 var type='';
                                 if(response.data.type==1)
                                 {
@@ -755,6 +781,8 @@ use App\Models\Tbl_healthpolicy_renews;
                                     response.data.paid_amount,
                                     response.data.due_amount,
                                     status,  
+                                    pay_now,
+                                    purchase_card,
                                     '<div class="btn-group dropdown">'+
                                         '<button class="btn btn-primary btn-xs dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" fdprocessedid="oolj6">Actions</button>'+
                                         '<ul class="dropdown-menu" role="menu">'+
@@ -777,7 +805,8 @@ use App\Models\Tbl_healthpolicy_renews;
                                                 '</a>'+
                                             '</li>'+
                                         '</ul>'+
-                                    '</div>',                                                                      
+                                    '</div>',     
+                                    policy_mode,                                                                                                                                     
                                     response.data.birth_date, 
                                     response.data.age, 
                                     response.data.height, 
@@ -791,8 +820,9 @@ use App\Models\Tbl_healthpolicy_renews;
                                     response.data.user_id,                                    
                                     response.data.referred,                                    
                                     response.data.provider,  
-                                    response.data.note,                                                                     
-                                    response.data.created_user
+                                    response.data.note, 
+                                    response.data.created_user,
+                                    response.data.created_date
                                 ]).draw(false);
 
                                 table.page('last').draw(false);  
@@ -874,8 +904,8 @@ use App\Models\Tbl_healthpolicy_renews;
                                 $('#edit_status').val(response.data.status);
                                 $('#edit_referred_id').val(response.data.referred_id).selectpicker('refresh');
                                 $('#edit_provider_id').val(response.data.provider_id);
-                                $('#edit_note').val(response.data.note);               
-                            
+                                $('#edit_note').val(response.data.note);
+                                $('#edit_policy_mode').val(response.data.policy_mode);            
                                 $('#EditModal').modal('show');
                             } else {
                                 alert('Error: ' + response.message);
@@ -955,6 +985,17 @@ use App\Models\Tbl_healthpolicy_renews;
                                 var table = $('#healthpolicies-datatable').DataTable();
                                 var type='';
                                 var status='';
+                                var policy_mode='';
+                                var pay_now='';
+                                var purchase_card='';
+                                if(response.data.policy_mode==1)
+                                {
+                                    policy_mode='<span class="badge badge-success">New</span>';
+                                }
+                                else if(response.data.policy_mode==2)
+                                {
+                                    policy_mode='<span class="badge badge-secondary">Renewal</span>';
+                                }
                                 if(response.data.type==1)
                                 {
                                     type='Family';
@@ -974,17 +1015,17 @@ use App\Models\Tbl_healthpolicy_renews;
                                 if(response.data.paid_amount==0)
                                 {
                                     status='<span class="badge badge-warning mb-2">Not Paid</span>';
-                                    status+='<a href="/policypayments/1/'+response.data.id+'"><button class="btn btn-danger btn-xs" data-id="'+response.data.id+'"><i class="fas fa-wallet"></i> Pay Now</button></a>';
                                 }
                                 else if(response.data.paid_amount!=0 && response.data.premium_amount != response.data.paid_amount)
                                 {
                                     status='<span class="badge badge-danger mb-2">Partial Paid</span>';
-                                    status+='<a href="/policypayments/1/'+response.data.id+'"><button class="btn btn-danger btn-xs" data-id="'+response.data.id+'"><i class="fas fa-wallet"></i> Pay Now</button></a>';
                                 }
                                 else if(response.data.paid_amount == response.data.premium_amount)
                                 {
                                     status='<span class="badge badge-success">Full Paid</span>';
                                 }
+                                pay_now='<a href="/policypayments/1/'+response.data.id+'"><button class="btn btn-danger btn-xs" data-id="'+response.data.id+'"><i class="fas fa-wallet"></i> Pay Now</button></a>';
+                                purchase_card='<a href="/purchase_cards/1/'+response.data.id+'"><button class="btn btn-dark btn-xs" data-id="'+response.data.id+'"><i class="fa fa-archive"></i> Purchase Card</button></a>'
                                 var addMembers='';
                                 if( response.data.type==1)
                                 {
@@ -1003,6 +1044,8 @@ use App\Models\Tbl_healthpolicy_renews;
                                     response.data.paid_amount,
                                     response.data.due_amount, 
                                     status,
+                                    pay_now,
+                                    purchase_card,
                                     '<div class="btn-group dropdown">'+
                                         '<button class="btn btn-primary btn-xs dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" fdprocessedid="oolj6">Actions</button>'+
                                         '<ul class="dropdown-menu" role="menu">'+
@@ -1021,7 +1064,8 @@ use App\Models\Tbl_healthpolicy_renews;
                                                 '</a>'+
                                             '</li>'+
                                         '</ul>'+
-                                    '</div>',                                                                    
+                                    '</div>',  
+                                    policy_mode,                                                                  
                                     response.data.birth_date, 
                                     response.data.age, 
                                     response.data.height, 
@@ -1036,7 +1080,8 @@ use App\Models\Tbl_healthpolicy_renews;
                                     response.data.referred,   
                                     response.data.provider,                                 
                                     response.data.note, 
-                                    response.data.created_user
+                                    response.data.created_user,
+                                    response.data.created_date
                                 ]).draw(false); 
                                 } else {
                                     alert('Error updating data: ' + response.message);

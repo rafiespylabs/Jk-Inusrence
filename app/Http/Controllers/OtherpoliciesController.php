@@ -12,7 +12,7 @@ use Auth;
 class OtherpoliciesController extends Controller
 {
     public function index(){
-        $otherpolicies = Tbl_other_policies::with(['policy_category','executive', 'referred', 'provider'])
+        $otherpolicies = Tbl_other_policies::with(['policy_category','executive', 'referred', 'provider','created_user'])
         ->get();
         $policy_category = Tbl_policy_categories::
         whereNotIn('id', [1,9])->get();
@@ -48,19 +48,20 @@ class OtherpoliciesController extends Controller
             'provider_id' => 'required|integer|exists:tbl_insurence_providers,id',
             'note' => 'nullable|string',
             'prepared_user_id' => 'nullable|integer|exists:users,id',
-            'payment_mode_id'=>'nullable|integer|exists:tbl_payment_modes,id'
+            'payment_mode_id'=>'nullable|integer|exists:tbl_payment_modes,id',
+            'policy_mode' => 'nullable|integer|in:1,2',
         ]);
         try {
-            if(Tbl_other_policies::where('name',$validatedData['name'])
-            ->orWhere('primary_number', $validatedData['primary_number'])
-            ->whereNotNull('primary_number')
-            ->exists())
-            {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Already Exist This Policy Name Or Phone Number',
-                ]);
-            }
+            // if(Tbl_other_policies::where('name',$validatedData['name'])
+            // ->orWhere('primary_number', $validatedData['primary_number'])
+            // ->whereNotNull('primary_number')
+            // ->exists())
+            // {
+            //     return response()->json([
+            //         'success' => false,
+            //         'message' => 'Already Exist This Policy Name Or Phone Number',
+            //     ]);
+            // }
             $current_user_id=Auth::user()->id;
             $otherpolicies = new Tbl_other_policies();
             $otherpolicies->policy_category_id = $validatedData['policy_category_id'];
@@ -78,6 +79,7 @@ class OtherpoliciesController extends Controller
             $otherpolicies->referred_id = $validatedData['referred_id'];           
             $otherpolicies->provider_id = $validatedData['provider_id'];           
             $otherpolicies->note = $validatedData['note'];  
+            $otherpolicies->policy_mode = $validatedData['policy_mode'];  
             $otherpolicies->prepared_user_id = $validatedData['prepared_user_id'];  
             $otherpolicies->created_by= $current_user_id ;     
             $otherpolicies->created_date=date('Y-m-d H:i:s') ;            
@@ -107,9 +109,11 @@ class OtherpoliciesController extends Controller
             $provider = Tbl_insurence_providers::find($validatedData['provider_id']);
             $otherpolicies->provider = $provider->provider_name;
 
-            $otherpolicyNew = Tbl_other_policies::find($otherpolicies->id);
+            $otherpolicyNew = Tbl_other_policies::with(['created_user'])->find($otherpolicies->id);
             $otherpolicies->paid_amount=$otherpolicyNew->paid_amount;
             $otherpolicies->due_amount=$otherpolicyNew->due_amount;
+            $otherpolicies->created_user= $otherpolicyNew->created_user->name;
+            $otherpolicies->created_date= $otherpolicyNew->created_date;
             return response()->json([
                 'success' => true,
                 'message' => 'Other policy created successfully',
@@ -148,7 +152,8 @@ class OtherpoliciesController extends Controller
                 'status' => $otherpolicies->status,          
                 'referred_id' => $otherpolicies->referred_id,          
                 'provider_id' => $otherpolicies->provider_id,       
-                'note' => $otherpolicies->note,       
+                'note' => $otherpolicies->note, 
+                'policy_mode' =>  $otherpolicies->policy_mode,    
             ]
         ]);
     }
@@ -171,28 +176,29 @@ class OtherpoliciesController extends Controller
             'referred_id' => 'nullable|integer|exists:tbl_referred_persons,id',
             'provider_id' => 'required|integer|exists:tbl_insurence_providers,id',
             'note' => 'nullable|string',     
+           'policy_mode' => 'nullable|integer|in:1,2',
         ]);
-            if(Tbl_other_policies::where('name',$validatedData['name'])
-            ->where('id','!=',$validatedData['id'])
-            ->exists())
-            {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Already Updated  Policy Name',
-                ]);
-            }
-            if(Tbl_other_policies::where('primary_number', $validatedData['primary_number'])
-            ->whereNotNull('primary_number')
-            ->where('id','!=',$validatedData['id'])
-            ->exists())
-            {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Already Updated  Phone Number',
-                ]);
-            }
+            // if(Tbl_other_policies::where('name',$validatedData['name'])
+            // ->where('id','!=',$validatedData['id'])
+            // ->exists())
+            // {
+            //     return response()->json([
+            //         'success' => false,
+            //         'message' => 'Already Updated  Policy Name',
+            //     ]);
+            // }
+            // if(Tbl_other_policies::where('primary_number', $validatedData['primary_number'])
+            // ->whereNotNull('primary_number')
+            // ->where('id','!=',$validatedData['id'])
+            // ->exists())
+            // {
+            //     return response()->json([
+            //         'success' => false,
+            //         'message' => 'Already Updated  Phone Number',
+            //     ]);
+            // }
             $current_user_id=Auth::user()->id;
-            $otherpolicies = Tbl_other_policies::find($validatedData['id']);
+            $otherpolicies = Tbl_other_policies::with(['created_user'])->find($validatedData['id']);
             $otherpolicies->policy_category_id = $validatedData['policy_category_id'];
             $otherpolicies->name = $validatedData['name'];
             $otherpolicies->primary_number = $validatedData['primary_number'];           
@@ -208,6 +214,7 @@ class OtherpoliciesController extends Controller
             $otherpolicies->referred_id = $validatedData['referred_id'];           
             $otherpolicies->provider_id = $validatedData['provider_id'];           
             $otherpolicies->note = $validatedData['note']; 
+            $otherpolicies->policy_mode = $validatedData['policy_mode'];  
             $otherpolicies->edited_by= $current_user_id ;     
             $otherpolicies->edited_date=date('Y-m-d H:i:s') ;          
             $otherpolicies->save();

@@ -31,10 +31,13 @@
                                         <th>Customer Paid Premium Amount</th>
                                         <th>Paid Amount</th>
                                         <th>Due Amount</th>
-                                        <th>Status</th>
+                                        <th>Payment Status</th>
+                                        <th>Pay Now</th>
+                                        <th>Purchase Card</th>
                                         <th>Document</th>
                                         <th>Renew</th>
                                         <th>Action</th>
+                                        <th>Policy Mode</th>
                                         <th>Secondary Number</th>
                                         <th>Start Date</th>
                                         <th>Expiry Date</th>
@@ -43,6 +46,8 @@
                                         <th>Referesnce Perosn</th>
                                         <th>Insurance Provider</th>
                                         <th>Note</th>
+                                        <th>Created By</th>
+                                        <th>Created Date</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -60,23 +65,29 @@
                                             <td>
                                                 @if($otherpolicy->paid_amount==0)
                                                 <span class="badge badge-warning mb-2">Not Paid</span>
-                                                <a href="/policypayments/{{$otherpolicy->policy_category_id}}/{{$otherpolicy->id}}"><button class="btn btn-danger btn-xs" data-id="{{$otherpolicy->id}}"><i class="fas fa-wallet"></i> Pay Now</button></a>
                                                 @elseif(($otherpolicy->paid_amount!=0 &&  $otherpolicy->premium_amount != $otherpolicy->paid_amount))
                                                 <span class="badge badge-danger mb-2">Partial Paid</span>
-                                                <a href="/policypayments/{{$otherpolicy->policy_category_id}}/{{$otherpolicy->id}}"><button class="btn btn-danger btn-xs" data-id="{{$otherpolicy->id}}"><i class="fas fa-wallet"></i> Pay Now</button></a>
                                                 @elseif($otherpolicy->paid_amount == $otherpolicy->premium_amount)
                                                 <span class="badge badge-success">Full Paid</span>
                                                 @endif
                                             </td>
+                                            <td><a href="/policypayments/{{$otherpolicy->policy_category_id}}/{{$otherpolicy->id}}"><button class="btn btn-danger btn-xs" data-id="{{$otherpolicy->id}}"><i class="fas fa-wallet"></i> Pay Now</button></a></td>
+                                            <td><a href="/purchase_cards/{{$otherpolicy->policy_category_id}}/{{$otherpolicy->id}}"><button class="btn btn-black btn-xs"><i class="fa fa-archive"></i> Purchase Card</button></a></td>
                                             <td><a href="{{route('otherPolicyDocs',$otherpolicy->id)}}" class="btn btn-primary btn-xs">Documents</a></td>     
                                             <td><a href="{{route('otherPolicyRenew',$otherpolicy->id)}}" class="btn btn-secondary btn-xs">Renew</a></td>                                  
                                             <td>
                                                 <i class="fa fa-edit edit_otherpolicies"
                                                     data-id="{{ $otherpolicy->id }}" data-rowid="{{ $i }}" data-bs-toggle="modal"
                                                     data-bs-target="#EditModal"></i>
-
                                                     <i class="fa fa-trash delete_otherpolicies"
                                                     data-id="{{ $otherpolicy->id }}"></i>    
+                                            </td>
+                                            <td>
+                                                @if($otherpolicy->policy_mode==1)
+                                                <span class="badge badge-primary">New</span>
+                                                @elseif($otherpolicy->policy_mode==2)
+                                                <span class="badge badge-success">Renewal</span>
+                                                @endif
                                             </td>
                                             <td>{{ $otherpolicy->secondary_number}}</td>
                                             <td>{{ $otherpolicy->start_date}}</td>
@@ -86,6 +97,8 @@
                                             <td>{{ $otherpolicy->referred->name ?? 'N/A' }}</td>                                            
                                             <td>{{ $otherpolicy->provider->provider_name ?? 'N/A' }}</td>   
                                             <td>{{ $otherpolicy->note }}</td>                                        
+                                            <td>{{ $otherpolicy->created_user->name ?? 'N/A'}}</td> 
+                                            <td>{{ $otherpolicy->created_date}}</td> 
                                         </tr>
                                         @php $i++; @endphp
                                     @endforeach
@@ -236,6 +249,14 @@
                                     @endforeach
                                 </select>
                             </div>
+                            <div class="col-4">
+                                <label for="policy_mode"  class="form-label">Policy Mode </label>
+                                <select name="policy_mode"  class="form-control">
+                                    <option value="">Select One</option>
+                                    <option value="1">New </option>
+                                    <option value="2">Renewal</option>
+                                </select>
+                            </div>  
                         </div>
                         <div class="form-actions form-group">
                             <button type="submit" class="btn btn-primary btn-sm">Submit</button>
@@ -359,6 +380,16 @@
                                 <input type="text" name="note" id="edit_note" class="form-control">
                             </div>
                         </div>
+                        <div class="row form-group">
+                            <div class="col-4">
+                                <label for="policy_mode"  class="form-label">Policy Mode </label>
+                                <select name="policy_mode" id="edit_policy_mode"  class="form-control">
+                                    <option value="">Select One</option>
+                                    <option value="1">New </option>
+                                    <option value="2">Renewal</option>
+                                </select>
+                            </div>  
+                        </div>
                         <div class="form-actions form-group">
                             <button type="submit" class="btn btn-primary btn-sm">Submit</button>
                             <button type="button" onclick="$('#EditModal').modal('hide')" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancel</button>
@@ -433,20 +464,31 @@
                                 var table = $('#otherpolicies-datatable').DataTable();
                                 var lastRowNumber = table.data().count() > 0 ? parseInt(table.row(':last').data()[0]) + 1 : 0;
                                 var status='';
+                                var policy_mode='';
+                                var purchase_card='';
+                                var pay_now='';
+                                if(response.data.policy_mode==1)
+                                {
+                                    policy_mode='<span class="badge badge-success">New</span>';
+                                }
+                                else if(response.data.policy_mode==2)
+                                {
+                                    policy_mode='<span class="badge badge-secondary">Renewal</span>';
+                                }
                                 if(response.data.paid_amount==0)
                                 {
                                     status='<span class="badge badge-warning mb-2">Not Paid</span>';
-                                    status+='<a href="/policypayments/'+response.data.policy_category_id+'/'+response.data.id+'"><button class="btn btn-danger btn-xs" data-id="'+response.data.id+'"><i class="fas fa-wallet"></i> Pay Now</button></a>';
                                 }
                                 else if(response.data.paid_amount!=0 && response.data.premium_amount != response.data.paid_amount)
                                 {
                                     status='<span class="badge badge-danger mb-2">Partial Paid</span>';
-                                    status+='<a href="/policypayments/'+response.data.policy_category_id+'/'+response.data.id+'"><button class="btn btn-danger btn-xs" data-id="'+response.data.id+'"><i class="fas fa-wallet"></i> Pay Now</button></a>';
                                 }
                                 else if(response.data.paid_amount==response.data.premium_amount)
                                 {
                                     status='<span class="badge badge-success">Full Paid</span>';
                                 }
+                                pay_now='<a href="/policypayments/'+response.data.policy_category_id+'/'+response.data.id+'"><button class="btn btn-danger btn-xs" data-id="'+response.data.id+'"><i class="fas fa-wallet"></i> Pay Now</button></a>';
+                                purchase_card='<a href="/purchase_cards/'+response.data.policy_category_id+'/'+response.data.id+'"><button class="btn btn-dark btn-xs" data-id="'+response.data.id+'"><i class="fa fa-archive"></i> Purchase Card</button></a>';
                                 var newRow = table.row.add([
                                     lastRowNumber,                         
                                     response.data.policy_category, 
@@ -457,10 +499,13 @@
                                     response.data.paid_amount,
                                     response.data.due_amount,   
                                     status,   
+                                    pay_now,
+                                    purchase_card,
                                     '<a href="/otherPolicyDoc/'+response.data.id+'" class="btn btn-primary btn-xs">Documents</a>',                                   
                                     '<a href="/otherPolicyRenew/'+response.data.id+'" class="btn btn-secondary btn-xs">Renew</a>', 
                                     '<i class="fa fa-edit edit_otherpolicies" data-rowid="'+ lastRowNumber +'" data-id="' + response.data.id + '" data-bs-toggle="modal" data-bs-target="#EditModal"></i>' +
-                                    '<i class="fa fa-trash delete_otherpolicies" data-rowid="'+ lastRowNumber +'" data-id="' + response.data.id + '"></i>',                                                                                                           
+                                    '<i class="fa fa-trash delete_otherpolicies" data-rowid="'+ lastRowNumber +'" data-id="' + response.data.id + '"></i>', 
+                                    policy_mode,                                                                                                          
                                     response.data.secondary_number,                                    
                                     response.data.start_date,
                                     response.data.expiry_date,                                    
@@ -468,7 +513,9 @@
                                     response.data.user_id,                                    
                                     response.data.referred,                                    
                                     response.data.provider,                                     
-                                    response.data.note
+                                    response.data.note,
+                                    response.data.created_user,
+                                    response.data.created_date
                                 ]).draw(false);
 
                                 table.page('last').draw(false);  
@@ -533,7 +580,8 @@
                                 $('#edit_status').val(response.data.status);
                                 $('#edit_referred_id').val(response.data.referred_id).selectpicker('refresh');
                                 $('#edit_provider_id').val(response.data.provider_id);
-                                $('#edit_note').val(response.data.note);               
+                                $('#edit_note').val(response.data.note);
+                                $('#edit_policy_mode').val(response.data.policy_mode);           
                             
                                 $('#EditModal').modal('show');
                             } else {
@@ -573,20 +621,31 @@
                                 var table = $('#otherpolicies-datatable').DataTable();
                                 var row = table.row('#row' + response.data.id); 
                                 var status='';
+                                var policy_mode='';
+                                var purchase_card='';
+                                var pay_now='';
+                                if(response.data.policy_mode==1)
+                                {
+                                    policy_mode='<span class="badge badge-success">New</span>';
+                                }
+                                else if(response.data.policy_mode==2)
+                                {
+                                    policy_mode='<span class="badge badge-secondary">Renewal</span>';
+                                }
                                 if(response.data.paid_amount==0)
                                 {
                                     status='<span class="badge badge-warning mb-2">Not Paid</span>';
-                                    status+='<a href="/policypayments/'+response.data.policy_category_id+'/'+response.data.id+'"><button class="btn btn-danger btn-xs" data-id="'+response.data.id+'"><i class="fas fa-wallet"></i> Pay Now</button></a>';
                                 }
                                 else if(response.data.paid_amount!=0 && response.data.premium_amount != response.data.paid_amount)
                                 {
                                     status='<span class="badge badge-danger mb-2">Partial Paid</span>';
-                                    status+='<a href="/policypayments/'+response.data.policy_category_id+'/'+response.data.id+'"><button class="btn btn-danger btn-xs" data-id="'+response.data.id+'"><i class="fas fa-wallet"></i> Pay Now</button></a>';
                                 }
                                 else if(response.data.paid_amount == response.data.premium_amount)
                                 {
                                     status='<span class="badge badge-success">Full Paid</span>';
                                 }
+                                pay_now='<a href="/policypayments/'+response.data.policy_category_id+'/'+response.data.id+'"><button class="btn btn-danger btn-xs" data-id="'+response.data.id+'"><i class="fas fa-wallet"></i> Pay Now</button></a>';
+                                purchase_card='<a href="/purchase_cards/'+response.data.policy_category_id+'/'+response.data.id+'"><button class="btn btn-dark btn-xs" data-id="'+response.data.id+'"><i class="fa fa-archive"></i> Purchase Card</button></a>';
                                 row.data([
                                     rowId,                        
                                     response.data.policy_category, 
@@ -597,10 +656,13 @@
                                     response.data.paid_amount,
                                     response.data.due_amount,
                                     status,    
+                                    pay_now,
+                                    purchase_card,
                                     '<a href="/otherPolicyDoc/'+response.data.id+'" class="btn btn-primary btn-xs">Documents</a>',                                   
                                     '<a href="/otherPolicyRenew/'+response.data.id+'" class="btn btn-secondary btn-xs">Renew</a>',  
                                     '<i class="fa fa-edit edit_otherpolicies" data-rowid="'+ rowId +'" data-id="' + response.data.id + '" data-bs-toggle="modal" data-bs-target="#EditModal"></i>' +
-                                    '<i class="fa fa-trash delete_otherpolicies" data-rowid="'+ rowId +'" data-id="' + response.data.id + '"></i>',                                                                                                  
+                                    '<i class="fa fa-trash delete_otherpolicies" data-rowid="'+ rowId +'" data-id="' + response.data.id + '"></i>',  
+                                    policy_mode,                                                                                                
                                     response.data.secondary_number,  
                                     response.data.start_date,                                  
                                     response.data.expiry_date,                                    
@@ -608,7 +670,9 @@
                                     response.data.user_id,                                    
                                     response.data.referred,   
                                     response.data.provider,    
-                                    response.data.note
+                                    response.data.note,
+                                    response.data.created_user.name || 'N/A',
+                                    response.data.created_date
                                 ]).draw(false); 
                                 } else {
                                     alert('Error updating data: ' + response.message);

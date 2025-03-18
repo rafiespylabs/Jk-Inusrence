@@ -40,7 +40,7 @@ class PolicyholderController extends Controller
     public function list()
     {
         $policyholders=Tbl_policyholders::with('added_executive','vehicle_model','company','agent',
-        'prepared_user','dealer','payment_mode','reffered','insurence_provider')->get();
+        'prepared_user','dealer','payment_mode','reffered','insurence_provider')->latest('id')->get();
         $html='';
         $i=1;
         foreach($policyholders as $holder)
@@ -77,21 +77,26 @@ class PolicyholderController extends Controller
             $html.='<td>'.$holder->customer_premium_amount.'</td>';
             $html.='<td>'.$holder->paid_amount.'</td>';
             $html.='<td>'.$holder->due_amount.'</td>';
+            $html.='<td>'.$payment_mode.'</td>';
             $html.='<td>';
             if($total_paid_amount==0)
             {
                 $html.='<span class="badge badge-warning mb-2">Not Paid</span>';
-                $html.='<a href="/policypayments/9/'.$holder->id.'"><button class="btn btn-danger btn-xs" data-id="'.$holder->id.'"><i class="fas fa-wallet"></i> Pay Now</button></a>';
             }
             elseif($total_paid_amount!=0 && $premium != $total_paid_amount)
             {
                 $html.='<span class="badge badge-danger mb-2">Partial Paid</span>';
-                $html.='<a href="/policypayments/9/'.$holder->id.'"><button class="btn btn-danger btn-xs" data-id="'.$holder->id.'"><i class="fas fa-wallet"></i> Pay Now</button></a>';
             }
             elseif($premium == $total_paid_amount)
             {
                 $html.='<span class="badge badge-success">Full Paid</span>';
             }
+            $html.='</td>';
+            $html.='<td>';
+                $html.='<a href="/policypayments/9/'.$holder->id.'"><button class="btn btn-danger btn-xs" data-id="'.$holder->id.'"><i class="fas fa-wallet"></i> Pay Now</button></a>';
+            $html.='</td>';
+            $html.='<td>';
+                $html.='<a href="/purchase_cards/9/'.$holder->id.'"><button class="btn btn-black btn-xs" data-id="'.$holder->id.'"><i class="fa fa-archive"></i>Purchase Card</button></a>';
             $html.='</td>';
             $html.='<td>';
             $html.='<a href="/vehicle_policydocuments/'.$holder->id.'"><button class="btn btn-primary btn-xs" data-id="'.$holder->id.'"><i class="fa fa-file"></i> Documents</button></a>';
@@ -106,6 +111,16 @@ class PolicyholderController extends Controller
             $html.='<td>';
             $html.='<i class="fa fa-edit edit_policyholder" data-id="'.$holder->id.'" data-bs-toggle="modal"   data-bs-target="#EditModal"></i>';
             $html.='</td>';
+            $html.='<td>';
+            if($holder->policy_mode==1)
+            {
+                $html.='<span class="badge badge-success">New</span>';
+            }
+            elseif($holder->policy_mode==2)
+            {
+                $html.='<span class="badge badge-secondary">Renewal</span>';
+            }
+            $html.='</td>';
             $html.='<td>'.$holder->secondary_number.'</td>';
             $html.='<td>'.$holder->start_date.'</td>';
             $html.='<td>'.$holder->expiry_date.'</td>';
@@ -113,7 +128,6 @@ class PolicyholderController extends Controller
             $html.='<td>'.$company.'</td>';
             $html.='<td>'.$holder->valuation_amount.'</td>';
             $html.='<td>'.$holder->total_cost.'</td>';
-            $html.='<td>'.$payment_mode.'</td>';
             $html.='<td>'.$added_executive.'</td>';
             $html.='<td>'.$prepared_by.'</td>';
             $html.='<td>'.$referred_person.'</td>';
@@ -165,6 +179,7 @@ class PolicyholderController extends Controller
         $policyholder->created_date=date('Y-m-d H:i:s');
         $policyholder->created_by=$created_by;
         $policyholder->note=$request->note;
+        $policyholder->policy_mode=$request->policy_mode;
         $policyholder->assigned_userid=$request->assigned_userid;
         $policyholder->assigned_date=date('Y-m-d');
         $policyholder->prepared_user_id=$request->prepared_user_id;
@@ -228,6 +243,7 @@ class PolicyholderController extends Controller
         $policyholder->total_cost =$request->total_cost;
         $policyholder->provider_id =$request->provider_id;
         $policyholder->coverage_type_id=$request->coverage_type_id;
+        $policyholder->policy_mode=$request->policy_mode;
         $policyholder->edited_by=$edited_by;
         $policyholder->edited_date=date('Y-m-d H:i:s');
         $policyholder->save();

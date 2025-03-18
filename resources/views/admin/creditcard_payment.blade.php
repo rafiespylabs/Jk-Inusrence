@@ -95,7 +95,7 @@
                     </div>
                 </div>
                 <div class="form-actions form-group">
-                  <button type="submit" class="btn btn-primary btn-sm">Submit</button>
+                  <button type="submit" class="btn btn-primary btn-sm" id="submit_btn">Submit</button>
                   <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
                 </div>
               </form>
@@ -247,6 +247,7 @@
                     {
                         $('#CreateModal').modal('hide');
                         $('#create_creditcard_pay_form')[0].reset();
+                        $("#submit_btn").prop("disabled", true);
                         swal("Good job!",response.message, {
                             icon: "success",
                             buttons: {
@@ -268,6 +269,7 @@
                             '<i class="fa fa-edit edit_creditcard_pay" data-rowid="'+ response.data.id +'" data-id="' + response.data.id + '" data-bs-toggle="modal" data-bs-target="#EditModal"></i>'
                         ]).draw(false);
                         table.page('first').draw(false);  
+                        $("#submit_btn").prop("disabled", false);
                         $(newRow.node()).attr('id', 'row' + response.data.id);
                     } 
                     else 

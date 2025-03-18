@@ -15,14 +15,17 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <a href="/purchase_cards/{{$policy_cat_id}}/{{$policy_id}}" class="ml-2">
+                    <!-- <a href="/purchase_cards/{{$policy_cat_id}}/{{$policy_id}}" class="ml-2">
                         <button class="btn btn-black btn-md ms-auto">
                             <i class="fa fa-archive"></i> Purchase Cards  <i class="fa fa-arrow-right"></i>
                         </button>
-                    </a>
+                    </a> -->
                     <p>Policy Name: <span id="policy_name"></span> &nbsp;&nbsp; Policy Phone Number: <span id="policy_primary_number"></span></p>
                     <p>Insurence Provider: <span id="provider_name"></span>&nbsp;&nbsp; <b>Customer Premium Amount :</b> <span id="total_cust_premium"></span></p>
                     <p class="mt-3"><b> Premium Amount :</b> <span id="total_premium"></span></p>
+                    <div id="valuation_div">
+                        <p class="mt-3"><b> Valuation Amount :</b> <span id="valuation_amount"></span> &nbsp;&nbsp;<b> Total Cost :</b> <span id="total_cost"></span></p>
+                    </div>
                     <div id="preloader" style="display:none;">
                         <img src="{{asset('web/preloader.gif')}}">
                     </div>
@@ -79,6 +82,9 @@
                <p>Policy Name : <span id="policy_name_1"></span> &nbsp;&nbsp; Policy Phone Number : <span id="policy_primary_number_1"></span></p>
                <p>Customer Paid Premium : <span id="customer_premium"></span> &nbsp; &nbsp; Premium Amount : <span id="premium_amt"></span></p>
                <p>Inusrence Provider : <span id="provider_name_1"></span></p>
+               <div id="valuation_div_1">
+                    <p class="mt-3"><b> Valuation Amount :</b> <span id="valuation_amount_1"></span> &nbsp;&nbsp;<b> Total Cost :</b> <span id="total_cost_1"></span></p>
+                </div>
               <form id="create_policy_payment_form" class="form" enctype="multipart/form-data">
               @csrf
                 <div class="row form-group">
@@ -116,16 +122,17 @@
                             <tr>
                                 <th>Card</th>
                                 <th>Taken Amount</th>
-                                <th>Card Balance</th>
+                                <!-- <th>Card Balance</th> -->
                                 <th>Provider Card Balance</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($purchase_cards as $pcard)
                             <tr>
-                                <td>{{$pcard->card->holder_name ?? ""}}</td>
+                                <!-- <td>{{$pcard->card->holder_name ?? ""}}</td> -->
+                                <td>{{$pcard->insurence_provider->provider_name	 ?? ""}}</td>
                                 <td>{{$pcard->taken_amount}}</td>
-                                <td>{{$pcard->card_balance_amount}}</td>
+                                <!-- <td>{{$pcard->card_balance_amount}}</td> -->
                                 <td>{{$pcard->provider_balance_amount}}</td>
                             </tr>
                             @endforeach
@@ -217,6 +224,23 @@
                         $('#policy_name_1').text(res.policy_name);
                         $('#provider_name').text(res.provider_name);
                         $('#provider_name_1').text(res.provider_name);
+                        if(res.policy_cat_id==9)
+                        {
+                            $('#valuation_div').show();
+                            $('#valuation_div_1').show();
+                            $('#valuation_amount').text(res.valuation_amount);
+                            $('#valuation_amount_1').text(res.valuation_amount);
+                            $('#total_cost').text(res.total_cost);
+                            $('#total_cost_1').text(res.total_cost);
+                        }
+                        else{
+                            $('#valuation_div').hide();
+                            $('#valuation_div_1').hide();
+                            $('#valuation_amount').text('');
+                            $('#valuation_amount_1').text('');
+                            $('#total_cost').text('');
+                            $('#total_cost_1').text('');
+                        }
                         $('#policypayment-datatable').DataTable({
                             "bStateSave": true,
                             "fnStateSave": function (oSettings, oData) {

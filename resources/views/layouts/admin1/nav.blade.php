@@ -279,7 +279,19 @@ $role_id=auth()->user()->role_id;
                                 ||request()->is('units')
                                 ||request()->is('suppliers')
                                 ||request()->is('items') 
-                                ||request()->is('clients')? 'show' : '' }}" id="tire" style="">
+                                ||request()->is('clients')
+                                ||request()->is('saletypes')
+                                ||request()->is('purchasetypes')
+                                || request()->is('hsncodes')
+                                ||request()->is('stocktypes')
+                                ||request()->is('servicecodes')
+                                ||request()->is('purchases')
+                                ||request()->is('purchase/*')
+                                || request()->is('sales')
+                                ||request()->is('sale/*')
+                                ||request()->is('multiexpenses')
+                                ||request()->is('manufacturers')
+                                ? 'show' : '' }}" id="tire" style="">
                         <ul class="nav nav-collapse">
                             <li class="submenu">
                                 <a data-bs-toggle="collapse" href="#policy" class="collapsed" aria-expanded="false">
@@ -292,6 +304,13 @@ $role_id=auth()->user()->role_id;
                                 ||request()->is('suppliers')
                                 ||request()->is('items')
                                 ||request()->is('clients')
+                                ||request()->is('saletypes')
+                                ||request()->is('purchasetypes')
+                                || request()->is('hsncodes')
+                                ||request()->is('stocktypes')
+                                || request()->is('servicecodes')
+                                ||request()->is('multiexpenses')
+                                ||request()->is('manufacturers')
                                 ? 'show' : '' }}" id="policy" style="">
                                     <ul class="nav nav-collapse subnav">
                                         <li class="{{request()->is('categories')? 'active':''}}">
@@ -322,6 +341,81 @@ $role_id=auth()->user()->role_id;
                                         <li class="{{request()->is('clients')? 'active':''}}">
                                             <a href="{{route('clients')}}">
                                                 <i class="menu-icon fa fa-user"></i> Clients
+                                            </a>
+                                        </li>
+                                        <li class="{{request()->is('saletypes')? 'active':''}}">
+                                            <a href="{{route('saletypes')}}">
+                                                <span class="sub-item">Sale Types</span>
+                                            </a>
+                                        </li>
+                                        <li class="{{request()->is('purchasetypes')? 'active':''}}">
+                                            <a href="{{route('purchasetypes')}}">
+                                                <span class="sub-item">Purchase Types</span>
+                                            </a>
+                                        </li>
+                                        <li class="{{request()->is('hsncodes')? 'active':''}}">
+                                            <a href="{{route('hsncodes')}}">
+                                                <span class="sub-item">Hsncodes</span>
+                                            </a>
+                                        </li>
+                                        <li class="{{request()->is('stocktypes')? 'active':''}}">
+                                            <a href="{{route('stocktypes')}}">
+                                                <span class="sub-item">Stock Types</span>
+                                            </a>
+                                        </li>
+                                        <li class="{{request()->is('servicecodes')? 'active':''}}">
+                                            <a href="{{route('servicecodes')}}">
+                                                <span class="sub-item">Service Codes</span>
+                                            </a>
+                                        </li>
+                                        <li class="{{request()->is('multiexpenses')? 'active':''}}">
+                                            <a href="{{route('multiexpenses')}}">
+                                                <span class="sub-item">Multi Expenses</span>
+                                            </a>
+                                        </li>
+                                        <li class="{{request()->is('manufacturers')? 'active':''}}">
+                                            <a href="{{route('manufacturers')}}">
+                                                <span class="sub-item">Manufacturers</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="submenu">
+                                <a data-bs-toggle="collapse" href="#purchase" class="collapsed" aria-expanded="false">
+                                    <i class="fa fa-shopping-cart"></i>Purchase
+                                    <span class="caret"></span>
+                                </a>
+                                <div class="collapse  {{ request()->is('purchases')||request()->is('purchase/*') ? 'show' : '' }}" id="purchase" style="">
+                                    <ul class="nav nav-collapse subnav">
+                                        <li class="{{request()->is('purchases')? 'active':''}}">
+                                            <a href="{{route('purchases')}}">
+                                                <span class="sub-item">Purchases</span>
+                                            </a>
+                                        </li>
+                                        <li class="{{request()->is('purchase/*')? 'active':''}}">
+                                            <a href="{{route('purchase.create')}}">
+                                                <span class="sub-item">Add Purchase</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="submenu">
+                                <a data-bs-toggle="collapse" href="#sale" class="collapsed" aria-expanded="false">
+                                    <i class="fa fa-receipt"></i>Sale
+                                    <span class="caret"></span>
+                                </a>
+                                <div class="collapse  {{ request()->is('sales')||request()->is('sale/*') ? 'show' : '' }}" id="sale" style="">
+                                    <ul class="nav nav-collapse subnav">
+                                        <li class="{{request()->is('sales')? 'active':''}}">
+                                            <a href="{{route('sales')}}">
+                                                <span class="sub-item">Sale</span>
+                                            </a>
+                                        </li>
+                                        <li class="{{request()->is('sale/*')? 'active':''}}">
+                                            <a href="{{route('sale.create')}}">
+                                                <span class="sub-item">Add Sale</span>
                                             </a>
                                         </li>
                                     </ul>

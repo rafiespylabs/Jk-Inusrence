@@ -33,12 +33,16 @@
                             <th>Customer Paid Premium</th>
                             <th>Paid Amount</th>
                             <th>Due Amount</th>
+                            <th>Payment Mode</th>
                             <th>Payment Status</th>
+                            <th>Pay Now</th>
+                            <th>Purchase Card</th>
                             <th>Documents</th>
                             <th>Renew</th>
                             <th>Insurence Provider</th>
                             <th>Assign</th>
                             <th>Action</th>
+                            <th>Policy Mode</th>
                             <th>Secondary Number</th>
                             <th>Start Date</th>
                             <th>Expiry Date</th>
@@ -46,7 +50,6 @@
                             <th>Company</th>
                             <th>Valuation Amount</th>
                             <th>Total Cost</th>
-                            <th>Payment Mode</th>
                             <th>Executive</th>
                             <th>Prepared Staff</th>
                             <th>Reference</th>
@@ -297,6 +300,14 @@
                             <option value="1">Paid</option>
                         </select>
                     </div>   
+                    <div class="col-4">
+                        <label for="policy_mode" class="form-label">Policy Mode </label>
+                        <select name="policy_mode"  class="form-control">
+                            <option value="">Select One</option>
+                            <option value="1">New </option>
+                            <option value="2">Renewal</option>
+                        </select>
+                    </div>   
                 </div>
                 <div class="form-actions form-group">
                   <button type="submit" class="btn btn-primary btn-sm">Submit</button>
@@ -450,6 +461,16 @@
                             </select>
                         </div>
                     </div>
+                    <div class="row form-group">
+                        <div class="col-4">
+                            <label for="policy_mode" class="form-label">Policy Mode <span>*</span></label>
+                            <select name="policy_mode"  id="policy_mode" class="form-control" required>
+                                <option value="">Select One</option>
+                                <option value="1">New </option>
+                                <option value="2">Renewal</option>
+                            </select>
+                        </div>  
+                    </div> 
                     <div class="form-actions form-group">
                         <button type="submit" class="btn btn-primary btn-sm">Save Changes</button>
                         <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
@@ -1136,6 +1157,7 @@
             $('#edit_total_cost').val(response.total_cost);
             $('#provider_id').val(response.provider_id);
             $('#coverage_type_id').val(response.coverage_type_id);
+            $('#policy_mode').val(response.policy_mode);
             if(response.buying_type==1)
             {
                 $('#edit_broker_div').hide();

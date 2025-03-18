@@ -32,4 +32,8 @@ class Tbl_other_policies extends Model
     {
         return $this->belongsTo(Tbl_insurence_providers::class,'provider_id','id');
     }
+    public function created_user()
+    {
+        return $this->belongsTo(User::class, 'created_by','id');
+    }
 }

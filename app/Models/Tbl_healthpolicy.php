@@ -42,5 +42,4 @@ class Tbl_healthpolicy extends Model
     {
         return $this->belongsTo(Tbl_insurence_providers::class,'provider_id','id');
     }
-
 }

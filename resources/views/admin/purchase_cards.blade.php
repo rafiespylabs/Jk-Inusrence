@@ -10,8 +10,8 @@
                         <h2>Purchase Cards</h2>
                         <button class="btn btn-primary btn-round btn-sm  ms-auto"  data-bs-toggle="modal" data-bs-target="#PurchaseCardModal">
                         <i class="fa fa-plus"></i> Add Purchase Card</button>
-                        <a href="{{url('policypayments')}}/{{$policy_cat_id}}/{{$policy_id}}" class="ml-2"><button class="btn btn-info btn-round btn-sm ms-auto">
-                        <i class="fa fa-arrow-left"></i> Back To Payment</button></a>
+                        <a href="{{ url()->previous() }}" class="ml-2"><button class="btn btn-info btn-round ms-auto btn-sm">
+                        <i class="fa fa-arrow-left"></i> Back</button></a>
                     </div>
                 </div>
                 <div class="card-body">
@@ -26,10 +26,11 @@
                         <thead>
                             <tr>
                             <th>Sl No</th>
-                            <th>Card</th>
+                            <th>Card/Client Direct</th>
+                            <!-- <th>Card</th> -->
                             <th>Provider</th>
                             <th>Taken Amount</th>
-                            <th>Card Balance</th>
+                            <!-- <th>Card Balance</th> -->
                             <th>Provider Card Balance</th>
                             <th>Added By</th>
                             <th>Added Date</th>
@@ -70,7 +71,8 @@
                             <select  name="purchase_type" class="add_payment_type form-control" data-count="1">
                                 <option value="">Select One</option>
                                 <option value="1">Card</option>
-                                <option value="2">Company Direct</option>
+                                <!-- <option value="2">Company Direct</option> -->
+                                <option value="3">Client Direct</option>
                             </select>
                         </div>
                         <div class="col-3" id="provider_div1" style="display:none;">
@@ -82,7 +84,7 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-3" id="card_div1" style="display:none;">
+                        <!-- <div class="col-3" id="card_div1" style="display:none;">
                             <label>Card </label>
                             <select  name="card_id" id="card_id" class="form-control">
                                 <option value="">Select One</option>
@@ -90,16 +92,16 @@
                                 <option value="{{$card->id}}">{{$card->holder_name}}-[{{$card->current_amount}}]</option>
                                 @endforeach
                             </select>
-                        </div>
+                        </div> -->
                         <div class="col-3">
                             <label>Amount Taken <span>*</span></label>
                             <input type="number" step="any"  name="taken_amount" id="taken_amount" class="form-control" required>
                         </div>
-                        <div class="col-3">
+                        <!-- <div class="col-3" id="card_bal_div1">
                             <label>Card Balance <span>*</span></label>
                             <input type="number" step="any"  name="card_balance_amount" id="card_balance_amount" class="form-control" required>
-                        </div>
-                        <div class="col-3">
+                        </div> -->
+                        <div class="col-3" id="provider_bal_div1">
                             <label>Provider Card Balance <span>*</span></label>
                             <input type="number" step="any"  name="provider_balance_amount" id="provider_balance_amount" class="form-control" required>
                         </div>
@@ -109,7 +111,7 @@
                     <button id="add-field" type="button" class="btn btn-secondary btn-sm" ><i class="fa fa-plus"></i> Add</button>
                 </div> -->
                 <div class="form-actions form-group">
-                  <button type="submit" class="btn btn-primary btn-sm">Submit</button>
+                  <button type="submit" class="btn btn-primary btn-sm" id="submit_btn">Submit</button>
                   <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
                 </div>
               </form>
@@ -141,10 +143,11 @@
             },
             columns: [
                 {data: "sl_no",name: "sl_no", orderable: false, searchable: false  },
-                {data:"card",name: "card" },
+                {data :"purchase_type" , name:"purchase_type"},
+                // {data:"card",name: "card" },
                 {data: "provider" ,name: "provider"},
                 {data: "taken_amount" ,name: "taken_amount"},
-                {data: "card_balance_amount" ,name: "card_balance_amount"},
+                // {data: "card_balance_amount" ,name: "card_balance_amount"},
                 {data: "provider_balance_amount" ,name: "provider_balance_amount"},
                 {data: "added_by" ,name: "added_by"},
                 {data: "added_date" ,name: "added_date"},
@@ -194,11 +197,11 @@
                         <label>Amount Taken <span>*</span></label>
                         <input type="number" step="any" name="taken_amount[]" class="form-control" required>
                     </div>
-                    <div class="col-3">
+                    <div class="col-3" id="card_bal_div${fieldCount}">
                         <label>Card Balance <span>*</span></label>
                         <input type="number"  step="any" name="card_balance_amount[]" class="form-control" required>
                     </div>
-                    <div class="col-3">
+                    <div class="col-3" id="provider_bal_div${fieldCount}">
                         <label>Provider Card Balance <span>*</span></label>
                         <input type="number"  step="any" name="provider_balance_amount[]" class="form-control" required>
                     </div>
@@ -227,6 +230,7 @@
                     if (response.success) 
                     {
                         $('#PurchaseCardModal').modal('hide');
+                        $("#submit_btn").prop("disabled", true);
                         Swal.fire({
                                 icon: 'success',
                                 title: 'Success!',
@@ -374,6 +378,15 @@ $(document).on("change", ".add_payment_type", function() {
    {
         $('#card_div'+count).show();
         $('#provider_div'+count).show();
+   }
+   else if(payment_type==3)
+   {
+        $('#card_div'+count).hide();
+        $('#provider_div'+count).hide();
+        $('#provider_bal_div'+count).hide();
+        $('#card_bal_div'+count).hide();
+        $("#card_balance_amount").removeAttr("required");
+        $("#provider_balance_amount").removeAttr("required");
    }
 });
 $(document).on("change", "#edit_payment_type", function() {
