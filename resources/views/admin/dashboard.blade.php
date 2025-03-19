@@ -2,6 +2,7 @@
 @php
 $role=auth()->user()->role_id;
 @endphp
+@if($role == 1)
 <div class="page-inner">
     <div class="page-header">
     </div>
@@ -355,4 +356,11 @@ $role=auth()->user()->role_id;
         </div>
     </div> -->
 </div>
+@else
+    <div class="page-inner">
+        <div class="page-header">
+           
+        </div>
+    </div>
+@endif
 </x-admin1-layout>
