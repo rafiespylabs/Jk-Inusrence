@@ -65,6 +65,7 @@ use App\Http\Controllers\OpeningstockController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\MultiexpenseController;
 use App\Http\Controllers\ManufacturerController;
+use App\Http\Controllers\MotorVehicleReportController;
 use Illuminate\Support\Facades\Route;
 // Route::get('/', [ComingsoonController::class, 'index'])->name('comingsoon');
 Route::get('/', function () {return redirect(route('login'));});
@@ -435,5 +436,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/manufacturers/edit', [ManufacturerController::class, 'edit'])->name('manufacturers.edit');
     Route::post('/manufacturers/update', [ManufacturerController::class, 'update'])->name('manufacturers.update');
     Route::post('/manufacturers/destroy', [ManufacturerController::class, 'destroy'])->name('manufacturers.destroy');
+
+    Route::get('/motorVehicleReport', [MotorVehicleReportController::class, 'index'])->name('motorVehicleReport');
+    Route::get('/motorVehicleReport/report', [MotorVehicleReportController::class, 'report'])->name('motorVehicleReport.report');
 });
 require __DIR__.'/auth.php';

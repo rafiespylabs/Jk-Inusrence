@@ -221,7 +221,7 @@ CREATE TABLE `tasks` (
   `status` varchar(255) NOT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 ;
 
 -- --------------------------------------------------------
 
@@ -233,13 +233,13 @@ CREATE TABLE `tbl_agents` (
   `id` int NOT NULL,
   `agent_name` varchar(100) NOT NULL,
   `email` varchar(255) DEFAULT NULL,
-  `phone_number` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `company_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `phone_number` varchar(20) CHARACTER SET utf8mb4  DEFAULT NULL,
+  `company_name` varchar(255) CHARACTER SET utf8mb4  DEFAULT NULL,
   `created_by` int NOT NULL,
   `created_date` date NOT NULL,
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- --------------------------------------------------------
 
@@ -450,10 +450,10 @@ INSERT INTO `tbl_attendances` (`id`, `login_id`, `punchin_long`, `punchin_lat`, 
 
 CREATE TABLE `tbl_branches` (
   `id` int NOT NULL,
-  `branch` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `branch` varchar(255) CHARACTER SET utf8mb4  NOT NULL,
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 --
 -- Dumping data for table `tbl_branches`
@@ -499,7 +499,7 @@ CREATE TABLE `tbl_cards` (
   `created_date` date DEFAULT NULL,
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 --
 -- Dumping data for table `tbl_cards`
@@ -574,12 +574,12 @@ CREATE TABLE `tbl_clients` (
 CREATE TABLE `tbl_companies` (
   `id` int NOT NULL,
   `company` varchar(255) DEFAULT NULL,
-  `phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `phone` varchar(20) CHARACTER SET utf8mb4  DEFAULT NULL,
   `created_by` int NOT NULL,
   `created_date` date DEFAULT NULL,
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 --
 -- Dumping data for table `tbl_companies`
@@ -599,7 +599,7 @@ CREATE TABLE `tbl_countries` (
   `country` varchar(255) NOT NULL,
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 --
 -- Dumping data for table `tbl_countries`
@@ -625,10 +625,10 @@ INSERT INTO `tbl_countries` (`id`, `country`, `createdAt`, `updatedAt`) VALUES
 
 CREATE TABLE `tbl_coverage_types` (
   `id` int NOT NULL,
-  `coverage_type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `coverage_type` varchar(255) CHARACTER SET utf8mb4  NOT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 --
 -- Dumping data for table `tbl_coverage_types`
@@ -660,7 +660,7 @@ CREATE TABLE `tbl_creditcard_payments` (
   `edited_date` datetime DEFAULT NULL,
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 --
 -- Dumping data for table `tbl_creditcard_payments`
@@ -776,7 +776,7 @@ CREATE TABLE `tbl_credit_repayments` (
   `edited_date` datetime DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 --
 -- Dumping data for table `tbl_credit_repayments`
@@ -796,13 +796,13 @@ CREATE TABLE `tbl_dealers` (
   `id` int NOT NULL,
   `dealer_name` varchar(255) NOT NULL,
   `email` varchar(100) DEFAULT NULL,
-  `phone_number` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `phone_number` varchar(20) CHARACTER SET utf8mb4  DEFAULT NULL,
   `company_name` varchar(255) DEFAULT NULL,
   `created_by` int NOT NULL,
   `created_date` date NOT NULL,
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- --------------------------------------------------------
 
@@ -815,7 +815,7 @@ CREATE TABLE `tbl_departments` (
   `department` varchar(255) NOT NULL,
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 --
 -- Dumping data for table `tbl_departments`
@@ -840,7 +840,7 @@ CREATE TABLE `tbl_designations` (
   `designation` varchar(255) NOT NULL,
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 --
 -- Dumping data for table `tbl_designations`
@@ -872,7 +872,7 @@ CREATE TABLE `tbl_districts` (
   `district` varchar(255) NOT NULL,
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 --
 -- Dumping data for table `tbl_districts`
@@ -1805,7 +1805,7 @@ CREATE TABLE `tbl_healthpolicymembers` (
   `added_date` date DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- --------------------------------------------------------
 
@@ -1823,7 +1823,7 @@ CREATE TABLE `tbl_healthpolicy_docucments` (
   `added_by` int DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- --------------------------------------------------------
 
@@ -1844,7 +1844,7 @@ CREATE TABLE `tbl_healthpolicy_renews` (
   `added_date` date DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 --
 -- Dumping data for table `tbl_healthpolicy_renews`
@@ -2022,7 +2022,7 @@ CREATE TABLE `tbl_jw_livestocks` (
   `qty` bigint NOT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- --------------------------------------------------------
 
@@ -2045,7 +2045,7 @@ CREATE TABLE `tbl_jw_openingstocks` (
   `editeddate` datetime DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- --------------------------------------------------------
 
@@ -2068,7 +2068,7 @@ CREATE TABLE `tbl_jw_purchases` (
   `editeddate` datetime DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- --------------------------------------------------------
 
@@ -2111,7 +2111,7 @@ CREATE TABLE `tbl_jw_purchase_trans` (
   `editeddate` datetime DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- --------------------------------------------------------
 
@@ -2121,7 +2121,7 @@ CREATE TABLE `tbl_jw_purchase_trans` (
 
 CREATE TABLE `tbl_jw_sales` (
   `id` int NOT NULL,
-  `sale_invoice_num` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `sale_invoice_num` varchar(50) CHARACTER SET utf8mb4  NOT NULL,
   `client_id` int NOT NULL,
   `gst_type` int NOT NULL COMMENT '1-inside kerala , 2-other',
   `sale_type_id` int NOT NULL,
@@ -2138,7 +2138,7 @@ CREATE TABLE `tbl_jw_sales` (
   `editeddate` datetime DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- --------------------------------------------------------
 
@@ -2184,7 +2184,7 @@ CREATE TABLE `tbl_jw_sale_trans` (
   `editeddate` datetime DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- --------------------------------------------------------
 
@@ -2353,11 +2353,11 @@ INSERT INTO `tbl_jw_units` (`id`, `unit_name`, `created_at`, `updated_at`) VALUE
 
 CREATE TABLE `tbl_leads` (
   `id` int NOT NULL,
-  `customer_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `customer_name` varchar(255) CHARACTER SET utf8mb4  NOT NULL,
   `mobile_number` varchar(255) NOT NULL,
   `vehicle_number` varchar(255) DEFAULT NULL,
-  `vehicle_model` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `IDV_value` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `vehicle_model` varchar(255) CHARACTER SET utf8mb4  DEFAULT NULL,
+  `IDV_value` varchar(255) CHARACTER SET utf8mb4  DEFAULT NULL,
   `ncb` varchar(100) NOT NULL,
   `year` varchar(10) NOT NULL,
   `lead_status` int DEFAULT NULL COMMENT '1-started,2-Inprogress,3-Not Need,4-Converted',
@@ -2367,7 +2367,7 @@ CREATE TABLE `tbl_leads` (
   `edited_date` date DEFAULT NULL,
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- --------------------------------------------------------
 
@@ -2380,7 +2380,7 @@ CREATE TABLE `tbl_leadsources` (
   `leadsource` varchar(255) NOT NULL,
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 --
 -- Dumping data for table `tbl_leadsources`
@@ -2412,7 +2412,7 @@ CREATE TABLE `tbl_lead_followups` (
   `status` int DEFAULT NULL COMMENT '1-started,2-Inprogress,3-Not Need,4-Converted',
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- --------------------------------------------------------
 
@@ -2497,7 +2497,7 @@ CREATE TABLE `tbl_otherpolicy_documents` (
   `added_date` date DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- --------------------------------------------------------
 
@@ -2576,7 +2576,7 @@ CREATE TABLE `tbl_other_policy_renews` (
   `added_date` date NOT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 --
 -- Dumping data for table `tbl_other_policy_renews`
@@ -2617,7 +2617,7 @@ CREATE TABLE `tbl_payments` (
   `added_by` int NOT NULL,
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 --
 -- Dumping data for table `tbl_payments`
@@ -2867,7 +2867,7 @@ CREATE TABLE `tbl_payment_modes` (
   `payment_mode` varchar(100) NOT NULL,
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 --
 -- Dumping data for table `tbl_payment_modes`
@@ -2900,8 +2900,8 @@ CREATE TABLE `tbl_policyholders` (
   `policy_type` int NOT NULL COMMENT '1-individual,2-agent,3- Dealer',
   `name` varchar(255) NOT NULL,
   `vehicle_number` varchar(100) NOT NULL,
-  `primary_number` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `secondary_number` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `primary_number` varchar(20) CHARACTER SET utf8mb4  DEFAULT NULL,
+  `secondary_number` varchar(20) CHARACTER SET utf8mb4  DEFAULT NULL,
   `start_date` date NOT NULL,
   `expiry_date` date NOT NULL,
   `vehicle_model_id` int NOT NULL,
@@ -2933,7 +2933,7 @@ CREATE TABLE `tbl_policyholders` (
   `edited_date` datetime DEFAULT NULL,
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 --
 -- Dumping data for table `tbl_policyholders`
@@ -3369,7 +3369,7 @@ CREATE TABLE `tbl_policy_categories` (
   `policy_category` varchar(255) NOT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 --
 -- Dumping data for table `tbl_policy_categories`
@@ -3404,7 +3404,7 @@ CREATE TABLE `tbl_preparepolicies` (
   `created_date` datetime DEFAULT NULL,
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- --------------------------------------------------------
 
@@ -3417,7 +3417,7 @@ CREATE TABLE `tbl_prooftypes` (
   `type` varchar(255) NOT NULL,
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 --
 -- Dumping data for table `tbl_prooftypes`
@@ -3458,7 +3458,7 @@ CREATE TABLE `tbl_purchase_cards` (
   `added_date` date NOT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 --
 -- Dumping data for table `tbl_purchase_cards`
@@ -3779,7 +3779,7 @@ CREATE TABLE `tbl_referred_persons` (
   `phone_number` varchar(12) DEFAULT NULL,
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 --
 -- Dumping data for table `tbl_referred_persons`
@@ -4132,7 +4132,7 @@ CREATE TABLE `tbl_roles` (
   `role` varchar(255) NOT NULL,
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 --
 -- Dumping data for table `tbl_roles`
@@ -4183,7 +4183,7 @@ CREATE TABLE `tbl_staffs` (
   `profile_image` varchar(255) DEFAULT NULL,
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 --
 -- Dumping data for table `tbl_staffs`
@@ -4222,7 +4222,7 @@ CREATE TABLE `tbl_states` (
   `state` varchar(255) NOT NULL,
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 --
 -- Dumping data for table `tbl_states`
@@ -4372,7 +4372,7 @@ CREATE TABLE `tbl_vehcilepolicydocuments` (
   `added_by` int DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 -- --------------------------------------------------------
 
@@ -4395,7 +4395,7 @@ CREATE TABLE `tbl_vehiclepolicy_renews` (
   `created_by` int NOT NULL,
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 --
 -- Dumping data for table `tbl_vehiclepolicy_renews`
@@ -5133,7 +5133,7 @@ CREATE TABLE `users` (
   `role_id` int NOT NULL,
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 --
 -- Dumping data for table `users`
