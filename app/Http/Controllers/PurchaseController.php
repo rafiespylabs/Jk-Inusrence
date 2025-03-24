@@ -7,6 +7,7 @@ use App\Models\Tbl_jw_purchases;
 use App\Models\Tbl_jw_purchase_trans;
 use App\Models\Tbl_supplier;
 use App\Models\Tbl_items;
+use App\Models\Tbl_jw_purchasetypes;
 use App\Models\Tbl_jw_unit;
 use App\Models\Tbl_jw_livestocks;
 use Carbon\Carbon;
@@ -70,8 +71,9 @@ class PurchaseController extends Controller
         $suppliers=Tbl_supplier::all();
         $items=Tbl_items::all();
         $units=Tbl_jw_unit::all();
+        $purchasetypes=Tbl_jw_purchasetypes::all();
         return view('purchase.create',['suppliers'=>$suppliers,
-        'items'=>$items,'units'=>$units]);
+        'items'=>$items,'units'=>$units,'purchasetypes'=>$purchasetypes]);
     }
     public function store(Request $request)
     {
@@ -87,6 +89,8 @@ class PurchaseController extends Controller
             'qty.*' => 'required|integer|min:1',
             'unit_id' => 'required|array|min:1', 
             'unit_id.*' => 'required|exists:tbl_jw_units,id',
+            'purchase_type_id' => 'required|array|min:1',
+            'purchase_type_id.*' => 'required|exists:tbl_jw_purchasetypes,id',
             'pur_rate' => 'required|array|min:1',
             'pur_rate.*' => 'required|numeric|min:0',
             'sale_rate' => 'required|array|min:1',
@@ -111,6 +115,7 @@ class PurchaseController extends Controller
               $batch_id=$validatedData['batch_id'];
               $qty=$validatedData['qty'];
               $unit_id=$validatedData['unit_id'];
+              $purchase_type_id=$validatedData['purchase_type_id'];
               $pur_rate=$validatedData['pur_rate'];
               $sale_rate=$validatedData['sale_rate'];
               $mrp=$validatedData['mrp'];
@@ -131,7 +136,7 @@ class PurchaseController extends Controller
               $purchase->save();
               
             for ($i = 0; $i < count($item_id); $i++) 
-            {
+            {                
                 $purchase_trans=new Tbl_jw_purchase_trans;
                 $purchase_trans->purchase_id= $purchase->id;
                 $purchase_trans->item_id= $item_id[$i];
@@ -142,10 +147,12 @@ class PurchaseController extends Controller
                 $purchase_trans->sale_rate= $sale_rate[$i];
                 $purchase_trans->mrp= $mrp[$i];
                 $purchase_trans->subtotal= $subtotal[$i];
-                $purchase_trans->purchase_type_id= 1;
+                $purchase_trans->purchase_type_id=$purchase_type_id[$i];
                 $purchase_trans->createdby= $created_by;
                 $purchase_trans->createddate= $currentdate;
                 $purchase_trans->save();
+
+                $item=Tbl_items::find($item_id[$i]);
 
                 $checkLiveStock=Tbl_jw_livestocks::where('item_id',$item_id[$i])->where('batch_id',$batch_id[$i])->first();
                 if($checkLiveStock){
@@ -156,6 +163,7 @@ class PurchaseController extends Controller
                     $LiveStock=new Tbl_jw_livestocks;
                     $LiveStock->item_id= $item_id[$i];
                     $LiveStock->batch_id= $batch_id[$i];
+                    $LiveStock->manufacturer_id= $item->manufacturer_id;
                     $LiveStock->pur_rate= $pur_rate[$i];
                     $LiveStock->sale_rate= $sale_rate[$i];
                     $LiveStock->mrp= $mrp[$i];

@@ -2,6 +2,7 @@
 @php
 $role=auth()->user()->role_id;
 @endphp
+@if($role == 1)
 <div class="page-inner">
     <div class="page-header">
     </div>
@@ -20,8 +21,8 @@ $role=auth()->user()->role_id;
                             </div>
                             <div class="col col-stats ms-3 ms-sm-0">
                             <div class="numbers">
-                                <p class="card-category">Health Insurences</p>
-                                <h4 class="card-title">0</h4>
+                                <p class="card-category">Attendance</p>
+                                <h4 class="card-title">{{$todayAttendanceCount}}</h4>
                             </div>
                             </div>
                         </div>
@@ -32,7 +33,7 @@ $role=auth()->user()->role_id;
         <div class="col-sm-6 col-md-3">
             <div class="card card-stats card-round">
                 <div class="card-body">
-                    <a href="">
+                    <a href="{{route('motorVehicleReport')}}">
                         <div class="row align-items-center">
                             <div class="col-icon">
                             <div
@@ -43,8 +44,8 @@ $role=auth()->user()->role_id;
                             </div>
                             <div class="col col-stats ms-3 ms-sm-0">
                             <div class="numbers">
-                                <p class="card-category">Vehicle Insurences</p>
-                                <h4 class="card-title">0</h4>
+                                <p class="card-category">Motor Policy</p>
+                                <h4 class="card-title">{{$todayMotorpolicyCount}}</h4>
                             </div>
                             </div>
                         </div>
@@ -66,8 +67,8 @@ $role=auth()->user()->role_id;
                         </div>
                         <div class="col col-stats ms-3 ms-sm-0">
                         <div class="numbers">
-                            <p class="card-category">Other Policies</p>
-                            <h4 class="card-title">0</h4>
+                            <p class="card-category">Health Policy</p>
+                            <h4 class="card-title">{{$todayHealthpolicyCount}}</h4>
                         </div>
                         </div>
                     </div>
@@ -78,7 +79,7 @@ $role=auth()->user()->role_id;
         <div class="col-sm-6 col-md-3">
             <div class="card card-stats card-round">
                 <div class="card-body">
-                    <a href="{{route('leads')}}">
+                    <a href="#">
                         <div class="row align-items-center">
                             <div class="col-icon">
                             <div class="icon-big text-center icon-secondary bubble-shadow-small">
@@ -87,8 +88,215 @@ $role=auth()->user()->role_id;
                             </div>
                             <div class="col col-stats ms-3 ms-sm-0">
                             <div class="numbers">
-                                <p class="card-category">Loans</p>
-                                <h4 class="card-title">0</h4>
+                                <p class="card-category">Other Policy</p>
+                                <h4 class="card-title">{{$todayOtherpolicyCount}}</h4>
+                            </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6 col-md-3">
+            <div class="card card-stats card-round">
+                <div class="card-body">
+                    <a href="">
+                        <div class="row align-items-center">
+                            <div class="col-icon">
+                            <div
+                                class="icon-big text-center icon-info bubble-shadow-small"
+                            >
+                                <i class="fas fa-briefcase"></i>
+                            </div>
+                            </div>
+                            <div class="col col-stats ms-3 ms-sm-0">
+                            <div class="numbers">
+                                <p class="card-category">Motor Policy Paid</p>
+                                <h4 class="card-title">{{$paidMotorpolicyCount}}</h4>
+                            </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3">
+        <div class="card card-stats card-round">
+            <div class="card-body">
+                <a href="">
+                    <div class="row align-items-center">
+                        <div class="col-icon">
+                        <div
+                            class="icon-big text-center icon-success bubble-shadow-small"
+                        >
+                            <i class="fas fa-book"></i>
+                        </div>
+                        </div>
+                        <div class="col col-stats ms-3 ms-sm-0">
+                        <div class="numbers">
+                            <p class="card-category">Health Policy Paid</p>
+                            <h4 class="card-title">{{$paidHealthpolicyCount}}</h4>
+                        </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        </div>
+        <div class="col-sm-6 col-md-3">
+            <div class="card card-stats card-round">
+                <div class="card-body">
+                    <a href="#">
+                        <div class="row align-items-center">
+                            <div class="col-icon">
+                            <div class="icon-big text-center icon-secondary bubble-shadow-small">
+                                <i class="fa fa-bullhorn"></i>
+                            </div>
+                            </div>
+                            <div class="col col-stats ms-3 ms-sm-0">
+                            <div class="numbers">
+                                <p class="card-category">Other Policy Paid</p>
+                                <h4 class="card-title">{{$paidOtherpolicyCount}}</h4>
+                            </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6 col-md-3">
+            <div class="card card-stats card-round">
+                <div class="card-body">
+                    <a href="">
+                        <div class="row align-items-center">
+                            <div class="col-icon">
+                            <div
+                                class="icon-big text-center icon-info bubble-shadow-small"
+                            >
+                                <i class="fas fa-briefcase"></i>
+                            </div>
+                            </div>
+                            <div class="col col-stats ms-3 ms-sm-0">
+                            <div class="numbers">
+                                <p class="card-category">Motor Policy Due</p>
+                                <h4 class="card-title">{{$dueMotorpolicyCount}}</h4>
+                            </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3">
+        <div class="card card-stats card-round">
+            <div class="card-body">
+                <a href="#">
+                    <div class="row align-items-center">
+                        <div class="col-icon">
+                        <div
+                            class="icon-big text-center icon-success bubble-shadow-small"
+                        >
+                            <i class="fas fa-book"></i>
+                        </div>
+                        </div>
+                        <div class="col col-stats ms-3 ms-sm-0">
+                        <div class="numbers">
+                            <p class="card-category">Health Policy Due</p>
+                            <h4 class="card-title">{{$dueHealthpolicyCount}}</h4>
+                        </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        </div>
+        <div class="col-sm-6 col-md-3">
+            <div class="card card-stats card-round">
+                <div class="card-body">
+                    <a href="#">
+                        <div class="row align-items-center">
+                            <div class="col-icon">
+                            <div class="icon-big text-center icon-secondary bubble-shadow-small">
+                                <i class="fa fa-bullhorn"></i>
+                            </div>
+                            </div>
+                            <div class="col col-stats ms-3 ms-sm-0">
+                            <div class="numbers">
+                                <p class="card-category">Other Policy Due</p>
+                                <h4 class="card-title">{{$dueOtherpolicyCount}}</h4>
+                            </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6 col-md-3">
+            <div class="card card-stats card-round">
+                <div class="card-body">
+                    <a href="">
+                        <div class="row align-items-center">
+                            <div class="col-icon">
+                            <div
+                                class="icon-big text-center icon-info bubble-shadow-small"
+                            >
+                                <i class="fas fa-briefcase"></i>
+                            </div>
+                            </div>
+                            <div class="col col-stats ms-3 ms-sm-0">
+                            <div class="numbers">
+                                <p class="card-category">Repaid Cards</p>
+                                <h4 class="card-title">{{$dueMotorpolicyCount}}</h4>
+                            </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3">
+        <div class="card card-stats card-round">
+            <div class="card-body">
+                <a href="#">
+                    <div class="row align-items-center">
+                        <div class="col-icon">
+                        <div
+                            class="icon-big text-center icon-success bubble-shadow-small"
+                        >
+                            <i class="fas fa-book"></i>
+                        </div>
+                        </div>
+                        <div class="col col-stats ms-3 ms-sm-0">
+                        <div class="numbers">
+                            <p class="card-category">Non Repaid Cards</p>
+                            <h4 class="card-title">{{$dueHealthpolicyCount}}</h4>
+                        </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        </div>
+        <div class="col-sm-6 col-md-3">
+            <div class="card card-stats card-round">
+                <div class="card-body">
+                    <a href="#">
+                        <div class="row align-items-center">
+                            <div class="col-icon">
+                            <div class="icon-big text-center icon-secondary bubble-shadow-small">
+                                <i class="fa fa-bullhorn"></i>
+                            </div>
+                            </div>
+                            <div class="col col-stats ms-3 ms-sm-0">
+                            <div class="numbers">
+                                <p class="card-category">Purchase Cards</p>
+                                <h4 class="card-title">{{$dueOtherpolicyCount}}</h4>
                             </div>
                             </div>
                         </div>
@@ -148,4 +356,11 @@ $role=auth()->user()->role_id;
         </div>
     </div> -->
 </div>
+@else
+    <div class="page-inner">
+        <div class="page-header">
+           
+        </div>
+    </div>
+@endif
 </x-admin1-layout>

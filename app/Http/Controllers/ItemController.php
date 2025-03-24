@@ -7,12 +7,14 @@ use App\Models\Tbl_jw_category;
 use App\Models\Tbl_jw_hsncodes;
 use App\Models\Tbl_jw_subcategory;
 use App\Models\Tbl_jw_unit;
+use App\Models\Tbl_jw_batches;
 use App\Models\Tbl_manufacturers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
-
+use Response;
+use Redirect;
 class ItemController extends Controller
 {
     public function index()
@@ -224,4 +226,10 @@ class ItemController extends Controller
             'message' => 'item deleted successfully',
         ]);
     } 
+    public function getbatches(Request $request)
+    {
+       $item_id=$request->item_id;
+       $batches=Tbl_jw_batches::where('item_id',$item_id)->get();
+       return Response::json(['success'=>true,'batches'=>$batches]);
+    }
 }

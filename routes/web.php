@@ -65,6 +65,12 @@ use App\Http\Controllers\OpeningstockController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\MultiexpenseController;
 use App\Http\Controllers\ManufacturerController;
+use App\Http\Controllers\CareofpersonController;
+use App\Http\Controllers\MotorVehicleReportController;
+use App\Http\Controllers\BusinesscategoryController;
+use App\Http\Controllers\DayworkController;
+use App\Http\Controllers\DayworkTransController;
+use App\Http\Controllers\DayworkPaymentsController;
 use Illuminate\Support\Facades\Route;
 // Route::get('/', [ComingsoonController::class, 'index'])->name('comingsoon');
 Route::get('/', function () {return redirect(route('login'));});
@@ -435,5 +441,33 @@ Route::middleware('auth')->group(function () {
     Route::post('/manufacturers/edit', [ManufacturerController::class, 'edit'])->name('manufacturers.edit');
     Route::post('/manufacturers/update', [ManufacturerController::class, 'update'])->name('manufacturers.update');
     Route::post('/manufacturers/destroy', [ManufacturerController::class, 'destroy'])->name('manufacturers.destroy');
+
+    Route::get('/careofpersons', [CareofpersonController::class, 'index'])->name('careofpersons');
+    Route::post('/careofpersons/list', [CareofpersonController::class, 'list'])->name('careofpersons.list');
+    Route::post('/careofpersons/store', [CareofpersonController::class, 'store'])->name('careofpersons.store');
+    Route::get('/careofpersons/{id}/edit', [CareofpersonController::class, 'edit'])->name('careofpersons.edit');
+    Route::post('/careofpersons/update/{id}', [CareofpersonController::class, 'update'])->name('careofpersons.update');
+    Route::delete('/careofpersons/{id}', [CareofpersonController::class, 'destroy'])->name('careofpersons.destroy');
+
+    Route::get('/businesscategories', [BusinesscategoryController::class, 'index'])->name('businesscategories');
+    Route::post('/businesscategories/store', [BusinesscategoryController::class, 'store'])->name('businesscategories.store');
+    Route::post('/businesscategories/edit', [BusinesscategoryController::class, 'edit'])->name('businesscategories.edit');
+    Route::post('/businesscategories/update', [BusinesscategoryController::class, 'update'])->name('businesscategories.update');
+    Route::post('/businesscategories/destroy', [BusinesscategoryController::class, 'destroy'])->name('businesscategories.destroy');
+
+    Route::get('/motorVehicleReport', [MotorVehicleReportController::class, 'index'])->name('motorVehicleReport');
+    Route::get('/motorVehicleReport/report', [MotorVehicleReportController::class, 'report'])->name('motorVehicleReport.report');
+
+    Route::get('/dayworks', [DayworkController::class, 'index'])->name('dayworks');
+    Route::any('/daywork/list', [DayworkController::class, 'list'])->name('daywork.list');
+    Route::post('/daywork/store', [DayworkController::class, 'store'])->name('daywork.store');
+
+    Route::get('/daywork_trans/{id}', [DayworkTransController::class, 'index'])->name('daywork_trans');    
+    Route::any('/daywork_trans/list', [DayworkTransController::class, 'list'])->name('daywork_trans.list');
+    Route::post('/daywork_trans/store', [DayworkTransController::class, 'store'])->name('daywork_trans.store');
+
+    Route::get('/daywork_payments/{id}', [ DayworkPaymentsController::class, 'index'])->name('daywork_payments'); 
+    Route::any('/daywork_payment/list', [ DayworkPaymentsController::class, 'list'])->name('daywork_payment.list');    
+    Route::post('/daywork_payment/store', [ DayworkPaymentsController::class, 'store'])->name('daywork_payment.store');    
 });
 require __DIR__.'/auth.php';

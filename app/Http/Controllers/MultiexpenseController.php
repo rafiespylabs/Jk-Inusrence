@@ -33,9 +33,9 @@ class MultiexpenseController extends Controller
             'amount' => 'required|numeric|min:0',
             'description' => 'nullable|string|max:100',
             'date' => 'required|date|date_format:Y-m-d',
-            'type_id' => 'required|exists:Tbl_expense_types,id',
-            'business_catogory_id' => 'required|exists:Tbl_business_categories,id',
-            'branch_id' => 'required|exists:Tbl_branches,id',
+            'type_id' => 'required|exists:tbl_expense_types,id',
+            'business_catogory_id' => 'required|exists:tbl_business_categories,id',
+            'branch_id' => 'required|exists:tbl_branches,id',
         ]);
     
         try {
@@ -109,9 +109,9 @@ class MultiexpenseController extends Controller
            'amount' => 'required|numeric|min:0',
             'description' => 'nullable|string|max:100',
             'date' => 'required|date|date_format:Y-m-d',
-            'type_id' => 'required|exists:Tbl_expense_types,id',
-            'business_catogory_id' => 'required|exists:Tbl_business_categories,id',
-            'branch_id' => 'required|exists:Tbl_branches,id',           
+            'type_id' => 'required|exists:tbl_expense_types,id',
+            'business_catogory_id' => 'required|exists:tbl_business_categories,id',
+            'branch_id' => 'required|exists:tbl_branches,id',           
         ]);
 
         $multiexpenses = Tbl_multi_expenses::find($validatedData['id']);

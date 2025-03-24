@@ -55,6 +55,7 @@
                                                 <th>Batch</th>
                                                 <th>Quantity</th>
                                                 <th>Unit</th>
+                                                <th>Purchase Type</th>
                                                 <th>Purchase Rate</th>
                                                 <th>Sale Rate</th>
                                                 <th>MRP</th>
@@ -91,6 +92,15 @@
                                                         @endforeach
                                                     </select>
                                                     <span class="error-message" id="unitError0"></span>
+                                                </td>
+                                                <td>
+                                                    <select class="form-control purchase_type-select" name="purchase_type_id[]">
+                                                        <option value="">Select One</option>
+                                                        @foreach($purchasetypes as $purchasetype)
+                                                        <option value="{{$purchasetype->id}}">{{$purchasetype->name }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                    <span class="error-message" id="purchase_typeError0"></span>
                                                 </td>
                                                 <td>
                                                     <input type="number" class="form-control pur_rate-input" name="pur_rate[]" value="" min="0" step="0.01" placeholder="Purchase Rate">
@@ -192,6 +202,15 @@ $(document).ready(function() {
                                 <span class="error-message" id="unitError${counter}"></span>
                             </td>
                             <td>
+                                <select class="form-control purchase_type-select" name="purchase_type_id[]">
+                                    <option value="">Select One</option>
+                                    @foreach($purchasetypes as $purchasetype)
+                                    <option value="{{$purchasetype->id}}">{{$purchasetype->name }}</option>
+                                    @endforeach
+                                </select>
+                                <span class="error-message" id="purchase_typeError${counter}"></span>
+                            </td>
+                            <td>
                                 <input type="number" class="form-control pur_rate-input" name="pur_rate[]" value="" min="0" step="0.01" placeholder="Purchase Rate">
                                 <span class="error-message" id="pur_rateError${counter}"></span>
                             </td>
@@ -224,8 +243,8 @@ $(document).ready(function() {
 });
 </script> 
 <script>
-$(document).on("change", ".item-select", function() {
-   var item_id = $(this).val();
+$(document).on('change', '.item-select', function() {
+   var item_id = $(this).find('option:selected').val();
    var count=$(this).data('count');
    $('#batch_id'+count).prop('disabled', true).html('<option value="">Loading...</option>');
    $.ajax({ type: "POST",

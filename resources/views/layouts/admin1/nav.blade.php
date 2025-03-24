@@ -291,6 +291,9 @@ $role_id=auth()->user()->role_id;
                                 ||request()->is('sale/*')
                                 ||request()->is('multiexpenses')
                                 ||request()->is('manufacturers')
+                                ||request()->is('careofpersons')
+                                ||request()->is('businesscategories')
+                                ||request()->is('dayworks')
                                 ? 'show' : '' }}" id="tire" style="">
                         <ul class="nav nav-collapse">
                             <li class="submenu">
@@ -311,6 +314,8 @@ $role_id=auth()->user()->role_id;
                                 || request()->is('servicecodes')
                                 ||request()->is('multiexpenses')
                                 ||request()->is('manufacturers')
+                                ||request()->is('careofpersons')
+                                ||request()->is('businesscategories')
                                 ? 'show' : '' }}" id="policy" style="">
                                     <ul class="nav nav-collapse subnav">
                                         <li class="{{request()->is('categories')? 'active':''}}">
@@ -378,6 +383,16 @@ $role_id=auth()->user()->role_id;
                                                 <span class="sub-item">Manufacturers</span>
                                             </a>
                                         </li>
+                                        <li class="{{request()->is('careofpersons')? 'active':''}}">
+                                            <a href="{{route('careofpersons')}}">
+                                                <span class="sub-item">Careof Persons</span>
+                                            </a>
+                                        </li>
+                                        <li class="{{request()->is('businesscategories')? 'active':''}}">
+                                            <a href="{{route('businesscategories')}}">
+                                                <span class="sub-item">Business Categories</span>
+                                            </a>
+                                        </li>
                                     </ul>
                                 </div>
                             </li>
@@ -420,6 +435,12 @@ $role_id=auth()->user()->role_id;
                                         </li>
                                     </ul>
                                 </div>
+                            </li>
+                            <li class="nav-item {{request()->is('dayworks')? 'active':''}}">
+                                <a href="{{route('dayworks')}}">
+                                    <i class="menu-icon fa fa-tasks"></i>
+                                    <p>Day Works</p>
+                                </a>
                             </li>
                         </ul>
                     </div>
