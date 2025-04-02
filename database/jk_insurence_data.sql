@@ -225,7 +225,7 @@ CREATE TABLE IF NOT EXISTS `tasks` (
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -238,14 +238,14 @@ CREATE TABLE IF NOT EXISTS `tbl_agents` (
   `id` int NOT NULL AUTO_INCREMENT,
   `agent_name` varchar(100) NOT NULL,
   `email` varchar(255) DEFAULT NULL,
-  `phone_number` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `company_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `phone_number` varchar(20) CHARACTER SET utf8mb4  DEFAULT NULL,
+  `company_name` varchar(255) CHARACTER SET utf8mb4  DEFAULT NULL,
   `created_by` int NOT NULL,
   `created_date` date NOT NULL,
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tbl_agents`
@@ -308,7 +308,7 @@ CREATE TABLE IF NOT EXISTS `tbl_batch_items` (
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -319,11 +319,11 @@ CREATE TABLE IF NOT EXISTS `tbl_batch_items` (
 DROP TABLE IF EXISTS `tbl_branches`;
 CREATE TABLE IF NOT EXISTS `tbl_branches` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `branch` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `branch` varchar(255) CHARACTER SET utf8mb4  NOT NULL,
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tbl_branches`
@@ -378,7 +378,7 @@ CREATE TABLE IF NOT EXISTS `tbl_cards` (
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tbl_cards`
@@ -424,14 +424,14 @@ INSERT INTO `tbl_clients` (`id`, `client_name`, `client_contact_number`, `client
 DROP TABLE IF EXISTS `tbl_companies`;
 CREATE TABLE IF NOT EXISTS `tbl_companies` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `company` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `company` varchar(255) CHARACTER SET utf8mb4  NOT NULL,
+  `phone` varchar(20) CHARACTER SET utf8mb4  DEFAULT NULL,
   `created_by` int NOT NULL,
   `created_date` date DEFAULT NULL,
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tbl_companies`
@@ -457,7 +457,7 @@ CREATE TABLE IF NOT EXISTS `tbl_countries` (
   `updatedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `country` (`country`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tbl_countries`
@@ -484,11 +484,11 @@ INSERT INTO `tbl_countries` (`id`, `country`, `createdAt`, `updatedAt`) VALUES
 DROP TABLE IF EXISTS `tbl_coverage_types`;
 CREATE TABLE IF NOT EXISTS `tbl_coverage_types` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `coverage_type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `coverage_type` varchar(255) CHARACTER SET utf8mb4  NOT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tbl_coverage_types`
@@ -522,7 +522,7 @@ CREATE TABLE IF NOT EXISTS `tbl_creditcard_payments` (
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tbl_creditcard_payments`
@@ -562,7 +562,7 @@ CREATE TABLE IF NOT EXISTS `tbl_credit_repayments` (
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tbl_credit_repayments`
@@ -585,14 +585,14 @@ CREATE TABLE IF NOT EXISTS `tbl_dealers` (
   `id` int NOT NULL AUTO_INCREMENT,
   `dealer_name` varchar(255) NOT NULL,
   `email` varchar(100) DEFAULT NULL,
-  `phone_number` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `phone_number` varchar(20) CHARACTER SET utf8mb4  DEFAULT NULL,
   `company_name` varchar(255) DEFAULT NULL,
   `created_by` int NOT NULL,
   `created_date` date NOT NULL,
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tbl_dealers`
@@ -618,7 +618,7 @@ CREATE TABLE IF NOT EXISTS `tbl_departments` (
   `updatedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `department` (`department`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tbl_departments`
@@ -643,7 +643,7 @@ CREATE TABLE IF NOT EXISTS `tbl_designations` (
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tbl_designations`
@@ -675,7 +675,7 @@ CREATE TABLE IF NOT EXISTS `tbl_districts` (
   PRIMARY KEY (`id`),
   KEY `fk_district_countrys` (`country_id`),
   KEY `fk_district_states` (`state_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=795 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=795 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tbl_districts`
@@ -1632,7 +1632,7 @@ CREATE TABLE IF NOT EXISTS `tbl_healthpolicymembers` (
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tbl_healthpolicymembers`
@@ -1661,7 +1661,7 @@ CREATE TABLE IF NOT EXISTS `tbl_healthpolicy_docucments` (
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tbl_healthpolicy_docucments`
@@ -1692,7 +1692,7 @@ CREATE TABLE IF NOT EXISTS `tbl_healthpolicy_renews` (
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tbl_healthpolicy_renews`
@@ -1896,7 +1896,7 @@ CREATE TABLE IF NOT EXISTS `tbl_jw_daypayments` (
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tbl_jw_daypayments`
@@ -1934,10 +1934,10 @@ DROP TABLE IF EXISTS `tbl_jw_dayworks`;
 CREATE TABLE IF NOT EXISTS `tbl_jw_dayworks` (
   `id` int NOT NULL AUTO_INCREMENT,
   `date` date NOT NULL,
-  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `phone_number` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `vehicle_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `vehicle_number` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4  DEFAULT NULL,
+  `phone_number` varchar(100) CHARACTER SET utf8mb4  DEFAULT NULL,
+  `vehicle_name` varchar(255) CHARACTER SET utf8mb4  DEFAULT NULL,
+  `vehicle_number` varchar(20) CHARACTER SET utf8mb4  DEFAULT NULL,
   `created_by` int NOT NULL,
   `created_date` datetime NOT NULL,
   `edited_by` int DEFAULT NULL,
@@ -1945,7 +1945,7 @@ CREATE TABLE IF NOT EXISTS `tbl_jw_dayworks` (
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tbl_jw_dayworks`
@@ -1985,7 +1985,7 @@ CREATE TABLE IF NOT EXISTS `tbl_jw_daywork_trans` (
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tbl_jw_daywork_trans`
@@ -2048,7 +2048,7 @@ CREATE TABLE IF NOT EXISTS `tbl_jw_livestocks` (
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tbl_jw_livestocks`
@@ -2082,7 +2082,7 @@ CREATE TABLE IF NOT EXISTS `tbl_jw_openingstocks` (
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tbl_jw_openingstocks`
@@ -2114,7 +2114,7 @@ CREATE TABLE IF NOT EXISTS `tbl_jw_purchases` (
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tbl_jw_purchases`
@@ -2191,7 +2191,7 @@ CREATE TABLE IF NOT EXISTS `tbl_jw_purchase_trans` (
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tbl_jw_purchase_trans`
@@ -2224,7 +2224,7 @@ INSERT INTO `tbl_jw_purchase_trans` (`id`, `purchase_id`, `item_id`, `batch_id`,
 DROP TABLE IF EXISTS `tbl_jw_sales`;
 CREATE TABLE IF NOT EXISTS `tbl_jw_sales` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `sale_invoice_num` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `sale_invoice_num` varchar(50) CHARACTER SET utf8mb4  NOT NULL,
   `client_id` int NOT NULL,
   `gst_type` int NOT NULL COMMENT '1-inside kerala , 2-other',
   `sale_type_id` int NOT NULL,
@@ -2242,7 +2242,7 @@ CREATE TABLE IF NOT EXISTS `tbl_jw_sales` (
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tbl_jw_sales`
@@ -2312,7 +2312,7 @@ CREATE TABLE IF NOT EXISTS `tbl_jw_sale_trans` (
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tbl_jw_sale_trans`
@@ -2434,11 +2434,11 @@ INSERT INTO `tbl_jw_units` (`id`, `unit_name`, `created_at`, `updated_at`) VALUE
 DROP TABLE IF EXISTS `tbl_leads`;
 CREATE TABLE IF NOT EXISTS `tbl_leads` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `customer_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `customer_name` varchar(255) CHARACTER SET utf8mb4  NOT NULL,
   `mobile_number` varchar(255) NOT NULL,
   `vehicle_number` varchar(255) DEFAULT NULL,
-  `vehicle_model` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `IDV_value` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `vehicle_model` varchar(255) CHARACTER SET utf8mb4  DEFAULT NULL,
+  `IDV_value` varchar(255) CHARACTER SET utf8mb4  DEFAULT NULL,
   `ncb` varchar(100) NOT NULL,
   `year` varchar(10) NOT NULL,
   `lead_status` int DEFAULT NULL COMMENT '1-started,2-Inprogress,3-Not Need,4-Converted',
@@ -2450,7 +2450,7 @@ CREATE TABLE IF NOT EXISTS `tbl_leads` (
   `updatedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_lead_added_user` (`added_by`)
-) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tbl_leads`
@@ -2473,7 +2473,7 @@ CREATE TABLE IF NOT EXISTS `tbl_leadsources` (
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tbl_leadsources`
@@ -2508,7 +2508,7 @@ CREATE TABLE IF NOT EXISTS `tbl_lead_followups` (
   `updatedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_followup_lead` (`lead_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tbl_lead_followups`
@@ -2694,7 +2694,7 @@ CREATE TABLE IF NOT EXISTS `tbl_otherpolicy_documents` (
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tbl_otherpolicy_documents`
@@ -2781,7 +2781,7 @@ CREATE TABLE IF NOT EXISTS `tbl_other_policy_renews` (
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tbl_other_policy_renews`
@@ -2823,7 +2823,7 @@ CREATE TABLE IF NOT EXISTS `tbl_payments` (
   PRIMARY KEY (`id`),
   KEY `fk_payment_mode` (`payment_mode_id`),
   KEY `fk_payment_added_user` (`added_by`)
-) ENGINE=InnoDB AUTO_INCREMENT=80 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=80 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tbl_payments`
@@ -2919,7 +2919,7 @@ CREATE TABLE IF NOT EXISTS `tbl_payment_modes` (
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tbl_payment_modes`
@@ -2952,8 +2952,8 @@ CREATE TABLE IF NOT EXISTS `tbl_policyholders` (
   `policy_type` int NOT NULL COMMENT '1-individual,2-agent,3- Dealer',
   `name` varchar(255) NOT NULL,
   `vehicle_number` varchar(100) NOT NULL,
-  `primary_number` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `secondary_number` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `primary_number` varchar(20) CHARACTER SET utf8mb4  DEFAULT NULL,
+  `secondary_number` varchar(20) CHARACTER SET utf8mb4  DEFAULT NULL,
   `start_date` date NOT NULL,
   `expiry_date` date NOT NULL,
   `vehicle_model_id` int NOT NULL,
@@ -2992,7 +2992,7 @@ CREATE TABLE IF NOT EXISTS `tbl_policyholders` (
   KEY `fk_policy_company` (`company_id`),
   KEY `fk_policy_paymentmode` (`payment_mode_id`),
   KEY `fk_policy_assigned_user` (`assigned_userid`)
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tbl_policyholders`
@@ -3037,7 +3037,7 @@ CREATE TABLE IF NOT EXISTS `tbl_policy_categories` (
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tbl_policy_categories`
@@ -3073,7 +3073,7 @@ CREATE TABLE IF NOT EXISTS `tbl_preparepolicies` (
   `updatedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_prepare_created_user` (`created_by`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tbl_preparepolicies`
@@ -3104,7 +3104,7 @@ CREATE TABLE IF NOT EXISTS `tbl_prooftypes` (
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tbl_prooftypes`
@@ -3147,7 +3147,7 @@ CREATE TABLE IF NOT EXISTS `tbl_purchase_cards` (
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=46 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=46 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tbl_purchase_cards`
@@ -3210,11 +3210,11 @@ DROP TABLE IF EXISTS `tbl_referred_persons`;
 CREATE TABLE IF NOT EXISTS `tbl_referred_persons` (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
-  `phone_number` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `phone_number` varchar(20) CHARACTER SET utf8mb4  DEFAULT NULL,
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tbl_referred_persons`
@@ -3253,7 +3253,7 @@ CREATE TABLE IF NOT EXISTS `tbl_roles` (
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tbl_roles`
@@ -3300,7 +3300,7 @@ CREATE TABLE IF NOT EXISTS `tbl_staffs` (
   KEY `fk_staff_country` (`country_id`),
   KEY `fk_staff_designation` (`design_id`),
   KEY `fk_staff_department` (`dept_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tbl_staffs`
@@ -3326,7 +3326,7 @@ CREATE TABLE IF NOT EXISTS `tbl_states` (
   `updatedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_state_country` (`country_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tbl_states`
@@ -3486,7 +3486,7 @@ CREATE TABLE IF NOT EXISTS `tbl_vehcilepolicydocuments` (
   PRIMARY KEY (`id`),
   KEY `fk_policydoc_policy` (`policy_id`),
   KEY `fk_policydoc_added_user` (`added_by`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tbl_vehcilepolicydocuments`
@@ -3528,7 +3528,7 @@ CREATE TABLE IF NOT EXISTS `tbl_vehiclepolicy_renews` (
   KEY `fk_renew_policyholder` (`policy_id`),
   KEY `fk_renew_created_user` (`created_by`),
   KEY `fk_renew_paymode` (`payment_mode_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tbl_vehiclepolicy_renews`
@@ -3777,7 +3777,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   UNIQUE KEY `email` (`email`),
   UNIQUE KEY `user_name` (`user_name`),
   KEY `fk_user_role` (`role_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=122 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=122 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `users`

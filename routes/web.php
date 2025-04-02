@@ -419,9 +419,16 @@ Route::middleware('auth')->group(function () {
     Route::any('/purchase/list', [PurchaseController::class, 'list'])->name('purchase.list');
     Route::get('/purchase/create', [PurchaseController::class, 'create'])->name('purchase.create');
     Route::post('/purchase/store', [PurchaseController::class, 'store'])->name('purchase.store');
+    Route::post('/purchase/storePurchase', [PurchaseController::class, 'storePurchase'])->name('purchase.storePurchase');
 
     Route::get('/purchaseitems/{id}', [PurchaseItemsController::class, 'index'])->name('purchaseitems');
     Route::any('/purchaseitem/list', [PurchaseItemsController::class, 'list'])->name('purchaseitem.list');
+    Route::get('/purchaseitem/addItems/{id}', [PurchaseItemsController::class, 'addItems'])->name('purchaseitem.addItems');
+    Route::get('/purchaseitem/calculateTotals', [PurchaseItemsController::class, 'calculateTotals'])->name('purchaseitem.calculateTotals');
+    Route::post('/purchaseitem/saveItems', [PurchaseItemsController::class, 'storePurchaseDetails'])->name('purchaseitem.saveItems');
+    Route::post('/purchaseitem/getItemDetails', [PurchaseItemsController::class, 'getItemDetails'])->name('purchaseitem.getItemDetails');
+    Route::post('/purchaseitem/getBatchForItem', [PurchaseItemsController::class, 'getBatchForItem'])->name('purchaseitem.getBatchForItem');
+    Route::post('/purchaseitem/addBatch', [PurchaseItemsController::class, 'addBatch'])->name('purchaseitem.addBatch');
 
     Route::get('/sales', [SaleController::class, 'index'])->name('sales');
     Route::any('/sale/list', [SaleController::class, 'list'])->name('sale.list');

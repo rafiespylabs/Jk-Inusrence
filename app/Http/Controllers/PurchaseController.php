@@ -10,6 +10,7 @@ use App\Models\Tbl_items;
 use App\Models\Tbl_jw_purchasetypes;
 use App\Models\Tbl_jw_unit;
 use App\Models\Tbl_jw_livestocks;
+use App\Models\Tbl_jw_batches;
 use Carbon\Carbon;
 use Response;
 use Redirect;
@@ -182,4 +183,80 @@ class PurchaseController extends Controller
             ], 500);
         }
     }
+
+    public function getPurchaseItems(Request $request)
+{
+    if ($request->ajax()) {
+        $data = PurchaseItem::with(['item', 'batch', 'unit'])->get();
+
+        return DataTables::of($data)
+            ->addIndexColumn()
+            ->addColumn('item', function ($row) {
+                return $row->item->item_name ?? '-';
+            })
+            ->addColumn('batch', function ($row) {
+                return $row->batch->batch ?? '-';
+            })
+            ->addColumn('unit', function ($row) {
+                return $row->unit->unit_name ?? '-';
+            })
+            ->addColumn('subtotal', function ($row) {
+                return number_format($row->qty * $row->pur_rate, 2);
+            })
+            ->addColumn('action', function ($row) {
+                return '<button class="btn btn-danger btn-sm delete-item" data-id="' . $row->id . '">Delete</button>';
+            })
+            ->rawColumns(['action'])
+            ->make(true);
+    }
+}
+
+    public function storePurchase(Request $request)
+    {
+        $validatedData = $request->validate([
+            'invoice_num' => 'required|string|max:255',
+            'purchase_date' => 'required|date',
+            'supplier_id' => 'nullable|integer|exists:tbl_suppliers,id',
+            'total_taxable_amount' => 'required|numeric|min:0',
+            'total_tax' => 'required|numeric|min:0',
+            'total_qty' => 'required|numeric|min:0',
+            'grand_total' => 'required|numeric|min:0',
+        ]);
+
+        try {
+            $existInvoiceNum = Tbl_jw_purchases::where('invoice_num', $validatedData['invoice_num'])->exists();
+            if ($existInvoiceNum) {
+                return Response::json(['success' => false, 'message' => 'Invoice Number Already Exist']);
+            }
+
+            $created_by = Auth::user()->id;
+            $currentdate = Carbon::now()->format('Y-m-d H:i:s');
+
+            $purchase = new Tbl_jw_purchases;
+            $purchase->invoice_num = $validatedData['invoice_num'];
+            $purchase->purchase_date = $validatedData['purchase_date'];
+            $purchase->supplier_id = $validatedData['supplier_id'];
+            $purchase->total_taxable_amount = $validatedData['total_taxable_amount'];
+            $purchase->total_tax = $validatedData['total_tax'];
+            $purchase->total_qty = $validatedData['total_qty'];
+            $purchase->grand_total = $validatedData['grand_total'];
+            $purchase->createdby = $created_by;
+            $purchase->createddate = $currentdate;
+            $purchase->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Purchase record added successfully',
+                'purchase_id' => $purchase->id,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to create Purchase: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+
+
 }
